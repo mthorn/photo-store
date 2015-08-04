@@ -1,0 +1,31 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Ignore bundler config
+/.bundle
+
+# Ignore the default SQLite database.
+/db/*.sqlite3
+
+# Ignore all logfiles and tempfiles.
+/public/*uploads
+/public/assets/source_maps
+/log/*.log
+/tmp
+
+# ignore files generated for RubyMine workspace
+/.idea
+
+.DS_Store
+/.sass-cache
+
+*-s[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].png
+
+/development_version
+/test_version
+
+/spec/javascripts/compiled
+
+/chromedriver.log
+
+/development.dump
+/chrome.zip

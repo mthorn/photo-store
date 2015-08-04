@@ -1,0 +1,28 @@
+default: &default
+  adapter: postgresql
+  pool: 5
+  timeout: 5000
+  encoding: unicode
+
+development:
+  <<: *default
+  database: photo_store_development
+  username: omnistream
+  password: omnistream
+  host: localhost
+  port: 5432
+  min_messages: WARNING
+
+test:
+  <<: *default
+  database: photo_store_test
+  username: omnistream
+  password: omnistream
+  host: localhost
+  port: 5432
+  min_messages: WARNING
+
+production:
+  <<: *default
+  url: <%= ENV['DATABASE_URL'] %>
+  pool: <%= ENV['DB_POOL'] || ENV['MAX_THREADS'] || 5 %>
