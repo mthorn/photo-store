@@ -1,0 +1,5 @@
+gallery
+
+%ul
+  %li{ 'ng-repeat' => 'upload in ctrl.uploads track by upload.id' }
+    %img{ 'ng-src' => '{{ upload.thumb_url }}' }

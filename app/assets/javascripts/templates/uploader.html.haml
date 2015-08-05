@@ -1,0 +1,5 @@
+%p {{ctrl.progress.done}}/{{ctrl.progress.count}}
+%p {{ctrl.progress.loaded + ctrl.fileProgress.loaded | bytes}}/{{ctrl.progress.total | bytes}}
+%p {{ctrl.timeRemaining() | duration}} remaining
+
+%div{ 'file-drop' => 'ctrl.enqueue(files)' }

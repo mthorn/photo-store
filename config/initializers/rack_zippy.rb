@@ -1,2 +1,2 @@
-Rails.application.config.middleware.insert_after Rack::Cors, Rack::Zippy::AssetServer
+Rails.application.config.middleware.insert_before Rack::Runtime, Rack::Zippy::AssetServer
 Rails.application.config.middleware.delete 'Rack::Sendfile'

@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+ruby '2.2.1'
 
 gem 'rails'
 gem 'pg'
@@ -18,6 +19,7 @@ gem 'angular-rails-templates'
 gem 'rack-zippy'
 gem 'carrierwave'
 gem 'fog'
+gem 'mini_magick'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-angular'
@@ -28,6 +30,7 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-angular-ui-bootstrap-bower'
   gem 'rails-assets-base64'
   gem 'rails-assets-font-awesome-animation'
+  gem 'rails-assets-lodash'
 end
 
 group :development, :test do
@@ -37,4 +40,8 @@ end
 
 group :development do
   gem 'letter_opener'
+end
+
+group :production do
+  gem 'rails_12factor'
 end
