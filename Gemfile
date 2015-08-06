@@ -21,6 +21,7 @@ gem 'carrierwave'
 gem 'fog'
 gem 'mini_magick'
 gem 'sucker_punch'
+gem 'font-awesome-rails'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-angular'
@@ -29,8 +30,6 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-angular-animate'
   gem 'rails-assets-angular-sanitize'
   gem 'rails-assets-angular-ui-bootstrap-bower'
-  gem 'rails-assets-base64'
-  gem 'rails-assets-font-awesome-animation'
   gem 'rails-assets-lodash'
 end
 

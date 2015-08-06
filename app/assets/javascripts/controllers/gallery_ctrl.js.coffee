@@ -1,6 +1,20 @@
 @app.controller 'GalleryCtrl', class GalleryCtrl extends Controller
 
-  @inject 'Upload'
+  @inject '$http', '$window', 'Upload'
 
   initialize: ->
-    @Upload.query().$promise.then((@uploads) =>)
+    @offset = 0
+    @limit = 12
+    @count = 0
+
+  '$watch(offset)': =>
+    @http(
+      method: 'GET'
+      url: '/api/uploads.json'
+      params:
+        offset: @offset
+        limit: @limit
+    ).then((response) =>
+      @items = response.data.items.map((upload) => new @Upload(upload))
+      @items.count = response.data.count
+    )

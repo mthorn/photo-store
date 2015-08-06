@@ -4,6 +4,14 @@ class UploadsController < ApplicationController
 
   def index
     @uploads = current_user.library.uploads
+    @count = @uploads.count
+
+    if (offset = params[:offset]).present?
+      @uploads = @uploads.offset(offset.to_i)
+    end
+    if (limit = params[:limit]).present?
+      @uploads = @uploads.limit(limit.to_i)
+    end
   end
 
   def create
@@ -12,9 +20,11 @@ class UploadsController < ApplicationController
       find_by(upload_params.slice(:name, :size, :mime)).
       try(:destroy)
 
-    @upload = current_user.library.uploads.new(uploader: current_user)
+    @upload = current_user.library.uploads.new(upload_params) do |u|
+      u.uploader = current_user
+    end
 
-    if @upload.update_attributes(upload_params)
+    if @upload.save
       render 'show'
     else
       render json: @upload.errors, status: :unprocessable_entity

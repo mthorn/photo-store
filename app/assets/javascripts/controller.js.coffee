@@ -18,22 +18,21 @@ class @Controller
 
       @initialize?()
 
-      for name, fn of @
-        if angular.isFunction(fn)
-          # create event handlers for functions named '$on(_event_name_)',
-          # create reference equality watches for functions named
-          # '$watch(_expr_)' and create object equality watches for functions
-          # named '$watchEquality(_expr_)'
-          if (m = name.match(/^(\$(?:watch|on|watchEquality))\((.+)\)$/))
-            scopeFn = m[1]
-            expr = m[2]
+    for name, fn of @
+      if angular.isFunction(fn)
+        # create event handlers for functions named '$on(_event_name_)',
+        # create reference equality watches for functions named
+        # '$watch(_expr_)' and create object equality watches for functions
+        # named '$watchEquality(_expr_)'
+        if (m = name.match(/^(\$(?:watch|on|watchEquality))\((.+)\)$/))
+          scopeFn = m[1]
+          expr = m[2]
 
-            do (expr) =>
-              if expr[0] == '@' # access controller property instead of scope
-                props = expr.substring(1).split('.')
-                expr = => props.inject(@, (obj, prop) -> obj?[prop])
+          do (expr) =>
+            props = expr.split('.')
+            expr = => _.inject(props, ((obj, prop) -> obj?[prop]), @)
 
-              if scopeFn == '$watchEquality'
-                @scope.$watch(expr, fn, true)
-              else
-                @scope[scopeFn](expr, fn)
+            if scopeFn == '$watchEquality'
+              @scope.$watch(expr, fn, true)
+            else
+              @scope[scopeFn](expr, fn)

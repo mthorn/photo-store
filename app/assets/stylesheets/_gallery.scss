@@ -1,0 +1,16 @@
+.gallery {
+  @extend .clearfix;
+  margin: 0 2%;
+
+  .gallery-item {
+    border: 1px solid #cacaca;
+    margin-bottom: 2em;
+
+    img {
+      display: block;
+      margin: 0 auto;
+      width: 90%;
+    }
+  }
+
+}

@@ -1,0 +1,21 @@
+footer {
+
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  opacity: 0.8;
+  max-height: 200px;
+
+  .error-list {
+    overflow-y: scroll;
+    padding: 1em;
+  }
+
+  button#clear {
+    margin: 1em;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+}

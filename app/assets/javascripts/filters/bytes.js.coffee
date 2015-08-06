@@ -6,6 +6,6 @@
     value = parseInt input
     for suffix, i in SUFFIXES
       if value < 1024 || i == SUFFIXES.length - 1
-        return "#{Math.round value}#{suffix}"
+        return "#{Math.floor(value * 100) / 100}#{suffix}" # 2 decimal places
       else
         value /= 1024

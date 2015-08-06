@@ -1,2 +1,9 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "font-awesome";
+@import "footer";
+@import "gallery";
+
+#main {
+  margin-bottom: 40px;
+}

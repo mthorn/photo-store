@@ -1,5 +1,17 @@
-gallery
+.gallery.row
+  %div{ 'ng-if' => 'ctrl.items.length != 0' }
+    .col-xs-6.col-sm-4.col-md-3.col-lg-2{ 'ng-repeat' => 'upload in ctrl.items track by upload.id' }
+      .gallery-item
+        %img{ 'ng-src' => '{{ upload.thumb_url }}' }
 
-%ul
-  %li{ 'ng-repeat' => 'upload in ctrl.uploads track by upload.id' }
-    %img{ 'ng-src' => '{{ upload.thumb_url }}' }
+  %p.text-center{ 'ng-if' => 'ctrl.items.length == 0' }
+    There are no items in your library. Drag &amp; drop some files here to add
+    them to your library.
+
+.text-center{ 'ng-hide' => 'ctrl.items.count < ctrl.limit' }
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.offset = ctrl.offset - ctrl.limit', 'ng-disabled' => 'ctrl.offset <= 0' }
+    %i.fa.fa-chevron-left
+  %span
+    {{ctrl.offset / ctrl.limit + 1}} / {{ctrl.window.Math.ceil(ctrl.items.count / ctrl.limit)}}
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.offset = ctrl.offset + ctrl.limit', 'ng-disabled' => 'ctrl.offset + ctrl.limit >= ctrl.items.count' }
+    %i.fa.fa-chevron-right

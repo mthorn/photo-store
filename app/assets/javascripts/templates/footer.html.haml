@@ -1,0 +1,12 @@
+%p.text-center{ 'ng-show' => 'ctrl.progress' }
+  Uploading:
+  %span {{ctrl.progress.done}} / {{ctrl.progress.count}} files,
+  %span {{ctrl.progress.loaded + ctrl.fileProgress.loaded | bytes}} / {{ctrl.progress.total | bytes}},
+  %span{ 'ng-show' => 'ctrl.timeRemaining()' }
+    {{ctrl.timeRemaining() | duration}} remaining
+
+.text-right{ 'ng-show' => 'ctrl.failed' }
+  {{ctrl.failed}} files failed to upload.
+  %button#clear.btn.btn-default{ 'ng-click' => 'ctrl.failed = 0' } Clear
+
+%div{ 'file-drop' => 'ctrl.enqueue(files)' }

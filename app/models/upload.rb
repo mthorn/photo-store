@@ -6,9 +6,13 @@ class Upload < ActiveRecord::Base
 
   direct_upload :file
 
+  validates :type, presence: true
   validates :library, presence: true
   validates :uploader, presence: true
-  validates :name, presence: true, uniqueness: { scope: [ :library_id, :size, :mime ] }
+  validates :name, presence: true, uniqueness: {
+    scope: [ :library_id, :size, :mime ],
+    message: 'has already been uploaded'
+  }
   validates :modified_at, presence: true
   validates :size, presence: true, numericality: { greater_than: 0 }
   validates :mime, presence: true, format: /\A\w+\/\w+\z/
