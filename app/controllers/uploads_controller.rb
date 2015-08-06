@@ -3,7 +3,7 @@ class UploadsController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    @uploads = current_user.library.uploads
+    @uploads = current_user.library.uploads.where(state: %w( process ready ))
     @count = @uploads.count
 
     if (offset = params[:offset]).present?

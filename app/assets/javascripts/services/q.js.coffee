@@ -43,9 +43,9 @@
             keep: (keepAttrs) ->
               for method in BASE_METHODS
                 decorate promise, method, (oldMethod, args) ->
-                  oldMethod.apply(promise, args).
-                    tap((newPromise) -> promise.slice(newPromise, keepAttrs)).
-                    keep(keepAttrs)
+                  newPromise = oldMethod.apply(promise, args)
+                  _.extend(newPromise, _.pick(promise, keepAttrs))
+                  newPromise.keep(keepAttrs)
               promise
 
             timeout: (ms) ->

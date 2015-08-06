@@ -1,8 +1,10 @@
 .gallery.row
   %div{ 'ng-if' => 'ctrl.items.length != 0' }
     .col-xs-6.col-sm-4.col-md-3.col-lg-2{ 'ng-repeat' => 'upload in ctrl.items track by upload.id' }
-      .gallery-item
-        %img{ 'ng-src' => '{{ upload.thumb_url }}' }
+      .gallery-item{ 'ng-switch' => 'upload.state' }
+        %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ upload.thumb_url }}' }
+        .processing.text-center{ 'ng-switch-when' => 'process' }
+          %i.fa.fa-4x.fa-spinner.fa-spin
 
   %p.text-center{ 'ng-if' => 'ctrl.items.length == 0' }
     There are no items in your library. Drag &amp; drop some files here to add

@@ -1,13 +1,16 @@
 @app.controller 'GalleryCtrl', class GalleryCtrl extends Controller
 
-  @inject '$http', '$window', 'Upload'
+  @inject '$http', '$window', 'Upload', 'schedule'
 
   initialize: ->
     @offset = 0
     @limit = 12
     @count = 0
 
-  '$watch(offset)': =>
+    @Upload.on('uploaded', @fetch)
+
+  fetch: =>
+    @timer?.cancel()
     @http(
       method: 'GET'
       url: '/api/uploads.json'
@@ -17,4 +20,12 @@
     ).then((response) =>
       @items = response.data.items.map((upload) => new @Upload(upload))
       @items.count = response.data.count
+
+      @timer?.cancel()
+      if _.any(@items, state: 'process')
+        @timer = @schedule.delay(5000, @fetch)
     )
+
+  '$watch(offset)': => @fetch()
+
+  '$on($destroy)': => @Upload.off('uploaded', @fetch)

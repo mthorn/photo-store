@@ -26,7 +26,7 @@ class Upload < ActiveRecord::Base
   end
 
   def fetch_and_process_file_in_background
-    self.state = 'process'
+    self.update_column(:state, 'process')
     super
   end
 

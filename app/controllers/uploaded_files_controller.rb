@@ -3,9 +3,14 @@ class UploadedFilesController < ApplicationController
   def show
     upload = current_user.library.uploads.find(params[:id])
     if (version = params[:version]).present?
-      redirect_to upload.file_url(version)
+      url = upload.file_url(version)
     else
-      redirect_to upload.file_url
+      url = upload.file_url
+    end
+    if url
+      redirect_to url
+    else
+      head :not_found
     end
   end
 

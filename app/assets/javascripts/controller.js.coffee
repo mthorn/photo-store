@@ -16,7 +16,7 @@ class @Controller
       @[s] = args[i]
       @[s.substring(1)] = args[i] if s[0] == '$'
 
-      @initialize?()
+    @initialize?()
 
     for name, fn of @
       if angular.isFunction(fn)
