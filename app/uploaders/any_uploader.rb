@@ -1,0 +1,2 @@
+class AnyUploader < BaseUploader
+end

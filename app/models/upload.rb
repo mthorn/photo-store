@@ -1,10 +1,10 @@
 class Upload < ActiveRecord::Base
-  include S3DirectUpload
+  include DirectUpload
 
   belongs_to :uploader, class_name: 'User'
   belongs_to :library
 
-  s3_upload :file
+  direct_upload :file
 
   validates :library, presence: true
   validates :uploader, presence: true
@@ -14,7 +14,7 @@ class Upload < ActiveRecord::Base
   validates :size, presence: true, numericality: { greater_than: 0 }
   validates :mime, presence: true, format: /\A\w+\/\w+\z/
 
-  after_create :create_direct_upload_meta_data_for_file, unless: :file?
+  after_create :create_direct_upload_for_file, unless: :file?
 
   def process_file file
     if file == :not_found

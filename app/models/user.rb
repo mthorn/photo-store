@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
 
   has_many :uploads, dependent: :destroy, foreign_key: :uploader_id
   has_one :library, foreign_key: :owner_id
+  has_many :upload_buffers, dependent: :destroy
 
   validates :name, presence: true
 

@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
   scope 'api' do
     resources :uploads
+    post 'buffers/:id' => 'buffers#save'
   end
 
   get 'uploaded_files/:id(/:version)' => 'uploaded_files#show', version: /\w+/

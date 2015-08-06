@@ -10,11 +10,11 @@
       video: [ 'MP4', 'WebM' ]
       doc: [ 'PDF' ]
 
-    HOST_BLACKLIST = [
+    HOST_BLACKLIST = _.compact([
       $window.location.host,
       config.s3Host,
       'cdn.omnistre.am'
-    ].map((h) -> h.replace(/\./g, '\\.'))
+    ]).map((h) -> h.replace(/\./g, '\\.'))
     HOST_BLACKLIST_RE = new RegExp("^https?://(?:#{HOST_BLACKLIST.join('|')})/")
 
     {
