@@ -46,7 +46,7 @@ module DirectUpload
     nil
   end
 
-  def move_and_process(field)
+  def fetch_and_process(field)
     file_data = nil
     key = self.direct_upload_key(field)
 
@@ -86,16 +86,17 @@ module DirectUpload
         attr_reader :"#{field}_post_url", :"#{field}_post_data"
         attr_accessor :"#{field}_uploaded"
 
-        after_save :"move_and_process_#{field}", if: :"#{field}_uploaded"
+        after_save :"fetch_and_process_#{field}_in_background", if: :"#{field}_uploaded"
 
-        class_eval <<-RUBY, __FILE__, __LINE__ + 1
+        include(mod = Module.new)
+        mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
           def create_direct_upload_for_#{field}
             self.create_direct_upload :#{field}
           end
 
-          def move_and_process_#{field}
+          def fetch_and_process_#{field}_in_background
             self.#{field}_uploaded = false
-            self.move_and_process :#{field}
+            ProcessUploadJob.perform_later(self, "#{field}")
           end
 
           def process_#{field} file

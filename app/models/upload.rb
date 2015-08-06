@@ -8,19 +8,29 @@ class Upload < ActiveRecord::Base
 
   validates :library, presence: true
   validates :uploader, presence: true
-  validates :failed, inclusion: [ true, false ]
   validates :name, presence: true, uniqueness: { scope: [ :library_id, :size, :mime ] }
   validates :modified_at, presence: true
   validates :size, presence: true, numericality: { greater_than: 0 }
   validates :mime, presence: true, format: /\A\w+\/\w+\z/
+  validates :state, inclusion: %w( upload process ready fail )
 
+  after_initialize :set_initial_state, if: :new_record?
   after_create :create_direct_upload_for_file, unless: :file?
+
+  def set_initial_state
+    self.state ||= 'upload'
+  end
+
+  def fetch_and_process_file_in_background
+    self.state = 'process'
+    super
+  end
 
   def process_file file
     if file == :not_found
-      self.update_attributes!(failed: true)
+      self.update_attributes!(state: 'fail')
     else
-      self.update_attributes!(file: file)
+      self.update_attributes!(state: 'ready', file: file)
     end
   end
 

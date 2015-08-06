@@ -20,6 +20,7 @@ gem 'rack-zippy'
 gem 'carrierwave'
 gem 'fog'
 gem 'mini_magick'
+gem 'sucker_punch'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-angular'
