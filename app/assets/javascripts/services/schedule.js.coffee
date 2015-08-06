@@ -106,9 +106,10 @@
       queue = []
       running = 0
       emptyDeferred = null
+      paused = false
 
       runTasks = ->
-        while running < concurrency && (task = queue.shift())
+        while ! paused && running < concurrency && (task = queue.shift())
           [ fn, deferred ] = task
           running += 1
           try
@@ -147,6 +148,11 @@
           queue.clear()
           $timeout runTasks
         exec
+
+      exec.pause = -> paused = exec.isPaused = true
+      exec.unpause = ->
+        $timeout runTasks
+        paused = exec.isPaused = false
 
       exec
 
