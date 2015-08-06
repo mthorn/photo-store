@@ -7,11 +7,14 @@ class UploadsController < ApplicationController
   end
 
   def create
-    @upload = current_user.library.uploads.new(upload_params) do |u|
-      u.uploader = current_user
-    end
+    current_user.library.uploads.
+      where(state: [ 'upload', 'fail' ]).
+      find_by(upload_params.slice(:name, :size, :mime)).
+      try(:destroy)
 
-    if @upload.save
+    @upload = current_user.library.uploads.new(uploader: current_user)
+
+    if @upload.update_attributes(upload_params)
       render 'show'
     else
       render json: @upload.errors, status: :unprocessable_entity
@@ -36,8 +39,8 @@ class UploadsController < ApplicationController
   private
 
   def upload_params
-    params.permit(:file, :modified_at, :name, :size, :mime, :description,
-                  :file_uploaded)
+    @upload_params ||= params.permit(
+      :file, :modified_at, :name, :size, :mime, :description, :file_uploaded)
   end
 
 end
