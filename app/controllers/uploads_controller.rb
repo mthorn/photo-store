@@ -12,6 +12,8 @@ class UploadsController < ApplicationController
     if (limit = params[:limit]).present?
       @uploads = @uploads.limit(limit.to_i)
     end
+
+    @uploads = @uploads.order(id: :desc)
   end
 
   def create

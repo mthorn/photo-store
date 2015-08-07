@@ -4,9 +4,9 @@ class PhotoUploader < BaseUploader
     %w( jpg jpeg gif png )
   end
 
-  version :thumb do
-    process resize_to_fit: [ 128, 96 ]
-    process resize_and_pad: [ 128, 96 ]
+  version :gallery do
+    process resize_to_fit: [ 256, 256 ]
+    process resize_and_pad: [ 256, 256 ]
   end
 
   version :large do

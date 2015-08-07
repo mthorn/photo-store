@@ -3,6 +3,7 @@
   margin: 0 2%;
 
   .gallery-item {
+    position: relative;
     border: 1px solid #cacaca;
     margin-bottom: 2em;
 
@@ -13,7 +14,13 @@
     }
 
     .processing {
-      padding: 4em;
+      position: absolute;
+      width: 100%;
+      padding: 33%;
+
+      & + img {
+        visibility: hidden;
+      }
     }
   }
 

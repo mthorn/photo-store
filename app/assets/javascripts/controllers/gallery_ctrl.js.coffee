@@ -1,6 +1,6 @@
 @app.controller 'GalleryCtrl', class GalleryCtrl extends Controller
 
-  @inject '$http', '$window', 'Upload', 'schedule'
+  @inject '$http', '$window', 'Upload', 'schedule', 'config'
 
   initialize: ->
     @offset = 0

@@ -4,3 +4,7 @@ json.env Rails.env
 json.csrfParams do
   json.set! request_forgery_protection_token, form_authenticity_token
 end
+
+json.assets do
+  json.whiteSquare asset_path "white-square.png"
+end
