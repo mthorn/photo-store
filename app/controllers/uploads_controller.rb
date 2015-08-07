@@ -13,7 +13,7 @@ class UploadsController < ApplicationController
       @uploads = @uploads.limit(limit.to_i)
     end
 
-    @uploads = @uploads.order(id: :desc)
+    @uploads = @uploads.order(imported_at: :desc, id: :asc)
   end
 
   def create
@@ -52,7 +52,8 @@ class UploadsController < ApplicationController
 
   def upload_params
     @upload_params ||= params.permit(
-      :file, :modified_at, :name, :size, :mime, :description, :file_uploaded)
+      :file, :modified_at, :name, :size, :mime, :description, :file_uploaded,
+      :imported_at)
   end
 
 end

@@ -86,7 +86,7 @@ module DirectUpload
         attr_reader :"#{field}_post_url", :"#{field}_post_data"
         attr_accessor :"#{field}_uploaded"
 
-        after_save :"fetch_and_process_#{field}_in_background", if: :"#{field}_uploaded"
+        after_commit :"fetch_and_process_#{field}_in_background", if: :"#{field}_uploaded"
 
         include(mod = Module.new)
         mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1

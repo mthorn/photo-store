@@ -13,6 +13,8 @@
       enqueue: (files) ->
         return if files.length == 0
 
+        importDate = new Date
+
         if ! @queue
           @queue = schedule.executor(1)
           @progress =
@@ -34,6 +36,7 @@
                 name: file.name
                 size: file.size
                 mime: file.type
+                imported_at: importDate
               )
               upload.create().
                 then(

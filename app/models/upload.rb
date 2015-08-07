@@ -17,6 +17,7 @@ class Upload < ActiveRecord::Base
   validates :size, presence: true, numericality: { greater_than: 0 }
   validates :mime, presence: true, format: /\A\w+\/\w+\z/
   validates :state, inclusion: %w( upload process ready fail )
+  validates :imported_at, presence: true
 
   after_initialize :set_initial_state, if: :new_record?
   after_create :create_direct_upload_for_file, unless: :file?
