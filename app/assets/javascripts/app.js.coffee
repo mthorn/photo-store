@@ -23,4 +23,5 @@
     $routeProvider.when '/gallery',
       templateUrl: 'gallery.html'
       controller: 'GalleryCtrl as ctrl'
+      reloadOnSearch: false
 ]

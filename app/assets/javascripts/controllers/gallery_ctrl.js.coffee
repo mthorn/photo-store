@@ -1,15 +1,19 @@
 @app.controller 'GalleryCtrl', class GalleryCtrl extends Controller
 
-  @inject '$http', '$window', 'Upload', 'schedule', 'config'
+  @inject '$http', '$window', '$location', 'Upload', 'schedule', 'config'
 
   initialize: ->
-    @offset = 0
-    @limit = 12
+    @offset = parseInt(@location.search().offset) || 0
+    @limit = parseInt(@location.search().limit) || 12
     @count = 0
 
     @Upload.on('uploaded', @fetch)
 
   fetch: =>
+    return @offset = 0 if @offset < 0
+
+    @location.search(offset: @offset, limit: @limit)
+
     @timer?.cancel()
     @http(
       method: 'GET'
@@ -28,4 +32,6 @@
 
   '$watch(offset)': => @fetch()
 
-  '$on($destroy)': => @Upload.off('uploaded', @fetch)
+  '$on($destroy)': =>
+    @timer?.cancel()
+    @Upload.off('uploaded', @fetch)
