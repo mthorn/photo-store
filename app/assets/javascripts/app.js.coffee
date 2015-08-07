@@ -18,6 +18,9 @@
       requireBase: false
 
     $routeProvider.when '/',
+      redirectTo: '/gallery'
+
+    $routeProvider.when '/gallery',
       templateUrl: 'gallery.html'
       controller: 'GalleryCtrl as ctrl'
 ]

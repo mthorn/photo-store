@@ -1,1 +1,16 @@
-header
+.container-fluid
+
+  .navbar-header
+    %a.navbar-brand
+      {{ctrl.config.library}}
+
+  %ul.nav.navbar-nav
+    %li
+      %a{ href: '/gallery', 'ng-class' => '{ active: ctrl.path() == "/gallery" }' } Gallery
+    %li
+      %a{ href: '/slides', 'ng-class' => '{ active: ctrl.path() == "/slides" }' } Slideshow
+
+  %ul.nav.navbar-nav.navbar-right
+    %li
+      %a{ href: '/users/sign_out', target: '_self', 'data-method' => 'delete' }
+        Sign out

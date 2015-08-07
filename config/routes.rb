@@ -10,7 +10,11 @@ Rails.application.routes.draw do
 
   get 'uploaded_files/:id(/:version)' => 'uploaded_files#show', version: /\w+/
 
-  root to: 'main#index'
+  with_options(to: 'main#index') do |app|
+    app.root
+    app.get :gallery
+    app.get :slides
+  end
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 

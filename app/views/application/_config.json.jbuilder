@@ -5,6 +5,10 @@ json.csrfParams do
   json.set! request_forgery_protection_token, form_authenticity_token
 end
 
+if user_signed_in?
+  json.library current_user.library.name
+end
+
 json.assets do
   json.whiteSquare asset_path "white-square.png"
 end

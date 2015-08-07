@@ -1,4 +1,4 @@
-%p.text-center{ 'ng-show' => 'ctrl.progress' }
+%p.bg-info.text-center{ 'ng-show' => 'ctrl.progress' }
   %button.btn.btn-default{ 'ng-hide' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.queue.pause()' } Pause
   %button.btn.btn-default{ 'ng-show' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.queue.unpause()' } Continue
   Uploading:
@@ -7,7 +7,7 @@
   %span{ 'ng-show' => 'ctrl.timeRemaining()' }
     {{ctrl.timeRemaining() | duration}} remaining
 
-.text-right{ 'ng-show' => 'ctrl.failed' }
+.text-right.text-warning{ 'ng-show' => 'ctrl.failed' }
   {{ctrl.failed}} files failed to upload.
   %button.btn.btn-default{ 'ng-click' => 'ctrl.failed = 0' } Clear
 
