@@ -2,7 +2,7 @@
   %div{ 'ng-if' => 'ctrl.items.length != 0' }
     .col-xs-6.col-sm-4.col-md-3.col-lg-2{ 'ng-repeat' => 'upload in ctrl.items track by upload.id' }
       .gallery-item{ 'ng-switch' => 'upload.state' }
-        %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ upload.gallery_url }}' }
+        %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ upload.gallery_url }}', 'while-loading' => '{{ ctrl.config.assets.whiteSquare }}' }
         .processing.text-center{ 'ng-switch-when' => 'process' }
           %i.fa.fa-4x.fa-spinner.fa-spin
         %img{ 'ng-switch-when' => 'process', 'ng-src' => '{{ ctrl.config.assets.whiteSquare }}' }

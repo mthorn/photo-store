@@ -5,12 +5,14 @@
   .gallery-item {
     position: relative;
     border: 1px solid #cacaca;
+    border-radius: 10px;
     margin-bottom: 2em;
 
     img {
       display: block;
       margin: 0 auto;
       width: 90%;
+      padding: 5% 0;
     }
 
     .processing {
