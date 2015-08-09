@@ -1,6 +1,7 @@
 @app.controller 'GalleryCtrl', class GalleryCtrl extends Controller
 
-  @inject '$http', '$window', '$location', 'Upload', 'schedule', 'config'
+  @inject '$http', '$window', '$location', 'Upload', 'schedule',
+    'placeholderImageUrl'
 
   initialize: ->
     @offset = parseInt(@location.search().offset) || 0
