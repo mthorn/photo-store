@@ -7,11 +7,11 @@
           %i.fa.fa-4x.fa-spinner.fa-spin
         %img{ 'ng-switch-when' => 'process', 'ng-src' => '{{ ctrl.placeholderImageUrl }}' }
 
-  %p.text-center{ 'ng-if' => 'ctrl.items.length == 0' }
+  %p.text-center{ 'ng-if' => 'ctrl.items.count == 0' }
     There are no items in your library. Drag &amp; drop some files here to add
     them to your library.
 
-.text-center{ 'ng-hide' => 'ctrl.items.count < ctrl.limit' }
+.text-center{ 'ng-hide' => 'ctrl.items.count < ctrl.limit && ctrl.offset == 0' }
   %button.btn.btn-default{ 'ng-click' => 'ctrl.offset = ctrl.offset - ctrl.limit', 'ng-disabled' => 'ctrl.offset <= 0' }
     %i.fa.fa-chevron-left
   %span
