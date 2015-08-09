@@ -5,6 +5,7 @@ class Upload < ActiveRecord::Base
   belongs_to :library
 
   direct_upload :file
+  serialize :metadata
 
   validates :type, presence: true
   validates :library, presence: true

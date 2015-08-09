@@ -2,13 +2,18 @@ class Photo < Upload
 
   mount_uploader :file, PhotoUploader
 
-  before_validation :calculate_dimensions, if: :file_changed?
-  def calculate_dimensions
+  before_validation :update_metadata, if: :file_changed?
+  def update_metadata
     if self.file?
       return if self.width? && self.height?
-      self.width, self.height = `identify -format '%w %h' '#{self.file.path}'`.strip.split(' ')
+      text = `identify -format '%w\n%h\n%[EXIF:*]' '#{self.file.path}'`.strip.split("\n")
+      self.width = text.shift.to_i
+      self.height = text.shift.to_i
+      self.metadata = text.
+        map { |l| l[5..-1].split('=', 2) }.
+        each.with_object({}) { |(k, v), h| h[k] = v }
     else
-      self.width = self.height = nil
+      self.width = self.height = self.metadata = nil
     end
   end
 
