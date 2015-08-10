@@ -1,6 +1,6 @@
 @app.directive 'uploader', [
-  'schedule', 'Upload',
-  (schedule,   Upload) ->
+  '$window', 'schedule', 'Upload',
+  ($window,   schedule,   Upload) ->
 
     templateUrl: 'footer.html'
 
@@ -9,6 +9,11 @@
 
       initialize: ->
         @expanded = false
+
+      handleBeforeUnload: ->
+        "Your file import will be incomplete if you leave this page. You can " +
+        "resume the import later by dropping the same set of files on the page, " +
+        "already completed files will not be duplicated."
 
       enqueue: (files) ->
         return if files.length == 0
@@ -24,6 +29,7 @@
             loaded: 0 # total uploaded bytes
           @startTime = Date.now()
           @failed ?= 0
+          $($window).on('beforeunload', @handleBeforeUnload)
 
         for file in files
           do (file) =>
@@ -57,6 +63,7 @@
 
         if @progress.count == files.length
           @queue.whenIdle().then =>
+            $($window).off('beforeunload', @handleBeforeUnload)
             @queue = @progress = @startTime = null
 
       timeRemaining: ->
