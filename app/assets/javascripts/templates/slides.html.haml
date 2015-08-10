@@ -1,0 +1,13 @@
+.slides{ 'ng-if' => 'ctrl.items.count != 0', 'ng-switch' => 'ctrl.upload.state' }
+  %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ ctrl.upload.large_url }}', 'vertical-center' => true }
+  .processing.text-center{ 'ng-switch-when' => 'process' }
+    %i.fa.fa-spinner.fa-spin
+
+  %button.btn#prev{ 'ng-click' => 'ctrl.idx = ctrl.idx - 1', 'ng-hide' => 'ctrl.idx <= 0' }
+    %i.fa.fa-chevron-left
+  %button.btn#next{ 'ng-click' => 'ctrl.idx = ctrl.idx + 1', 'ng-hide' => 'ctrl.idx >= ctrl.items.count - 1' }
+    %i.fa.fa-chevron-right
+
+%p.text-center{ 'ng-if' => 'ctrl.items.count == 0' }
+  There are no items in your library. Drag &amp; drop some files here to add
+  them to your library.

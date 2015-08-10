@@ -24,4 +24,8 @@
       templateUrl: 'gallery.html'
       controller: 'GalleryCtrl as ctrl'
       reloadOnSearch: false
+
+    $routeProvider.when '/slides',
+      templateUrl: 'slides.html'
+      controller: 'SlidesCtrl as ctrl'
 ]
