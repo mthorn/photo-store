@@ -28,7 +28,7 @@
             total: 0  # total bytes to upload
             loaded: 0 # total uploaded bytes
           @startTime = Date.now()
-          @failed ?= 0
+          @failed ?= []
           @skipped = 0
           @rateWindow = [ [ @startTime, 0 ] ]
           $($window).on('beforeunload', @handleBeforeUnload)
@@ -58,10 +58,14 @@
                       @skipped += 1
                       @progress.done += 1
                       @progress.total -= file.size
-                    else if reason != 'cancel'
-                      @failed += 1
+                    else
                       @progress.count -= 1
                       @progress.total -= file.size
+                      if reason != 'cancel'
+                        @failed.push(
+                          file: @current.file
+                          importDate: importDate
+                        )
                   ),
                   ((currentProgress) =>
                     @current.progress = currentProgress
@@ -110,8 +114,10 @@
         @queue.clear()
         @current?.promise?.abort()
 
+      retry: ->
+        for failure in @failed.reverse()
+          @enqueue([ failure.file ], 'start', failure.importDate)
+        @failed = []
+
     controllerAs: 'ctrl'
-    link: (scope, element, attrs) ->
-
-
 ]

@@ -13,9 +13,10 @@
   %span{ 'ng-hide' => 'ctrl.timeRemaining()' }
     calculating time remaining...
 
-.text-right.text-warning{ 'ng-show' => 'ctrl.failed' }
-  {{ctrl.failed}} files failed to upload.
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.failed = 0' } Clear
+.text-right.text-warning{ 'ng-show' => 'ctrl.failed.length' }
+  {{ctrl.failed.length}} files failed to upload.
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.retry()' } Retry
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.failed = []' } Clear
 
 %h1.file-drop-target.bg-primary{ 'file-drop' => 'ctrl.enqueue(files)' }
   %span{ 'ng-hide' => 'ctrl.progress.count' }
