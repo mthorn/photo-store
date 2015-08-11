@@ -27,7 +27,6 @@
             options.cancel?()
           promise.catch (reason) -> options.cancelled?() if reason == 'cancel'
           promise.finally(-> options.destroy?())
-          promise.keep([ 'cancel' ])
           options.initialize?(deferred)
           promise
 
@@ -39,14 +38,6 @@
             decorate promise, method, (m, args) -> extendPromise(m.apply(promise, args))
 
           angular.extend promise,
-
-            keep: (keepAttrs) ->
-              for method in BASE_METHODS
-                decorate promise, method, (oldMethod, args) ->
-                  newPromise = oldMethod.apply(promise, args)
-                  _.extend(newPromise, _.pick(promise, keepAttrs))
-                  newPromise.keep(keepAttrs)
-              promise
 
             timeout: (ms) ->
               deferred = $q.defer()

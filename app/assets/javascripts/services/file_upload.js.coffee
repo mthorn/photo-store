@@ -3,7 +3,12 @@
   ($q,   $rootScope,   $http,   formData) ->
 
     fileUpload = (options) ->
+      xhr = null
       deferred = $q.defer()
+
+      progressHandler = (event) ->
+        return unless event.lengthComputable
+        $rootScope.$apply -> deferred.notify(loaded: event.loaded, total: event.total)
 
       $q.when($.ajax
         url: options.url
@@ -12,14 +17,8 @@
         headers: _.pick($http.defaults.headers.common, [ 'X-CSRF-Token', 'X-Call-Token' ])
         cache: false
         xhr: ->
-          fn = (event) ->
-            return unless event.lengthComputable
-            $rootScope.$apply -> deferred.notify
-              loaded: event.loaded
-              total: event.total
-              percent: event.loaded / event.total * 100
           xhr = $.ajaxSettings.xhr()
-          xhr.upload?.addEventListener('progress', fn, false)
+          xhr.upload?.addEventListener('progress', progressHandler, false)
           xhr
         xhrFields:
           withCredentials: true
@@ -35,6 +34,11 @@
             data: xhr.responseJSON
         )
       )
+
+      deferred.promise.abort = ->
+        xhr.upload?.removeEventListener('progress', progressHandler) # prevents double $apply error
+        xhr.abort()
+        null
 
       deferred.promise
 

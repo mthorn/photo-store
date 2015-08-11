@@ -31,6 +31,7 @@
             loaded: 0 # total uploaded bytes
           @startTime = Date.now()
           @failed ?= 0
+          @skipped = 0
           @rateWindow = [ [ @startTime, 0 ] ]
           $($window).on('beforeunload', @handleBeforeUnload)
 
@@ -47,16 +48,21 @@
                 mime: file.type
                 imported_at: importDate
               )
-              upload.create().
+              (@current = upload.create()).
                 then(
                   (=>
                     @progress.done += 1
                     @progress.loaded += file.size
                   ),
-                  (=>
-                    @progress.count -= 1
-                    @progress.total -= file.size
-                    @failed += 1
+                  ((reason) =>
+                    if angular.equals(reason.data, name: [ 'has already been uploaded' ])
+                      @skipped += 1
+                      @progress.done += 1
+                      @progress.total -= file.size
+                    else if reason != 'cancel'
+                      @failed += 1
+                      @progress.count -= 1
+                      @progress.total -= file.size
                   ),
                   ((@fileProgress) =>
                     now = Date.now()
@@ -66,7 +72,7 @@
                   )
                 ).
                 finally(=>
-                  @fileProgress = null
+                  @fileProgress = @current = null
                 )
 
         if @progress.count == files.length
@@ -89,6 +95,10 @@
           (last[1] - first[1]) / ((last[0] - first[0]) / 1000)
         else
           0
+
+      cancel: ->
+        @queue.clear()
+        @current?.abort()
 
     controllerAs: 'ctrl'
     link: (scope, element, attrs) ->

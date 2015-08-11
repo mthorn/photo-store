@@ -145,11 +145,13 @@
         if queue.length
           for [ _, deferred ] in queue
             deferred[finalizer](valueOrReason)
-          queue.clear()
+          queue.splice(0, queue.length)
           $timeout runTasks
         exec
 
-      exec.pause = -> paused = exec.isPaused = true
+      exec.pause = ->
+        paused = exec.isPaused = true
+
       exec.unpause = ->
         $timeout runTasks
         paused = exec.isPaused = false

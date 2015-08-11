@@ -1,9 +1,12 @@
 .bg-info.text-center{ 'ng-show' => 'ctrl.progress' }
   %button.btn.btn-default{ 'ng-hide' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.queue.pause()' } Pause
   %button.btn.btn-default{ 'ng-show' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.queue.unpause()' } Continue
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.cancel()' } Cancel
   Uploading:
   %span {{ctrl.progress.done + 1}} / {{ctrl.progress.count}} files,
   %span {{ctrl.progress.loaded + (ctrl.fileProgress.loaded || 0) | bytes}} / {{ctrl.progress.total | bytes}},
+  %span{ 'ng-show' => 'ctrl.skipped' }
+    {{ctrl.skipped}} files skipped,
   %span{ 'ng-show' => 'ctrl.timeRemaining()' }
     {{ctrl.timeRemaining() | duration}} remaining,
     {{ctrl.uploadRate() | bytes}}/s
