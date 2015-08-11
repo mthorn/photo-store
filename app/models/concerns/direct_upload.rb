@@ -80,6 +80,19 @@ module DirectUpload
     end
   end
 
+  def destroy_buffer(field)
+    key = self.direct_upload_key(field)
+
+    if S3
+      begin
+        S3.delete_object(S3_BUCKET_NAME, key)
+      rescue Excon::Errors::NotFound
+      end
+    else
+      UploadBuffer.find_by(key: key).try(:destroy)
+    end
+  end
+
   module ClassMethods
     def direct_upload *fields
       fields.each do |field|
@@ -87,6 +100,7 @@ module DirectUpload
         attr_accessor :"#{field}_uploaded"
 
         after_commit :"fetch_and_process_#{field}_in_background", if: :"#{field}_uploaded"
+        after_commit :"destroy_#{field}_buffer", on: :destroy
 
         include(mod = Module.new)
         mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
@@ -103,6 +117,10 @@ module DirectUpload
             if file != :not_found
               self.update_attributes! :#{field} => file
             end
+          end
+
+          def destroy_#{field}_buffer
+            self.destroy_buffer :#{field}
           end
         RUBY
       end

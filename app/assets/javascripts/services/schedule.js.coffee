@@ -127,11 +127,15 @@
           emptyDeferred.resolve()
           emptyDeferred = null
 
-      exec = (tasks) ->
+      exec = (tasks, where = 'end') ->
         tasks = [ tasks ] if angular.isFunction tasks
         tasks = tasks.map((task) -> [ task, $q.defer() ])
 
-        queue = queue.concat(tasks)
+        queue =
+          if where == 'start'
+            tasks.concat(queue)
+          else
+            queue.concat(tasks)
         $timeout runTasks
 
         $q.all(tasks.map(([ task, deferred ]) -> deferred.promise))

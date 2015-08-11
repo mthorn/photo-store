@@ -10,11 +10,12 @@
       file = @file
       delete @file
 
+      cancel = false
       upload = null
 
       promise = @$save().
         then(=>
-          if upload == 'cancel'
+          if cancel
             $q.reject 'cancel'
           else
             upload = fileUpload(
@@ -26,13 +27,13 @@
         then(=> @$update(file_uploaded: true)).
         catch((reason) =>
           @$delete() if @id # delete partially completed upload (eg. provision step succeeds but S3 rejects file)
-          $q.reject reason
+          $q.reject(if cancel then 'cancel' else reason)
         ).
         then((upload) -> Upload.trigger('uploaded', upload))
 
       promise.abort = ->
         upload?.abort()
-        upload = 'cancel'
+        cancel = true
         null
 
       promise

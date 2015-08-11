@@ -17,10 +17,8 @@
         "resume the import later by dropping the same set of files on the page, " +
         "already completed files will not be duplicated."
 
-      enqueue: (files) ->
+      enqueue: (files, where = 'end', importDate = new Date) ->
         return if files.length == 0
-
-        importDate = new Date
 
         if ! @queue
           @queue = schedule.executor(1)
@@ -39,16 +37,17 @@
           do (file) =>
             @progress.count += 1
             @progress.total += file.size
-            @queue =>
-              upload = new Upload(
-                modified_at: file.lastModifiedDate
+            @queue((=>
+              @current =
                 file: file
-                name: file.name
-                size: file.size
-                mime: file.type
-                imported_at: importDate
-              )
-              (@current = upload.create()).
+                upload: new Upload
+                  modified_at: file.lastModifiedDate
+                  file: file
+                  name: file.name
+                  size: file.size
+                  mime: file.type
+                  imported_at: importDate
+              (@current.promise = @current.upload.create()).
                 then(
                   (=>
                     @progress.done += 1
@@ -64,16 +63,18 @@
                       @progress.count -= 1
                       @progress.total -= file.size
                   ),
-                  ((@fileProgress) =>
+                  ((currentProgress) =>
+                    @current.progress = currentProgress
                     now = Date.now()
-                    @rateWindow.push([ now, @progress.loaded + @fileProgress.loaded ])
+                    @rateWindow.push([ now, @progress.loaded + @current.progress.loaded ])
                     cutoff = now - RATE_WINDOW_SIZE
                     @rateWindow.shift() while @rateWindow[0][0] < cutoff
                   )
                 ).
                 finally(=>
-                  @fileProgress = @current = null
+                  @current = null
                 )
+            ), where)
 
         if @progress.count == files.length
           @queue.whenIdle().then =>
@@ -82,7 +83,7 @@
 
       timeRemaining: ->
         return null unless @startTime
-        loaded = @progress.loaded + (@fileProgress?.loaded || 0)
+        loaded = @progress.loaded + (@current?.progress?.loaded || 0)
         return null if loaded == 0
         elapsed = Date.now() - @startTime
         expected = elapsed * @progress.total / loaded
@@ -96,9 +97,18 @@
         else
           0
 
+      pause: ->
+        @queue.pause()
+        # cancel current file and requeue
+        @current?.promise?.abort()
+        @enqueue([ @current.file ], 'start', @current.upload['imported_at']) if @current?.file?
+
+      unpause: ->
+        @queue.unpause()
+
       cancel: ->
         @queue.clear()
-        @current?.abort()
+        @current?.promise?.abort()
 
     controllerAs: 'ctrl'
     link: (scope, element, attrs) ->
