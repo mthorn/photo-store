@@ -4,11 +4,6 @@
     TYPES =
       image: [ 'image/gif', 'image/jpeg', 'image/png' ]
       video: [ 'video/mp4', 'video/webm', 'video/x-m4v', 'video/ogg' ]
-      doc: [ 'application/pdf' ]
-    HINTS =
-      image: [ 'JPG', 'PNG', 'GIF' ]
-      video: [ 'MP4', 'WebM' ]
-      doc: [ 'PDF' ]
 
     HOST_BLACKLIST = _.compact([
       $window.location.host,
@@ -21,19 +16,7 @@
       link: (scope, element, attrs, controller) ->
         callback = $parse attrs.fileDrop
 
-        types = []
-        hints = []
-        if attrs.dropTypes
-          for type in attrs.dropTypes.split(',')
-            types = types.concat(TYPES[type])
-            hints = hints.concat(HINTS[type])
-        else
-          for k, v of TYPES
-            types = types.concat(v)
-          for k, v of HINTS
-            hints = hints.concat(v)
-
-        element.addClass 'drop-target'
+        types = _.flatten(_.values(TYPES))
 
         handleDragOver = (e) ->
           element.addClass 'active'

@@ -1,14 +1,20 @@
-%p.bg-info.text-center{ 'ng-show' => 'ctrl.progress' }
+.bg-info.text-center{ 'ng-show' => 'ctrl.progress' }
   %button.btn.btn-default{ 'ng-hide' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.queue.pause()' } Pause
   %button.btn.btn-default{ 'ng-show' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.queue.unpause()' } Continue
   Uploading:
-  %span {{ctrl.progress.done}} / {{ctrl.progress.count}} files,
-  %span {{ctrl.progress.loaded + ctrl.fileProgress.loaded | bytes}} / {{ctrl.progress.total | bytes}},
+  %span {{ctrl.progress.done + 1}} / {{ctrl.progress.count}} files,
+  %span {{ctrl.progress.loaded + (ctrl.fileProgress.loaded || 0) | bytes}} / {{ctrl.progress.total | bytes}},
   %span{ 'ng-show' => 'ctrl.timeRemaining()' }
     {{ctrl.timeRemaining() | duration}} remaining
+  %span{ 'ng-hide' => 'ctrl.timeRemaining()' }
+    calculating time remaining...
 
 .text-right.text-warning{ 'ng-show' => 'ctrl.failed' }
   {{ctrl.failed}} files failed to upload.
   %button.btn.btn-default{ 'ng-click' => 'ctrl.failed = 0' } Clear
 
-%div{ 'file-drop' => 'ctrl.enqueue(files)' }
+%h1.file-drop-target.bg-primary{ 'file-drop' => 'ctrl.enqueue(files)' }
+  %span{ 'ng-hide' => 'ctrl.progress.count' }
+    Drop files to start import!
+  %span{ 'ng-show' => 'ctrl.progress.count' }
+    Drop files to add to import!

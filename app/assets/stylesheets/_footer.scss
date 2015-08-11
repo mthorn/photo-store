@@ -13,4 +13,15 @@ footer {
     padding-bottom: 0;
   }
 
+  .file-drop-target {
+    padding: 0.5em 0;
+    margin-bottom: 0;
+    display: none;
+    text-align: center;
+
+    &.active {
+      display: block;
+    }
+  }
+
 }
