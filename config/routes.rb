@@ -12,8 +12,9 @@ Rails.application.routes.draw do
 
   with_options(to: 'main#index') do |app|
     app.root
-    app.get :gallery
-    app.get :slides
+    %i( gallery slides ).each do |page|
+      app.get page
+    end
   end
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
