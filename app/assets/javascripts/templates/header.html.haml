@@ -1,16 +1,22 @@
 .container-fluid
 
   .navbar-header
+    %button.navbar-toggle.collapsed{ type: 'button', 'data-toggle' => 'collapse', 'data-target' => '#nav_content', 'aria-expanded' => 'false' }
+      %span.sr-only Toggle navigation
+      %span.icon-bar
+      %span.icon-bar
+      %span.icon-bar
     %a.navbar-brand
       {{ctrl.config.library}}
 
-  %ul.nav.navbar-nav
-    %li
-      %a{ href: '/gallery', 'ng-class' => '{ active: ctrl.path() == "/gallery" }' } Gallery
-    %li
-      %a{ href: '/slides', 'ng-class' => '{ active: ctrl.path() == "/slides" }' } Slideshow
+  .collapse.navbar-collapse#nav_content
+    %ul.nav.navbar-nav
+      %li
+        %a{ href: '/gallery', 'ng-class' => '{ active: ctrl.path() == "/gallery" }' } Gallery
+      %li
+        %a{ href: '/slides', 'ng-class' => '{ active: ctrl.path() == "/slides" }' } Slideshow
 
-  %ul.nav.navbar-nav.navbar-right
-    %li
-      %a{ href: '/users/sign_out', target: '_self', 'data-method' => 'delete' }
-        Sign out
+    %ul.nav.navbar-nav.navbar-right
+      %li
+        %a{ href: '/users/sign_out', target: '_self', 'data-method' => 'delete' }
+          Sign out
