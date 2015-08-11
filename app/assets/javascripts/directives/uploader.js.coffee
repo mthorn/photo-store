@@ -2,6 +2,8 @@
   '$window', 'schedule', 'Upload',
   ($window,   schedule,   Upload) ->
 
+    RATE_WINDOW_SIZE = 30000
+
     templateUrl: 'footer.html'
 
     scope: true
@@ -29,6 +31,7 @@
             loaded: 0 # total uploaded bytes
           @startTime = Date.now()
           @failed ?= 0
+          @rateWindow = [ [ @startTime, 0 ] ]
           $($window).on('beforeunload', @handleBeforeUnload)
 
         for file in files
@@ -55,7 +58,12 @@
                     @progress.total -= file.size
                     @failed += 1
                   ),
-                  ((@fileProgress) =>)
+                  ((@fileProgress) =>
+                    now = Date.now()
+                    @rateWindow.push([ now, @progress.loaded + @fileProgress.loaded ])
+                    cutoff = now - RATE_WINDOW_SIZE
+                    @rateWindow.shift() while @rateWindow[0][0] < cutoff
+                  )
                 ).
                 finally(=>
                   @fileProgress = null
@@ -64,7 +72,7 @@
         if @progress.count == files.length
           @queue.whenIdle().then =>
             $($window).off('beforeunload', @handleBeforeUnload)
-            @queue = @progress = @startTime = null
+            @queue = @progress = @startTime = @rateWindow = null
 
       timeRemaining: ->
         return null unless @startTime
@@ -73,6 +81,14 @@
         elapsed = Date.now() - @startTime
         expected = elapsed * @progress.total / loaded
         Math.ceil((expected - elapsed) / 1000) * 1000
+
+      uploadRate: ->
+        if @rateWindow? && @rateWindow.length >= 2
+          first = @rateWindow[0]
+          last = @rateWindow[@rateWindow.length - 1]
+          (last[1] - first[1]) / ((last[0] - first[0]) / 1000)
+        else
+          0
 
     controllerAs: 'ctrl'
     link: (scope, element, attrs) ->

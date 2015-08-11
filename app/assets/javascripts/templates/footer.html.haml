@@ -5,7 +5,8 @@
   %span {{ctrl.progress.done + 1}} / {{ctrl.progress.count}} files,
   %span {{ctrl.progress.loaded + (ctrl.fileProgress.loaded || 0) | bytes}} / {{ctrl.progress.total | bytes}},
   %span{ 'ng-show' => 'ctrl.timeRemaining()' }
-    {{ctrl.timeRemaining() | duration}} remaining
+    {{ctrl.timeRemaining() | duration}} remaining,
+    {{ctrl.uploadRate() | bytes}}/s
   %span{ 'ng-hide' => 'ctrl.timeRemaining()' }
     calculating time remaining...
 
