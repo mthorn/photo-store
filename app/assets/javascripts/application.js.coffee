@@ -10,4 +10,6 @@
 #= require angular-ui-bootstrap-bower
 #= require lodash
 #
+#= require controllers/controller
+#= require controllers/index_ctrl
 #= require_tree .

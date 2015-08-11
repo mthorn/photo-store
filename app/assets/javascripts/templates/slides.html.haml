@@ -1,5 +1,5 @@
-.slides{ 'ng-if' => 'ctrl.items.count != 0', 'ng-switch' => 'ctrl.upload.state' }
-  %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ ctrl.upload.large_url }}', 'vertical-center' => true }
+.slides{ 'ng-if' => 'ctrl.items.count != 0', 'ng-switch' => 'ctrl.upload().state' }
+  %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ ctrl.upload().large_url }}', 'vertical-center' => true }
   .processing.text-center{ 'ng-switch-when' => 'process' }
     %i.fa.fa-spinner.fa-spin
 
