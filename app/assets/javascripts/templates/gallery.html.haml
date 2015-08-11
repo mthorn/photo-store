@@ -1,3 +1,22 @@
+.filter-settings.form.clearfix
+
+  .form-group.col-xs-4.col-sm-3.col-md-2
+    %label{ for: 'limit' } Per page
+    %select#limit.form-control{ 'ng-model' => 'ctrl.limit', 'ng-options' => 'e.i as e.i for e in ctrl.limitOptions' }
+
+  .form-group.col-xs-4.col-sm-3.col-md-2
+    %label{ for: 'order' } Sorting
+    %select#order.form-control{ 'ng-model' => 'ctrl.order' }
+      %option{ value: '' } default
+      %option{ value: 'name-asc' } name &#8595;
+      %option{ value: 'name-desc' } name &#8593;
+      %option{ value: 'created_at-asc' } upload time &#8595;
+      %option{ value: 'created_at-desc' } upload time &#8593;
+
+.text-center
+  %pagination{ 'ng-model' => 'ctrl.page', 'total-items' => 'ctrl.items.count',
+               'items-per-page' => 'ctrl.limit', 'max-size' => 5 }
+
 .gallery.row
   %div{ 'ng-if' => 'ctrl.items.length != 0' }
     .col-xs-6.col-sm-4.col-md-3.col-lg-2{ 'ng-repeat' => 'upload in ctrl.items track by upload.id' }
@@ -11,10 +30,6 @@
     There are no items in your library. Drag &amp; drop some files here to add
     them to your library.
 
-.text-center{ 'ng-hide' => 'ctrl.items.count < ctrl.limit && ctrl.offset == 0' }
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.offset = ctrl.offset - ctrl.limit', 'ng-disabled' => 'ctrl.offset <= 0' }
-    %i.fa.fa-chevron-left
-  %span
-    {{ctrl.offset / ctrl.limit + 1}} / {{ctrl.window.Math.ceil(ctrl.items.count / ctrl.limit)}}
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.offset = ctrl.offset + ctrl.limit', 'ng-disabled' => 'ctrl.offset + ctrl.limit >= ctrl.items.count' }
-    %i.fa.fa-chevron-right
+.text-center
+  %pagination{ 'ng-model' => 'ctrl.page', 'total-items' => 'ctrl.items.count',
+               'items-per-page' => 'ctrl.limit', 'max-size' => 5 }

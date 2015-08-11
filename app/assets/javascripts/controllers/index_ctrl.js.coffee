@@ -5,13 +5,16 @@ class @IndexCtrl extends Controller
 
   initialize: ->
     @count = 0
+    @order = @location.search().order || ''
 
     @Upload.on('uploaded', @fetch)
 
-  fetch: (force) =>
-    return @offset = 0 if @offset < 0
+  fetch: =>
+    params = @queryParams()
+    if changed = ! angular.equals(@location.search(), params)
+      @location.search(params)
 
-    if force != 'force' && (@fetching || @fetchAgain)
+    if ! changed && (@fetching || @fetchAgain)
       return @fetchAgain = true
 
     @timer?.cancel()
@@ -21,6 +24,7 @@ class @IndexCtrl extends Controller
       params:
         offset: @offset
         limit: @limit
+        order: @order
     ).then((response) =>
       @items = response.data.items.map((upload) => new @Upload(upload))
       @items.count = response.data.count
@@ -32,7 +36,8 @@ class @IndexCtrl extends Controller
         @timer = @schedule.delay(5000, @fetch)
     )
 
-  '$watch(offset)': => @fetch('force')
+  '$watch(order)': (order, oldOrder) =>
+    @fetch() if oldOrder
 
   '$on($destroy)': =>
     @timer?.cancel()

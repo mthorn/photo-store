@@ -1,3 +1,13 @@
+.filter-settings {
+  text-align: center;
+
+  & > .form-group {
+    display: inline-block;
+    float: none;
+    text-align: left;
+  }
+}
+
 .gallery {
   @extend .clearfix;
   margin: 0 2%;

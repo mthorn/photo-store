@@ -10,8 +10,16 @@ class UploadsController < ApplicationController
     if (limit = params[:limit]).present?
       @uploads = @uploads.limit(limit.to_i)
     end
-
-    @uploads = @uploads.order(imported_at: :desc, id: :asc)
+    if (order = params[:order]).present? # format: "field1-asc,field2-desc,..."
+      @uploads = @uploads.order(
+        order.
+          split(',').
+          map { |p| p.split('-', 2) }.
+          each.with_object({}) { |(field, sort), h| h[field.to_sym] = sort.to_sym }
+      )
+    else
+      @uploads = @uploads.order(imported_at: :desc, id: :asc)
+    end
   end
 
   def create
