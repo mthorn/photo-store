@@ -1,3 +1,15 @@
+.text-right.text-warning{ 'ng-show' => 'ctrl.errors.length' }
+  %a{ href: '#', 'ng-click' => 'ctrl.viewErrors()' }
+    {{ctrl.errors.length}} files failed to upload.
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.retryAll()' } Retry
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.errors = []' } Clear
+
+%h1.file-drop-target.bg-primary{ 'file-drop' => 'ctrl.import(files)' }
+  %span{ 'ng-hide' => 'ctrl.progress.count' }
+    Drop files to start import!
+  %span{ 'ng-show' => 'ctrl.progress.count' }
+    Drop files to add to import!
+
 .bg-info.text-center{ 'ng-show' => 'ctrl.progress' }
   %button.btn.btn-default{ 'ng-hide' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.pause()' } Pause
   %button.btn.btn-default{ 'ng-show' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.unpause()' } Continue
@@ -12,17 +24,5 @@
     {{ctrl.uploadRate() | bytes}}/s
   %span{ 'ng-hide' => 'ctrl.timeRemaining()' }
     calculating time remaining...
-
-.text-right.text-warning{ 'ng-show' => 'ctrl.errors.length' }
-  %a{ href: '#', 'ng-click' => 'ctrl.viewErrors()' }
-    {{ctrl.errors.length}} files failed to upload.
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.retryAll()' } Retry
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.errors = []' } Clear
-
-%h1.file-drop-target.bg-primary{ 'file-drop' => 'ctrl.import(files)' }
-  %span{ 'ng-hide' => 'ctrl.progress.count' }
-    Drop files to start import!
-  %span{ 'ng-show' => 'ctrl.progress.count' }
-    Drop files to add to import!
 
 %progressbar{ 'ng-if' => 'ctrl.progress', max: 'ctrl.progress.total', value: 'ctrl.progress.loaded + (ctrl.current.progress.loaded || 0)' }
