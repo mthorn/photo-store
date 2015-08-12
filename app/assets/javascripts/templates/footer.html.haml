@@ -24,3 +24,5 @@
     Drop files to start import!
   %span{ 'ng-show' => 'ctrl.progress.count' }
     Drop files to add to import!
+
+%progressbar{ 'ng-if' => 'ctrl.progress', max: 'ctrl.progress.total', value: 'ctrl.progress.loaded + (ctrl.current.progress.loaded || 0)' }

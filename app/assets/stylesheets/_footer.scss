@@ -24,4 +24,10 @@ footer {
     }
   }
 
+  .progress {
+    @extend .bg-info;
+    margin-bottom: 0;
+    height: 5px;
+  }
+
 }
