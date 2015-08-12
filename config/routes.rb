@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     end
   end
 
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  if (path = ENV['RAILS_ADMIN_PATH']).present?
+    mount RailsAdmin::Engine => path, as: 'rails_admin'
+  end
 
 end
