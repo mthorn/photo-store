@@ -1,0 +1,23 @@
+.modal-header
+  %h3.modal-title Upload Errors
+.modal-body
+  %table.table{ 'ng-show' => 'errors.length' }
+    %tr{ 'ng-repeat' => 'error in errors' }
+      %td {{error.file.name}}:
+      %td{ 'ng-switch' => 'error.reason.status' }
+        %span{ 'ng-switch-when' => '400' }
+          {{error.reason.statusText}} (transient cloud provider error)
+        %span{ 'ng-switch-when' => '422' }
+          {{error.reason.data | fullErrorMessages}}
+        %span{ 'ng-switch-default' => true, 'ng-show' => 'error.reason.statusText' }
+          {{error.reason.statusText}}
+        %span{ 'ng-switch-default' => true, 'ng-hide' => 'error.reason.statusText' }
+          Unknown error
+      %td
+        %button.btn.btn-default.btn-skinny.pull-right{ 'ng-click' => 'errors.splice($index, 1)' } Clear
+      %td
+        %button.btn.btn-default.btn-skinny.pull-right{ 'ng-click' => 'retryAt($index)' } Retry
+  %p{ 'ng-hide' => 'errors.length' }
+    All errors resolved.
+.modal-footer
+  %button.btn.btn-primary{ 'ng-click' => '$close()' } Close

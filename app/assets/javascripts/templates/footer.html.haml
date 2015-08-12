@@ -13,10 +13,11 @@
   %span{ 'ng-hide' => 'ctrl.timeRemaining()' }
     calculating time remaining...
 
-.text-right.text-warning{ 'ng-show' => 'ctrl.failed.length' }
-  {{ctrl.failed.length}} files failed to upload.
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.retry()' } Retry
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.failed = []' } Clear
+.text-right.text-warning{ 'ng-show' => 'ctrl.errors.length' }
+  %a{ href: '#', 'ng-click' => 'ctrl.viewErrors()' }
+    {{ctrl.errors.length}} files failed to upload.
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.retryAll()' } Retry
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.errors = []' } Clear
 
 %h1.file-drop-target.bg-primary{ 'file-drop' => 'ctrl.enqueue(files)' }
   %span{ 'ng-hide' => 'ctrl.progress.count' }

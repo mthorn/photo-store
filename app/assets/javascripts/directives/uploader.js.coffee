@@ -1,6 +1,6 @@
 @app.directive 'uploader', [
-  '$window', 'schedule', 'Upload',
-  ($window,   schedule,   Upload) ->
+  '$window', '$modal', 'schedule', 'Upload',
+  ($window,   $modal,   schedule,   Upload) ->
 
     RATE_WINDOW_SIZE = 30000
 
@@ -11,6 +11,7 @@
 
       initialize: ->
         @expanded = false
+        @errors = []
 
       handleBeforeUnload: ->
         "Your file import will be incomplete if you leave this page. You can " +
@@ -28,7 +29,6 @@
             total: 0  # total bytes to upload
             loaded: 0 # total uploaded bytes
           @startTime = Date.now()
-          @failed ?= []
           @skipped = 0
           @rateWindow = [ [ @startTime, 0 ] ]
           $($window).on('beforeunload', @handleBeforeUnload)
@@ -62,9 +62,10 @@
                       @progress.count -= 1
                       @progress.total -= file.size
                       if reason != 'cancel'
-                        @failed.push(
+                        @errors.push(
                           file: @current.file
                           importDate: importDate
+                          reason: reason
                         )
                   ),
                   ((currentProgress) =>
@@ -114,10 +115,21 @@
         @queue.clear()
         @current?.promise?.abort()
 
-      retry: ->
-        for failure in @failed.reverse()
+      retryAll: ->
+        for failure in @errors.reverse()
           @enqueue([ failure.file ], 'start', failure.importDate)
-        @failed = []
+        @errors.splice(0, @errors.length)
+
+      retryAt: (i) =>
+        if (failure = @errors?.splice(i, 1)[0])?
+          @enqueue([ failure.file ], 'start', failure.importDate)
+
+      viewErrors: ->
+        $modal.open
+          templateUrl: 'errors.html'
+          scope: angular.extend @scope.$new(),
+            errors: @errors
+            retryAt: @retryAt
 
     controllerAs: 'ctrl'
 ]
