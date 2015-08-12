@@ -1,5 +1,5 @@
 @app.filter 'bytes', ->
-  SUFFIXES = [ 'B', 'kB', 'MB', 'GB', 'TB' ]
+  SUFFIXES = [ 'B', 'KiB', 'MiB', 'GiB', 'TiB' ]
   (input) ->
     value = parseInt(input || 0)
     for suffix, i in SUFFIXES
