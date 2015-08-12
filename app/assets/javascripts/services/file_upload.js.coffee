@@ -6,8 +6,12 @@
       xhr = null
       deferred = $q.defer()
 
+      lastProgressApply = 0
       progressHandler = (event) ->
         return unless event.lengthComputable
+        now = Date.now()
+        return if now - lastProgressApply < 500
+        lastProgressApply = now
         $rootScope.$apply -> deferred.notify(loaded: event.loaded, total: event.total)
 
       $q.when($.ajax
