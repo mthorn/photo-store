@@ -9,6 +9,10 @@
           {{error.reason.statusText}} (transient cloud provider error)
         %span{ 'ng-switch-when' => '422' }
           {{error.reason.data | fullErrorMessages}}
+        %span{ 'ng-switch-when' => '503' }
+          {{error.reason.statusText}},
+          possibly means that Heroku server is unavailable, see
+          %a{ href: 'https://status.heroku.com', target: '_blank' } Heroku Status
         %span{ 'ng-switch-default' => true, 'ng-show' => 'error.reason.statusText' }
           {{error.reason.statusText}}
         %span{ 'ng-switch-default' => true, 'ng-hide' => 'error.reason.statusText' }
