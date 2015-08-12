@@ -70,10 +70,7 @@
                   ),
                   ((currentProgress) =>
                     @current.progress = currentProgress
-                    now = Date.now()
-                    @rateWindow.push([ now, @progress.loaded + @current.progress.loaded ])
-                    cutoff = now - RATE_WINDOW_SIZE
-                    @rateWindow.shift() while @rateWindow[0][0] < cutoff
+                    @rateWindow.push([ Date.now(), @progress.loaded + @current.progress.loaded ])
                   )
                 ).
                 finally(=>
@@ -100,12 +97,18 @@
         @lastTimeRemaining = Math.ceil((expected - elapsed) / 1000) * 1000
 
       uploadRate: ->
-        if @rateWindow? && @rateWindow.length >= 2
-          first = @rateWindow[0]
-          last = @rateWindow[@rateWindow.length - 1]
-          (last[1] - first[1]) / ((last[0] - first[0]) / 1000)
-        else
-          0
+        if @rateWindow?
+          # discard entries not in window
+          now = Date.now()
+          cutoff = now - RATE_WINDOW_SIZE
+          @rateWindow.shift() while @rateWindow[0][0] < cutoff
+
+          if @rateWindow.length >= 2 # rate = 0 if there aren't 2 entries to compare
+            first = @rateWindow[0]
+            last = @rateWindow[@rateWindow.length - 1]
+            return (last[1] - first[1]) / ((now - first[0]) / 1000)
+
+        0
 
       pause: ->
         @queue.pause()
