@@ -1,6 +1,6 @@
 @app.directive 'uploader', [
-  '$window', '$modal', 'schedule', 'Upload',
-  ($window,   $modal,   schedule,   Upload) ->
+  '$window', '$modal', '$http', 'schedule', 'Upload',
+  ($window,   $modal,   $http,   schedule,   Upload) ->
 
     RATE_WINDOW_SIZE = 30000
 
@@ -17,6 +17,29 @@
         "Your file import will be incomplete if you leave this page. You can " +
         "resume the import later by dropping the same set of files on the page, " +
         "already completed files will not be duplicated."
+
+      import: (files) ->
+        checks = files.map (file, i) ->
+          id: i
+          name: file.name
+          size: file.size
+          mime: file.type
+
+        $http(
+          method: 'POST'
+          url: '/api/uploads/check.json'
+          data: { is_new: checks }
+        ).then((response) =>
+          newFiles = []
+          for i in response.data
+            newFiles.push(files[i])
+          @enqueue(newFiles)
+
+          skipped = files.length - newFiles.length
+          @skipped += skipped
+          @progress.count += skipped
+          @progress.done += skipped
+        )
 
       enqueue: (files, where = 'end', importDate = new Date) ->
         return if files.length == 0

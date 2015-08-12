@@ -1,5 +1,7 @@
 class UploadsController < ApplicationController
 
+  UNIQUE_PARAMS = %i( name size mime )
+
   def index
     @uploads = current_user.library.uploads.where(state: %w( process ready ))
     @count = @uploads.count
@@ -52,6 +54,19 @@ class UploadsController < ApplicationController
   def destroy
     current_user.library.uploads.find(params[:id]).destroy
     head :ok
+  end
+
+  def check
+    new = []
+    checks = params.permit(is_new: ([ :id ] + UNIQUE_PARAMS))[:is_new]
+    existing = current_user.library.uploads.where(
+      state: [ 'process', 'ready' ],
+      name: checks.map { |c| c[:name] }
+    ).select(UNIQUE_PARAMS).to_a
+    checks.each do |check|
+      new.push(check[:id]) if existing.none? { |u| UNIQUE_PARAMS.all? { |param| u[param] == check[param] } }
+    end
+    render json: new
   end
 
   private

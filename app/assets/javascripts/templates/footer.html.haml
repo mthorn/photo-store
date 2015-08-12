@@ -19,7 +19,7 @@
   %button.btn.btn-default{ 'ng-click' => 'ctrl.retryAll()' } Retry
   %button.btn.btn-default{ 'ng-click' => 'ctrl.errors = []' } Clear
 
-%h1.file-drop-target.bg-primary{ 'file-drop' => 'ctrl.enqueue(files)' }
+%h1.file-drop-target.bg-primary{ 'file-drop' => 'ctrl.import(files)' }
   %span{ 'ng-hide' => 'ctrl.progress.count' }
     Drop files to start import!
   %span{ 'ng-show' => 'ctrl.progress.count' }

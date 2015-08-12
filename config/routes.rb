@@ -4,7 +4,11 @@ Rails.application.routes.draw do
   devise_for :admins
 
   scope 'api' do
-    resources :uploads
+    resources :uploads do
+      collection do
+        post :check
+      end
+    end
     post 'buffers/:id' => 'buffers#save'
   end
 
