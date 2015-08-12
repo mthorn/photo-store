@@ -90,9 +90,14 @@
         return null unless @startTime
         loaded = @progress.loaded + (@current?.progress?.loaded || 0)
         return null if loaded == 0
-        elapsed = Date.now() - @startTime
+
+        now = Date.now()
+        return @lastTimeRemaining if now - (@lastTimeRemainingCalculatedAt || 0) < 1000
+        @lastTimeRemainingCalculatedAt = now
+
+        elapsed = now - @startTime
         expected = elapsed * @progress.total / loaded
-        Math.ceil((expected - elapsed) / 1000) * 1000
+        @lastTimeRemaining = Math.ceil((expected - elapsed) / 1000) * 1000
 
       uploadRate: ->
         if @rateWindow? && @rateWindow.length >= 2
