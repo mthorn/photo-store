@@ -5,6 +5,8 @@
     %tr{ 'ng-repeat' => 'error in errors' }
       %td {{error.file.name}}:
       %td{ 'ng-switch' => 'error.reason.status' }
+        %span{ 'ng-switch-when' => '0' }
+          Unable to connect to server, net connection down?
         %span{ 'ng-switch-when' => '400' }
           {{error.reason.statusText}} (transient cloud provider error)
         %span{ 'ng-switch-when' => '422' }
