@@ -1,5 +1,5 @@
 !!! 5
-%html{ 'ng-app' => 'photo-store' }
+%html{ 'ng-app' => (controller_name == 'main' && 'photo-store') }
   %head
     %title Photo Store
     %meta{ name: 'viewport', content: 'width=device-width, initial-scale=1' }

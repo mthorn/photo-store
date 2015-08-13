@@ -7,4 +7,7 @@ end
 
 if user_signed_in?
   json.library current_user.library.name
+  json.user do
+    json.partial! 'users/user', user: current_user
+  end
 end

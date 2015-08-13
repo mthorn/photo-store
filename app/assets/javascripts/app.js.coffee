@@ -28,4 +28,9 @@
     $routeProvider.when '/slides',
       templateUrl: 'slides.html'
       controller: 'SlidesCtrl as ctrl'
+      reloadOnSearch: false
+
+    $routeProvider.when '/profile',
+      templateUrl: 'profile.html'
+      controller: 'ProfileCtrl as ctrl'
 ]
