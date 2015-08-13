@@ -1,20 +1,31 @@
 @app.directive 'verticalCenter', [
   '$window',
   ($window) ->
-    (scope, element) ->
+    (scope, element, attrs) ->
 
       container = element.parent()
+      image = undefined
 
-      setMargin = (containerHeight, elementHeight) ->
-        containerHeight = container.height() if typeof containerHeight != 'number'
-        elementHeight = element.height() if typeof elementHeight != 'number'
-        element.css('margin-top', "#{(containerHeight - elementHeight) / 2}px")
+      setMargin = ->
+        imageRatio = image.width / image.height
 
-      scope.$watch(
-        (-> [ container.height(), element.height() ]),
-        (([ containerHeight, elementHeight ]) -> setMargin(containerHeight, elementHeight)),
-        true
-      )
+        cWidth = container.width()
+        cHeight = container.height()
+        cRatio = cWidth / cHeight
+
+        if cRatio < imageRatio
+          element.css
+            width: '100%'
+            height: 'auto'
+            margin: "#{(cHeight - (cWidth / imageRatio)) / 2}px 0"
+        else
+          element.css
+            width: 'auto'
+            height: '100%'
+            margin: '0 auto'
+
+      scope.$watch attrs.verticalCenter, (desc) ->
+        image = desc
 
       $($window).on('resize', setMargin)
       element.on('load', setMargin)

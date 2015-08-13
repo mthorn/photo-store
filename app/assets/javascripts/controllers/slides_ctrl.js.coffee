@@ -5,7 +5,6 @@
     @idx = parseInt(@location.search().idx) || 0
     @idx = 0 if @idx < 0
     @limit = 100
-    @offset = Math.floor(@idx / @limit) * @limit
 
   upload: ->
     @items?[@idx - @offset]
@@ -14,5 +13,6 @@
     idx: @idx
 
   '$watch(idx)': =>
+    oldOffset = @offset
     @offset = Math.floor(@idx / @limit) * @limit
-    @fetch()
+    @fetch() if @offset != oldOffset
