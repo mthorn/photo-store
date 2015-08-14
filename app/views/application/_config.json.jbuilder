@@ -6,8 +6,11 @@ json.csrfParams do
 end
 
 if user_signed_in?
-  json.library current_user.library.name
   json.user do
     json.partial! 'users/user', user: current_user
   end
+  json.libraries current_user.libraries do |library|
+    json.partial! 'libraries/library', library: library
+  end
+  json.defaultLibraryId current_user.library_ids.first
 end

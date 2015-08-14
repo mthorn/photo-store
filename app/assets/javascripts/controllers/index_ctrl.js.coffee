@@ -1,7 +1,7 @@
 class @IndexCtrl extends Controller
 
-  @inject '$http', '$window', '$location', 'Upload', 'schedule',
-    'placeholderImageUrl'
+  @inject '$http', '$window', '$location', '$routeParams', 'Upload',
+    'schedule', 'placeholderImageUrl'
 
   initialize: ->
     @count = 0
@@ -20,7 +20,7 @@ class @IndexCtrl extends Controller
     @timer?.cancel()
     @fetching = @http(
       method: 'GET'
-      url: '/api/uploads.json'
+      url: "/api/libraries/#{@routeParams.library_id}/uploads.json"
       params:
         offset: @offset
         limit: @limit

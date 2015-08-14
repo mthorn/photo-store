@@ -7,16 +7,23 @@
       %span.icon-bar
       %span.icon-bar
     %a.navbar-brand
-      {{ctrl.config.library}}
-
+      {{ctrl.library().name}}
   .collapse.navbar-collapse#nav_content
     %ul.nav.navbar-nav
       %li
-        %a{ href: '/gallery', 'ng-class' => '{ active: ctrl.path() == "/gallery" }' } Gallery
+        %a{ 'ng-href' => '/{{ctrl.libraryId()}}/gallery', 'ng-class' => '{ active: ctrl.path() == "/gallery" }' } Gallery
       %li
-        %a{ href: '/slides', 'ng-class' => '{ active: ctrl.path() == "/slides" }' } Slideshow
+        %a{ 'ng-href' => '/{{ctrl.libraryId()}}/slides', 'ng-class' => '{ active: ctrl.path() == "/slides" }' } Slideshow
 
     %ul.nav.navbar-nav.navbar-right
+      %li.dropdown
+        %a.dropdown-toggle{ 'data-toggle' => 'dropdown', role: 'button', 'aria-haspopup' => 'true', 'aria-expanded' => 'false' }
+          Library
+          %span.caret
+        %ul.dropdown-menu
+          %li{ 'ng-repeat' => 'library in ctrl.Library.mine track by library.id' }
+            %a{ 'ng-href' => '/{{library.id}}/gallery' }
+              {{library.name}}
       %li
         %a{ href: '/profile' }
           Profile

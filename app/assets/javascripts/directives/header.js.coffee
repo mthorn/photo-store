@@ -2,8 +2,10 @@
   templateUrl: 'header.html'
   scope: true
   controller: class extends Controller
-    @inject '$location', 'config'
+    @inject '$location', 'Library', 'config'
 
+    library: -> @Library.current
+    libraryId: -> @library()?.id
     path: -> @location.path()
 
   controllerAs: 'ctrl'

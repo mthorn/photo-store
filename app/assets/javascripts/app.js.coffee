@@ -10,22 +10,22 @@
 ]
 
 @app.config [
-  '$locationProvider', '$routeProvider',
-  ($locationProvider,   $routeProvider) ->
+  '$locationProvider', '$routeProvider', 'config',
+  ($locationProvider,   $routeProvider,   config) ->
 
     $locationProvider.html5Mode
       enabled: true
       requireBase: false
 
     $routeProvider.when '/',
-      redirectTo: '/gallery'
+      redirectTo: "/#{config.defaultLibraryId}/gallery"
 
-    $routeProvider.when '/gallery',
+    $routeProvider.when '/:library_id/gallery',
       templateUrl: 'gallery.html'
       controller: 'GalleryCtrl as ctrl'
       reloadOnSearch: false
 
-    $routeProvider.when '/slides',
+    $routeProvider.when '/:library_id/slides',
       templateUrl: 'slides.html'
       controller: 'SlidesCtrl as ctrl'
       reloadOnSearch: false

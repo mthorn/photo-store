@@ -4,9 +4,11 @@ Rails.application.routes.draw do
   devise_for :admins
 
   scope 'api' do
-    resources :uploads, only: %i( index create update destroy ) do
-      collection do
-        post :check
+    resources :libraries, only: [] do
+      resources :uploads, only: %i( index create update destroy ) do
+        collection do
+          post :check
+        end
       end
     end
     post 'buffers/:id' => 'buffers#save'
@@ -17,8 +19,10 @@ Rails.application.routes.draw do
 
   with_options(to: 'main#index') do |app|
     app.root
-    %i( gallery slides profile ).each do |page|
-      app.get page
+    app.get :profile
+    scope :library_id do
+      app.get :gallery
+      app.get :slides
     end
   end
 

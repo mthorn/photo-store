@@ -1,7 +1,8 @@
 class Library < ActiveRecord::Base
 
   has_many :uploads, dependent: :destroy
-  belongs_to :owner, class_name: 'User'
+  has_many :users, through: :library_memberships, dependent: :destroy
+  has_many :library_memberships, dependent: :destroy
 
   validates :name, presence: true
 

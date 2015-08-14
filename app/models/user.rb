@@ -4,9 +4,14 @@ class User < ActiveRecord::Base
     :trackable, :validatable
 
   has_many :uploads, dependent: :destroy, foreign_key: :uploader_id
-  has_one :library, foreign_key: :owner_id
+  has_many :libraries, through: :library_memberships, dependent: :destroy
+  has_many :library_memberships, dependent: :destroy
   has_many :upload_buffers, dependent: :destroy
 
   validates :name, presence: true
+
+  def uploads
+    Upload.joins(library: :library_memberships).where(library_memberships: { user_id: self.id })
+  end
 
 end

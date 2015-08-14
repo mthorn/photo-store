@@ -1,9 +1,10 @@
 class UploadsController < ApplicationController
 
   UNIQUE_PARAMS = %i( name size mime )
+  SORTABLE_FIELDS = %w( name created_at )
 
   def index
-    @uploads = current_user.library.uploads.where(state: %w( process ready ))
+    @uploads = @library.uploads.where(state: %w( process ready ))
     @count = @uploads.count
 
     if (offset = params[:offset]).present?
@@ -16,6 +17,7 @@ class UploadsController < ApplicationController
       @uploads = @uploads.order(
         order.
           split(',').
+          select { |p| p =~ /\A(#{SORTABLE_FIELDS.join('|')})-(asc|desc)\z/o }.
           map { |p| p.split('-', 2) }.
           each.with_object({}) { |(field, sort), h| h[field.to_sym] = sort.to_sym }
       )
@@ -25,12 +27,12 @@ class UploadsController < ApplicationController
   end
 
   def create
-    current_user.library.uploads.
+    @library.uploads.
       where(state: [ 'upload', 'fail' ]).
       find_by(upload_params.slice(:name, :size, :mime)).
       try(:destroy)
 
-    @upload = current_user.library.uploads.new(upload_params) do |u|
+    @upload = @library.uploads.new(upload_params) do |u|
       u.uploader = current_user
     end
 
@@ -42,7 +44,7 @@ class UploadsController < ApplicationController
   end
 
   def update
-    @upload = current_user.library.uploads.find(params[:id])
+    @upload = @library.uploads.find(params[:id])
 
     if @upload.update_attributes(upload_params)
       render 'show'
@@ -52,14 +54,14 @@ class UploadsController < ApplicationController
   end
 
   def destroy
-    current_user.library.uploads.find(params[:id]).destroy
+    @library.uploads.find(params[:id]).destroy
     head :ok
   end
 
   def check
     new = []
     checks = params.permit(is_new: ([ :id ] + UNIQUE_PARAMS))[:is_new]
-    existing = current_user.library.uploads.where(
+    existing = @library.uploads.where(
       state: [ 'process', 'ready' ],
       name: checks.map { |c| c[:name] }
     ).select(UNIQUE_PARAMS).to_a

@@ -1,6 +1,6 @@
 @app.directive 'uploader', [
-  '$window', '$modal', '$http', 'schedule', 'Upload',
-  ($window,   $modal,   $http,   schedule,   Upload) ->
+  '$window', '$modal', '$http', 'schedule', 'Upload', 'Library',
+  ($window,   $modal,   $http,   schedule,   Upload,   Library) ->
 
     RATE_WINDOW_SIZE = 30000
 
@@ -27,7 +27,7 @@
 
         $http(
           method: 'POST'
-          url: '/api/uploads/check.json'
+          url: "/api/libraries/#{Library.current?.id}/uploads/check.json"
           data: { is_new: checks }
         ).then((response) =>
           newFiles = []
@@ -35,10 +35,11 @@
             newFiles.push(files[i])
           @enqueue(newFiles)
 
-          skipped = files.length - newFiles.length
-          @skipped += skipped
-          @progress.count += skipped
-          @progress.done += skipped
+          if @progress
+            skipped = files.length - newFiles.length
+            @skipped += skipped
+            @progress.count += skipped
+            @progress.done += skipped
         )
 
       enqueue: (files, where = 'end', importDate = new Date) ->
@@ -56,6 +57,7 @@
           @rateWindow = [ [ @startTime, 0 ] ]
           $($window).on('beforeunload', @handleBeforeUnload)
 
+        libraryId = Library.current?.id
         for file in files
           do (file) =>
             @progress.count += 1
@@ -70,6 +72,7 @@
                   size: file.size
                   mime: file.type
                   imported_at: importDate
+                  library_id: libraryId
               (@current.promise = @current.upload.create()).
                 then(
                   (=>

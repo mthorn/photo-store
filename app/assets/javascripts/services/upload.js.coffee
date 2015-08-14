@@ -2,7 +2,7 @@
   '$resource', '$q', 'fileUpload', 'formData', 'Observable',
   ($resource,   $q,   fileUpload,   formData,   Observable) ->
 
-    Upload = $resource '/api/uploads/:id.json'
+    Upload = $resource '/api/libraries/:library_id/uploads/:id.json'
 
     angular.extend Upload, Observable
 

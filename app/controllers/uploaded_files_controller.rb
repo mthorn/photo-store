@@ -1,7 +1,7 @@
 class UploadedFilesController < ApplicationController
 
   def show
-    upload = current_user.library.uploads.find(params[:id])
+    upload = current_user.uploads.find(params[:id])
     if (version = params[:version]).present?
       url = upload.file_url(version)
     else
