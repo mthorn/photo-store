@@ -15,7 +15,9 @@
 
 .text-center{ 'ng-if' => 'ctrl.items.length != 0' }
   %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
-               'items-per-page' => 'ctrl.params.limit', 'max-size' => 5 }
+    'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
+    'previous-text' => '‹', 'next-text' => '›',
+    'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
 
 .gallery.row
   %div{ 'ng-if' => 'ctrl.items.length != 0' }
@@ -32,4 +34,6 @@
 
 .text-center{ 'ng-if' => 'ctrl.items.length != 0' }
   %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
-               'items-per-page' => 'ctrl.params.limit', 'max-size' => 5 }
+    'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
+    'previous-text' => '‹', 'next-text' => '›',
+    'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
