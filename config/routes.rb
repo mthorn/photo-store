@@ -20,7 +20,7 @@ Rails.application.routes.draw do
   with_options(to: 'main#index') do |app|
     app.root
     app.get :profile
-    scope :library_id do
+    scope ':library_id' do
       app.get :gallery
       app.get :slides
     end

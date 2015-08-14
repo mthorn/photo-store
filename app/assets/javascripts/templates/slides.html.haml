@@ -3,9 +3,9 @@
   .processing.text-center{ 'ng-switch-when' => 'process' }
     %i.fa.fa-spinner.fa-spin
 
-  %button.btn#prev{ 'ng-click' => 'ctrl.idx = ctrl.idx - 1', 'ng-hide' => 'ctrl.idx <= 0' }
+  %button.btn#prev{ 'ng-click' => 'ctrl.params.i = ctrl.params.i - 1', 'ng-hide' => 'ctrl.params.i <= 0' }
     %i.fa.fa-chevron-left
-  %button.btn#next{ 'ng-click' => 'ctrl.idx = ctrl.idx + 1', 'ng-hide' => 'ctrl.idx >= ctrl.items.count - 1' }
+  %button.btn#next{ 'ng-click' => 'ctrl.params.i = ctrl.params.i + 1', 'ng-hide' => 'ctrl.params.i >= ctrl.items.count - 1' }
     %i.fa.fa-chevron-right
 
 %p.text-center{ 'ng-if' => 'ctrl.items.count == 0' }

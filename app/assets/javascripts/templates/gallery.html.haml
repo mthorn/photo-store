@@ -2,20 +2,20 @@
 
   .form-group.col-xs-4.col-sm-3.col-md-2
     %label{ for: 'limit' } Per page
-    %select#limit.form-control{ 'ng-model' => 'ctrl.limit', 'ng-options' => 'e.i as e.i for e in ctrl.limitOptions' }
+    %select#limit.form-control{ 'ng-model' => 'ctrl.params.limit', 'ng-options' => 'e.i as e.i for e in ctrl.limitOptions' }
 
   .form-group.col-xs-4.col-sm-3.col-md-2
     %label{ for: 'order' } Sorting
-    %select#order.form-control{ 'ng-model' => 'ctrl.order' }
+    %select#order.form-control{ 'ng-model' => 'ctrl.params.order' }
       %option{ value: '' } default
       %option{ value: 'name-asc' } name &#8595;
       %option{ value: 'name-desc' } name &#8593;
       %option{ value: 'created_at-asc' } upload time &#8595;
       %option{ value: 'created_at-desc' } upload time &#8593;
 
-.text-center
-  %pagination{ 'ng-model' => 'ctrl.page', 'total-items' => 'ctrl.items.count',
-               'items-per-page' => 'ctrl.limit', 'max-size' => 5 }
+.text-center{ 'ng-if' => 'ctrl.items.length != 0' }
+  %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
+               'items-per-page' => 'ctrl.params.limit', 'max-size' => 5 }
 
 .gallery.row
   %div{ 'ng-if' => 'ctrl.items.length != 0' }
@@ -30,6 +30,6 @@
     There are no items in your library. Drag &amp; drop some files here to add
     them to your library.
 
-.text-center
-  %pagination{ 'ng-model' => 'ctrl.page', 'total-items' => 'ctrl.items.count',
-               'items-per-page' => 'ctrl.limit', 'max-size' => 5 }
+.text-center{ 'ng-if' => 'ctrl.items.length != 0' }
+  %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
+               'items-per-page' => 'ctrl.params.limit', 'max-size' => 5 }

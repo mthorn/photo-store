@@ -1,18 +1,16 @@
 @app.controller 'SlidesCtrl', class SlidesCtrl extends IndexCtrl
 
-  initialize: ->
-    super
-    @idx = parseInt(@location.search().idx) || 0
-    @idx = 0 if @idx < 0
-    @limit = 100
+  LIMIT = 100
 
-  upload: ->
-    @items?[@idx - @offset]
+  parseSearchParams: =>
+    i: parseInt(@location.search().i || 0)
 
   queryParams: ->
-    idx: @idx
+    limit: LIMIT
+    offset: @getOffset()
 
-  '$watch(idx)': =>
-    oldOffset = @offset
-    @offset = Math.floor(@idx / @limit) * @limit
-    @fetch() if @offset != oldOffset
+  upload: ->
+    @items?[@params.i - @getOffset()]
+
+  getOffset: ->
+    Math.floor(@params.i / LIMIT) * LIMIT

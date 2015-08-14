@@ -4,15 +4,13 @@ class @IndexCtrl extends Controller
     'schedule', 'placeholderImageUrl'
 
   initialize: ->
-    @count = 0
-    @order = @location.search().order || ''
-
+    @scope.$watch @parseSearchParams, ((@params) =>), true
+    @scope.$watch (=> @params), @fetch, true
     @Upload.on('uploaded', @fetch)
 
   fetch: =>
-    params = @queryParams()
-    if changed = ! angular.equals(@location.search(), params)
-      @location.search(params)
+    if changed = ! angular.equals(@params, @parseSearchParams())
+      @location.search(@params)
 
     if ! changed && (@fetching || @fetchAgain)
       return @fetchAgain = true
@@ -21,23 +19,22 @@ class @IndexCtrl extends Controller
     @fetching = @http(
       method: 'GET'
       url: "/api/libraries/#{@routeParams.library_id}/uploads.json"
-      params:
-        offset: @offset
-        limit: @limit
-        order: @order
+      params: @queryParams()
     ).then((response) =>
       @items = response.data.items.map((upload) => new @Upload(upload))
       @items.count = response.data.count
 
-      @fetching = null
       if @fetchAgain || _.any(@items, state: 'process')
-        @fetchAgain = false
         @timer?.cancel()
         @timer = @schedule.delay(5000, @fetch)
+      null
+    ).catch(=>
+      @timer?.cancel()
+      @timer = @schedule.delay(5000, @fetch)
+    ).finally(=>
+      @fetching = null
+      @fetchAgain = false
     )
-
-  '$watch(order)': (order, oldOrder) =>
-    @fetch() if oldOrder
 
   '$on($destroy)': =>
     @timer?.cancel()
