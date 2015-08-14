@@ -18,15 +18,21 @@
     %ul.nav.navbar-nav.navbar-right
       %li.dropdown
         %a.dropdown-toggle{ 'data-toggle' => 'dropdown', role: 'button', 'aria-haspopup' => 'true', 'aria-expanded' => 'false' }
-          Library
+          Libraries
           %span.caret
         %ul.dropdown-menu
           %li{ 'ng-repeat' => 'library in ctrl.Library.mine track by library.id' }
             %a{ 'ng-href' => '/{{library.id}}/gallery' }
               {{library.name}}
-      %li
-        %a{ href: '/profile' }
-          Profile
-      %li
-        %a{ href: '/users/sign_out', target: '_self', 'data-method' => 'delete' }
-          Sign out
+
+      %li.dropdown
+        %a.dropdown-toggle{ 'data-toggle' => 'dropdown', role: 'button', 'aria-haspopup' => 'true', 'aria-expanded' => 'false' }
+          {{ctrl.User.me.name}}
+          %span.caret
+        %ul.dropdown-menu
+          %li
+            %a{ href: '/profile' }
+              Profile
+          %li
+            %a{ href: '/users/sign_out', target: '_self', 'data-method' => 'delete' }
+              Sign out
