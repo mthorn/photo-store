@@ -13,6 +13,7 @@
         @expanded = false
         @errors = []
         @checking = 0
+        @skipped = 0
 
       handleBeforeUnload: ->
         "Your file import will be incomplete if you leave this page. You can " +
@@ -150,6 +151,7 @@
         @queue.unpause()
 
       cancel: ->
+        @skipped = 0
         @queue.clear()
         @current?.promise?.abort()
 

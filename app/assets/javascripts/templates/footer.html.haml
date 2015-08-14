@@ -20,12 +20,16 @@
   Uploading:
   %span {{ctrl.progress.done + 1}} / {{ctrl.progress.count}} files,
   %span {{ctrl.progress.loaded + (ctrl.current.progress.loaded || 0) | bytes}} / {{ctrl.progress.total | bytes}},
-  %span{ 'ng-show' => 'ctrl.skipped' }
+  %span{ 'ng-show' => 'ctrl.skipped', tooltip: 'Files are skipped if they are already in the library.' }
     {{ctrl.skipped}} files skipped,
   %span{ 'ng-show' => 'ctrl.timeRemaining()' }
     {{ctrl.timeRemaining() | duration}} remaining,
     {{ctrl.uploadRate() | bytes}}/s
   %span{ 'ng-hide' => 'ctrl.timeRemaining()' }
     calculating time remaining...
+
+.ng-info.text-center{ 'ng-show' => '! ctrl.progress && ctrl.skipped' }
+  Import complete, {{ctrl.skipped}} files that are already in the library were skipped.
+  %button.btn.btn-default{ 'ng-click' => 'ctrl.skipped = 0' } Close
 
 %progressbar{ 'ng-if' => 'ctrl.progress', max: 'ctrl.progress.total', value: 'ctrl.progress.loaded + (ctrl.current.progress.loaded || 0)' }
