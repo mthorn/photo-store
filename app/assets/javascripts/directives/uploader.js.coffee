@@ -127,7 +127,7 @@
           # discard entries not in window
           now = Date.now()
           cutoff = now - RATE_WINDOW_SIZE
-          @rateWindow.shift() while @rateWindow[0][0] < cutoff
+          @rateWindow.shift() while @rateWindow.length != 0 && @rateWindow[0][0] < cutoff
 
           if @rateWindow.length >= 2 # rate = 0 if there aren't 2 entries to compare
             first = @rateWindow[0]
