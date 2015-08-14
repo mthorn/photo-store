@@ -1,6 +1,6 @@
 @app.factory 'Upload', [
-  '$resource', '$q', 'fileUpload', 'formData', 'Observable',
-  ($resource,   $q,   fileUpload,   formData,   Observable) ->
+  '$resource', '$q', 'fileUpload', 'formData', 'schedule', 'Observable',
+  ($resource,   $q,   fileUpload,   formData,   schedule,   Observable) ->
 
     Upload = $resource '/api/libraries/:library_id/uploads/:id.json'
 
@@ -15,16 +15,16 @@
 
       promise = @$save().
         then(=>
-          if cancel
-            $q.reject 'cancel'
-          else
-            upload = fileUpload(
-              url: @file_post_url
-              data: formData().add(@file_post_data).build('file', file)
-            )
+          schedule.retryable =>
+            if cancel
+              $q.reject 'cancel'
+            else
+              upload = fileUpload
+                url: @file_post_url
+                data: formData().add(@file_post_data).build('file', file)
         ).
         finally(-> upload = null).
-        then(=> @$update(file_uploaded: true)).
+        then(=> schedule.retryable => @$update(file_uploaded: true)).
         catch((reason) =>
           @$delete() if @id # delete partially completed upload (eg. provision step succeeds but S3 rejects file)
           $q.reject(if cancel then 'cancel' else reason)

@@ -162,10 +162,32 @@
 
       exec
 
+    retryable = (attempts, fn) ->
+      if arguments.length == 1
+        fn = attempts
+        attempts = 3
+
+      deferred = $q.defer()
+
+      (makeAttempt = ((reason) ->
+        if attempts > 0
+          attempts -= 1
+          fn().then(
+            deferred.resolve,
+            makeAttempt,
+            deferred.notify
+          )
+        else
+          deferred.reject(reason)
+      ))()
+
+      deferred.promise
+
     angular.extend once,
       once: once
       delay: once
       repeatAtRate: repeatAtRate
       repeatWithDelay: repeatWithDelay
       executor: executor
+      retryable: retryable
 ]
