@@ -17,11 +17,19 @@ footer {
     padding: 0.5em 0;
     margin-top: 0;
     margin-bottom: 0;
-    display: none;
     text-align: center;
 
-    &.active {
+    display: none;
+    & > * { display: none; }
+
+    &.hover {
       display: block;
+      & > .hover { display: inline; }
+    }
+
+    &.reading, &.checking {
+      display: block;
+      & > .reading { display: inline; }
     }
   }
 

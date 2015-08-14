@@ -12,65 +12,62 @@
     ]).map((h) -> h.replace(/\./g, '\\.'))
     HOST_BLACKLIST_RE = new RegExp("^https?://(?:#{HOST_BLACKLIST.join('|')})/")
 
-    {
-      link: (scope, element, attrs, controller) ->
-        callback = $parse attrs.fileDrop
+    BATCH_SIZE = 500
 
-        types = _.flatten(_.values(TYPES))
+    (scope, element, attrs) ->
+      callback = $parse attrs.fileDrop
 
-        handleDragOver = (e) ->
-          element.addClass 'active'
-          false
+      types = _.flatten(_.values(TYPES))
 
-        handleDragLeave = (e) ->
-          element.removeClass 'active'
+      handleDragOver = (e) ->
+        element.addClass 'hover'
+        element.removeClass 'reading'
+        false
 
-        handleDrop = (e) ->
-          element.removeClass 'active'
-          $rootScope.$apply ->
-            getTransferFiles(e.originalEvent.dataTransfer).then((filesOrUrl) ->
-              valid = filesOrUrl.filter (f) -> f.type in types
-              if valid.length
-                $log.debug "Dropped file types: #{valid.map((f) -> f.type).join(', ')}"
-                callback(scope, files: valid, file: valid[0], url: null)
-            )
-          false
+      handleDragLeave = (e) ->
+        element.removeClass 'hover reading'
 
-        getTransferFiles = (transfer, done) ->
-          $q.all(
-            _.map(transfer.items, (item) ->
-              getFiles(item.webkitGetAsEntry())
-            )
-          ).then((files) =>
-            _.compact(_.flatten(files))
-          )
+      handleDrop = (e) ->
+        element.removeClass 'hover'
+        element.addClass 'reading'
 
-        getFiles = (entry) ->
-          if entry.isDirectory
-            $q((resolve, reject) ->
-              entry.createReader().readEntries((entries) ->
-                $rootScope.$apply ->
-                  $q.all(entries.map(getFiles)).
-                    then(_.flatten).
-                    then(resolve)
-              )
-            )
-          else if entry.isFile
-            $q((resolve, reject) ->
-              entry.file (file) -> $rootScope.$apply -> resolve(file)
-            )
-          else
-            null
+        for item in e.originalEvent.dataTransfer.items
+          getFilesFromEntry(item.webkitGetAsEntry())
 
+        false
+
+      queue = []
+      waiting = 0
+      decrementWaiting = ->
+        waiting -= 1
+        element.removeClass('reading') if waiting == 0
+        if queue.length >= BATCH_SIZE || (waiting == 0 && queue.length > 0)
+          batch = queue.splice(0, queue.length)
+          $log.debug "Dropped #{batch.length} files"
+          $rootScope.$apply -> callback(scope, files: batch)
+
+      getFilesFromEntry = (entry) ->
+        waiting += 1
+        if entry.isDirectory
+          entry.createReader().readEntries (entries) ->
+            for entry in entries
+              getFilesFromEntry(entry)
+            decrementWaiting()
+        else if entry.isFile
+          entry.file (file) ->
+            queue.push(file) if file.type in types
+            decrementWaiting()
+        else
+          decrementWaiting()
+
+      $('html').
+        on('dragover',  handleDragOver).
+        on('dragleave', handleDragLeave).
+        on('drop',      handleDrop)
+
+      scope.$on '$destroy', ->
         $('html').
-          on('dragover',  handleDragOver).
-          on('dragleave', handleDragLeave).
-          on('drop',      handleDrop)
-
-        scope.$on '$destroy', ->
-          $('html').
-            off('dragover',  handleDragOver).
-            off('dragleave', handleDragLeave).
-            off('drop',      handleDrop)
-    }
+          off('dragover',  handleDragOver).
+          off('dragleave', handleDragLeave).
+          off('drop',      handleDrop)
 ]

@@ -12,6 +12,7 @@
       initialize: ->
         @expanded = false
         @errors = []
+        @checking = 0
 
       handleBeforeUnload: ->
         "Your file import will be incomplete if you leave this page. You can " +
@@ -25,6 +26,7 @@
           size: file.size
           mime: file.type
 
+        @checking += 1
         $http(
           method: 'POST'
           url: "/api/libraries/#{Library.current?.id}/uploads/check.json"
@@ -35,11 +37,13 @@
             newFiles.push(files[i])
           @enqueue(newFiles)
 
+          skipped = files.length - newFiles.length
+          @skipped += skipped
           if @progress
-            skipped = files.length - newFiles.length
-            @skipped += skipped
             @progress.count += skipped
             @progress.done += skipped
+        ).finally(=>
+          @checking -= 1
         )
 
       enqueue: (files, where = 'end', importDate = new Date) ->
