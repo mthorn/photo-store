@@ -59,16 +59,28 @@ class UploadsController < ApplicationController
   end
 
   def check
-    new = []
-    checks = params.permit(is_new: ([ :id ] + UNIQUE_PARAMS))[:is_new]
-    existing = @library.uploads.where(
-      state: [ 'process', 'ready' ],
-      name: checks.map { |c| c[:name] }
-    ).select(UNIQUE_PARAMS).to_a
-    checks.each do |check|
-      new.push(check[:id]) if existing.none? { |u| UNIQUE_PARAMS.all? { |param| u[param] == check[param] } }
-    end
-    render json: new
+    check_keys = [ :id ] + UNIQUE_PARAMS
+    checks = params[:is_new].presence || []
+    result = Upload.connection.execute <<-SQL
+      SELECT checks.column1 AS id
+      FROM (
+        VALUES #{
+          checks.map { |c|
+            '(' +
+            check_keys.map { |k|
+              Upload.sanitize(c[k])
+            }.join(',') +
+            ')'
+          }.join(',')
+        }
+      ) checks
+      WHERE (checks.column2, checks.column3, checks.column4) NOT IN (
+        SELECT name, size, mime
+        FROM uploads
+        WHERE library_id = #{@library.id}
+      )
+    SQL
+    render json: (result.map { |r| r['id'].to_i })
   end
 
   private
