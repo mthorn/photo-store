@@ -2,7 +2,7 @@
   templateUrl: 'header.html'
   scope: true
   controller: class extends Controller
-    @inject '$location', 'User', 'Library', 'config'
+    @inject '$location', 'User', 'Library', 'config', 'selection'
 
     library: -> @Library.current
     libraryId: -> @library()?.id

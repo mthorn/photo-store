@@ -1,12 +1,13 @@
 class @IndexCtrl extends Controller
 
   @inject '$http', '$window', '$location', '$routeParams', 'Upload',
-    'schedule', 'placeholderImageUrl'
+    'schedule', 'placeholderImageUrl', 'selection'
 
   initialize: ->
     @scope.$watch @parseSearchParams, ((@params) =>), true
     @scope.$watch (=> @params), @fetch, true
     @Upload.on('uploaded', @fetch)
+    @selection.ctrl = @
 
   fetch: =>
     if changed = ! angular.equals(@params, @parseSearchParams())
@@ -16,13 +17,9 @@ class @IndexCtrl extends Controller
       return @fetchAgain = true
 
     @timer?.cancel()
-    @fetching = @http(
-      method: 'GET'
-      url: "/api/libraries/#{@routeParams.library_id}/uploads.json"
-      params: @queryParams()
-    ).then((response) =>
-      @items = response.data.items.map((upload) => new @Upload(upload))
-      @items.count = response.data.count
+    @fetching = @query(@queryParams()).then((data) =>
+      @items = data.items.map((upload) => new @Upload(upload))
+      @items.count = data.count
 
       if @fetchAgain || _.any(@items, state: 'process')
         @timer?.cancel()
@@ -36,6 +33,16 @@ class @IndexCtrl extends Controller
       @fetchAgain = false
     )
 
+  query: (params) =>
+    @http(
+      method: 'GET'
+      url: "/api/libraries/#{@routeParams.library_id}/uploads.json"
+      params: params
+    ).then((response) ->
+      response.data
+    )
+
   '$on($destroy)': =>
     @timer?.cancel()
     @Upload.off('uploaded', @fetch)
+    delete @selection.ctrl

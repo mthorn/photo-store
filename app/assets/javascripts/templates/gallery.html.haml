@@ -13,27 +13,29 @@
       %option{ value: 'created_at-asc' } upload time &#8595;
       %option{ value: 'created_at-desc' } upload time &#8593;
 
-.text-center{ 'ng-if' => 'ctrl.items.length != 0' }
-  %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
-    'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
-    'previous-text' => '‹', 'next-text' => '›',
-    'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
+%div{ 'ng-if' => 'ctrl.items.length != 0' }
+  .text-center
+    %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
+      'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
+      'previous-text' => '‹', 'next-text' => '›',
+      'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
 
-.gallery.row
-  %div{ 'ng-if' => 'ctrl.items.length != 0' }
+  .gallery.row
     .col-xs-6.col-sm-4.col-md-3.col-lg-2{ 'ng-repeat' => 'upload in ctrl.items track by upload.id' }
-      .gallery-item{ 'ng-switch' => 'upload.state' }
+      .gallery-item{ 'ng-switch' => 'upload.state',
+          'ng-click' => 'ctrl.selection.click($event, upload.id)',
+          'ng-class' => '{ selected: ctrl.selection.isSelected(upload.id) }' }
         %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ upload.gallery_url }}', 'while-loading' => '{{ ctrl.placeholderImageUrl }}' }
         .processing.text-center{ 'ng-switch-when' => 'process' }
           %i.fa.fa-4x.fa-spinner.fa-spin
         %img{ 'ng-switch-when' => 'process', 'ng-src' => '{{ ctrl.placeholderImageUrl }}' }
 
-  %p.text-center{ 'ng-if' => 'ctrl.items.count == 0' }
-    There are no items in your library. Drag &amp; drop some files here to add
-    them to your library.
+  .text-center
+    %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
+      'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
+      'previous-text' => '‹', 'next-text' => '›',
+      'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
 
-.text-center{ 'ng-if' => 'ctrl.items.length != 0' }
-  %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
-    'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
-    'previous-text' => '‹', 'next-text' => '›',
-    'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
+%p.text-center{ 'ng-if' => 'ctrl.items.count == 0' }
+  There are no items in your library. Drag &amp; drop some files here to add
+  them to your library.

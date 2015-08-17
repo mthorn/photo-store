@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   devise_for :admins
 
   scope 'api' do
-    resources :libraries, only: [] do
+    resources :libraries, only: [ :update ] do
       resources :uploads, only: %i( index create update destroy ) do
         collection do
           post :check

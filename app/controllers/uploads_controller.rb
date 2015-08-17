@@ -4,8 +4,11 @@ class UploadsController < ApplicationController
   SORTABLE_FIELDS = %w( name created_at )
 
   def index
+    only_id = params[:only_id] == 'true'
+
     @uploads = @library.uploads.where(state: %w( process ready ))
-    @count = @uploads.count
+
+    @count = @uploads.count unless only_id
 
     if (offset = params[:offset]).present?
       @uploads = @uploads.offset(offset.to_i)
@@ -23,6 +26,10 @@ class UploadsController < ApplicationController
       )
     else
       @uploads = @uploads.order(imported_at: :desc, id: :asc)
+    end
+
+    if only_id
+      render json: @uploads.pluck(:id)
     end
   end
 

@@ -1,1 +1,1 @@
-json.(user, :id, :name, :email)
+json.(user, :id, :name, :email, :manual_deselect)

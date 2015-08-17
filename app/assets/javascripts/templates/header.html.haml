@@ -18,6 +18,35 @@
     %ul.nav.navbar-nav.navbar-right
       %li.dropdown
         %a.dropdown-toggle{ 'data-toggle' => 'dropdown', role: 'button', 'aria-haspopup' => 'true', 'aria-expanded' => 'false' }
+          Selection
+          %span{ 'ng-hide' => 'ctrl.selection.isEmpty()' } ({{ctrl.selection.count()}})
+          %span.caret
+        %ul.dropdown-menu
+          %li
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.clear()' }
+              Clear
+          %li{ 'ng-show' => 'ctrl.selection.isPageAvailable()' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.togglePage(true)' }
+              Select all on page
+          %li{ 'ng-show' => 'ctrl.selection.isAllPagesAvailable()' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.toggleAllPages(true)' }
+              Select all on all pages
+          %li{ 'ng-show' => 'ctrl.selection.isPageAvailable() && ctrl.selection.manualDeselect()' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.togglePage(false)' }
+              De-select all on page
+          %li{ 'ng-show' => 'ctrl.selection.isAllPagesAvailable() && ctrl.selection.manualDeselect()' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.toggleAllPages(false)' }
+              De-select all on all pages
+
+          %li.divider{ role: 'separator' }
+
+          %li
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.manualDeselect("toggle")' }
+              %i.fa{ 'ng-class' => '{ "fa-check": ctrl.selection.manualDeselect() }' }
+              Click to de-select
+
+      %li.dropdown
+        %a.dropdown-toggle{ 'data-toggle' => 'dropdown', role: 'button', 'aria-haspopup' => 'true', 'aria-expanded' => 'false' }
           Libraries
           %span.caret
         %ul.dropdown-menu

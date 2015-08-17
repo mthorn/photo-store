@@ -12,6 +12,10 @@ class Photo < Upload
       self.metadata = text.
         map { |l| l[5..-1].split('=', 2) }.
         each.with_object({}) { |(k, v), h| h[k] = v }
+
+      if self.metadata['Orientation'].in?(%w( 6 8 ))
+        self.width, self.height = self.height, self.width
+      end
     else
       self.width = self.height = self.metadata = nil
     end
