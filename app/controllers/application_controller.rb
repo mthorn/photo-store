@@ -5,7 +5,8 @@ class ApplicationController < ActionController::Base
 
   def load_library
     if (id = params[:library_id]).present?
-      @library = current_user.libraries.find(id)
+      @library_membership = current_user.library_memberships.find_by!(library_id: id)
+      @library = @library_membership.library
     end
   end
 

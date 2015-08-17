@@ -18,7 +18,7 @@
     r
 
   queryParams: ->
-    angular.extend _.pick(@params, 'limit', 'order'),
+    angular.extend _.pick(@params, 'limit', 'order', 'selected'),
       offset: (@params.page - 1) * @params.limit
 
   pageIds: ->

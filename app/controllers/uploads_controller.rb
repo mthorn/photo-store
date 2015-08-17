@@ -8,14 +8,23 @@ class UploadsController < ApplicationController
 
     @uploads = @library.uploads.where(state: %w( process ready ), deleted_at: nil)
 
+    # filtering
+    if params[:selected] == 'true' && @library_membership.selection.present?
+      @uploads = @uploads.where(id: @library_membership.selection)
+    end
+
+    # calculate page count before pagination
     @count = @uploads.count unless only_id
 
+    # pagination
     if (offset = params[:offset]).present?
       @uploads = @uploads.offset(offset.to_i)
     end
     if (limit = params[:limit]).present?
       @uploads = @uploads.limit(limit.to_i)
     end
+
+    # ordering
     if (order = params[:order]).present? # format: "field1-asc,field2-desc,..."
       @uploads = @uploads.order(
         order.

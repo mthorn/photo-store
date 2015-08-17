@@ -79,6 +79,9 @@
           else
             setIds(_.difference(@ids, ids))
 
+      review: ->
+        $location.url "/#{Library.current.id}/gallery?selected=true"
+
       deleteSelected: ->
         Library.current.$deleteSelected().then =>
           @ids = []
