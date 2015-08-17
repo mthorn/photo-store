@@ -20,9 +20,11 @@ class Upload < ActiveRecord::Base
   validates :state, inclusion: %w( upload process ready fail )
   validates :imported_at, presence: true
 
-  after_initialize :set_initial_state, if: :new_record?
+  scope :deleted, -> { where.not(deleted_at: nil) }
+
   after_create :create_direct_upload_for_file, unless: :file?
 
+  after_initialize :set_initial_state, if: :new_record?
   def set_initial_state
     self.state ||= 'upload'
   end

@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   devise_for :admins
 
   scope 'api' do
-    resources :libraries, only: [ :update ] do
+    resources :libraries, only: [ :update, :show ] do
       member do
         delete :selected, action: :destroy_selection
       end
@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     scope ':library_id' do
       app.get :gallery
       app.get :slides
+      app.get :settings
     end
   end
 

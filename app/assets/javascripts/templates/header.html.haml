@@ -56,9 +56,15 @@
 
       %li.dropdown
         %a.dropdown-toggle{ 'data-toggle' => 'dropdown', role: 'button', 'aria-haspopup' => 'true', 'aria-expanded' => 'false' }
-          Libraries
+          Library
           %span.caret
         %ul.dropdown-menu
+          %li{ 'ng-class' => '{ disabled: ! ctrl.library() }' }
+            %a{ href: '/{{ctrl.libraryId()}}/settings' }
+              Settings
+
+          %li.divider{ role: 'separator' }
+
           %li{ 'ng-repeat' => 'library in ctrl.Library.mine track by library.id' }
             %a{ 'ng-href' => '/{{library.id}}/gallery' }
               {{library.name}}

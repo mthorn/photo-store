@@ -8,9 +8,12 @@ class LibrariesController < ApplicationController
           (library_membership_params.blank? || @library_membership.update_attributes(library_membership_params))
         render :show
       else
-        render json: @library.errors.merge(@library_membership.errors), status: :unprocessable_entity
+        render json: @library.errors.to_hash.merge(@library_membership.errors.to_hash), status: :unprocessable_entity
       end
     end
+  end
+
+  def show
   end
 
   def destroy_selection

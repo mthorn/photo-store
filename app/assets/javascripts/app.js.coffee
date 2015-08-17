@@ -30,6 +30,10 @@
       controller: 'SlidesCtrl as ctrl'
       reloadOnSearch: false
 
+    $routeProvider.when '/:library_id/settings',
+      templateUrl: 'settings.html'
+      controller: 'SettingsCtrl as ctrl'
+
     $routeProvider.when '/profile',
       templateUrl: 'profile.html'
       controller: 'ProfileCtrl as ctrl'
