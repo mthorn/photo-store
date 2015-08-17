@@ -40,6 +40,12 @@
 
           %li.divider{ role: 'separator' }
 
+          %li{ 'ng-class' => '{ disabled: ctrl.selection.isEmpty() }' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.deleteSelected()' }
+              Delete
+
+          %li.divider{ role: 'separator' }
+
           %li
             %a{ href: '#', 'ng-click' => 'ctrl.selection.manualDeselect("toggle")' }
               %i.fa{ 'ng-class' => '{ "fa-check": ctrl.selection.manualDeselect() }' }

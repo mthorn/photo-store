@@ -1,12 +1,12 @@
 class @IndexCtrl extends Controller
 
-  @inject '$http', '$window', '$location', '$routeParams', 'Upload',
+  @inject '$http', '$window', '$location', '$routeParams', 'Upload', 'Library',
     'schedule', 'placeholderImageUrl', 'selection'
 
   initialize: ->
     @scope.$watch @parseSearchParams, ((@params) =>), true
     @scope.$watch (=> @params), @fetch, true
-    @Upload.on('uploaded', @fetch)
+    @Library.on('change', @fetch)
     @selection.ctrl = @
 
   fetch: =>
@@ -44,5 +44,5 @@ class @IndexCtrl extends Controller
 
   '$on($destroy)': =>
     @timer?.cancel()
-    @Upload.off('uploaded', @fetch)
+    @Library.off('change', @fetch)
     delete @selection.ctrl

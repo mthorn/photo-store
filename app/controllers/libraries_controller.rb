@@ -13,6 +13,14 @@ class LibrariesController < ApplicationController
     end
   end
 
+  def destroy_selection
+    if (ids = @library_membership.selection).present?
+      @library.uploads.where(id: ids).update_all(deleted_at: Time.current)
+      @library_membership.update_attributes!(selection: [])
+    end
+    head :ok
+  end
+
   private
 
   def load_library

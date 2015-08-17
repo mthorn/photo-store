@@ -1,10 +1,8 @@
 @app.factory 'Upload', [
-  '$resource', '$q', 'fileUpload', 'formData', 'schedule', 'Observable',
-  ($resource,   $q,   fileUpload,   formData,   schedule,   Observable) ->
+  '$resource', '$q', 'fileUpload', 'formData', 'schedule', 'Library',
+  ($resource,   $q,   fileUpload,   formData,   schedule,   Library) ->
 
     Upload = $resource '/api/libraries/:library_id/uploads/:id.json'
-
-    angular.extend Upload, Observable
 
     Upload::create = ->
       file = @file
@@ -29,7 +27,7 @@
           @$delete() if @id # delete partially completed upload (eg. provision step succeeds but S3 rejects file)
           $q.reject(if cancel then 'cancel' else reason)
         ).
-        then((upload) -> Upload.trigger('uploaded', upload))
+        then((upload) -> Library.trigger('change', upload))
 
       promise.abort = ->
         upload?.abort()

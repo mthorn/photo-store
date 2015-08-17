@@ -1,7 +1,13 @@
 @app.factory 'Library', [
-  '$resource', '$rootScope', '$routeParams', 'config',
-  ($resource,   $rootScope,   $routeParams,   config) ->
-    Library = $resource '/api/libraries/:id.json'
+  '$resource', '$rootScope', '$routeParams', 'Observable', 'config',
+  ($resource,   $rootScope,   $routeParams,   Observable,   config) ->
+    Library = $resource '/api/libraries/:id.json', {},
+      deleteSelected:
+        method: 'DELETE'
+        url: '/api/libraries/:id/selected.json'
+
+    angular.extend Library, Observable
+
     Library.mine = config.libraries.map((library) -> new Library(library))
 
     $rootScope.$watch (-> $routeParams.library_id), (id = config.defaultLibraryId) ->

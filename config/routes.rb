@@ -5,6 +5,9 @@ Rails.application.routes.draw do
 
   scope 'api' do
     resources :libraries, only: [ :update ] do
+      member do
+        delete :selected, action: :destroy_selection
+      end
       resources :uploads, only: %i( index create update destroy ) do
         collection do
           post :check

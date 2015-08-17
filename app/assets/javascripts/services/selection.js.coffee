@@ -78,4 +78,9 @@
               setIds(ids)
           else
             setIds(_.difference(@ids, ids))
+
+      deleteSelected: ->
+        Library.current.$deleteSelected().then =>
+          @ids = []
+          Library.trigger('change')
 ]

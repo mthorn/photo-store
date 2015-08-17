@@ -6,7 +6,7 @@ class UploadsController < ApplicationController
   def index
     only_id = params[:only_id] == 'true'
 
-    @uploads = @library.uploads.where(state: %w( process ready ))
+    @uploads = @library.uploads.where(state: %w( process ready ), deleted_at: nil)
 
     @count = @uploads.count unless only_id
 
