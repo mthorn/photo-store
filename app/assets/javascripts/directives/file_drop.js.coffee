@@ -18,8 +18,16 @@
       callback = $parse attrs.fileDrop
 
       types = _.flatten(_.values(TYPES))
+      fromPage = false
+
+      handleDragStart = ->
+        fromPage = true
+
+      handleDragEnd = ->
+        fromPage = false
 
       handleDragOver = (e) ->
+        return if fromPage
         element.addClass 'hover'
         element.removeClass 'reading'
         false
@@ -48,12 +56,12 @@
 
       getFilesFromEntry = (entry) ->
         waiting += 1
-        if entry.isDirectory
+        if entry?.isDirectory
           entry.createReader().readEntries (entries) ->
             for entry in entries
               getFilesFromEntry(entry)
             decrementWaiting()
-        else if entry.isFile
+        else if entry?.isFile
           entry.file (file) ->
             queue.push(file) if file.type in types
             decrementWaiting()
@@ -61,12 +69,16 @@
           decrementWaiting()
 
       $('html').
+        on('dragstart', handleDragStart).
+        on('dragend',   handleDragEnd).
         on('dragover',  handleDragOver).
         on('dragleave', handleDragLeave).
         on('drop',      handleDrop)
 
       scope.$on '$destroy', ->
         $('html').
+          off('dragstart', handleDragStart).
+          off('dragend',   handleDragEnd).
           off('dragover',  handleDragOver).
           off('dragleave', handleDragLeave).
           off('drop',      handleDrop)
