@@ -1,6 +1,6 @@
 @app.factory 'selection', [
-  '$rootScope', '$location', '$http', '$route', 'Library', 'User',
-  ($rootScope,   $location,   $http,   $route,   Library,   User) ->
+  '$rootScope', '$location', '$http', '$route', '$q', 'Library', 'User',
+  ($rootScope,   $location,   $http,   $route,   $q,   Library,   User) ->
 
     $rootScope.$watch (-> Library.current), (lib) ->
       setIds(lib.selection ||= [])
@@ -18,6 +18,8 @@
     setIds = (ids) ->
       service.ids = _.uniq(ids.sort((a, b) -> a - b), true)
 
+    startId = null
+
     service =
       manualDeselect: (setting) ->
         if setting == 'toggle'
@@ -30,10 +32,18 @@
       click: (event, uploadId) ->
         @clear() unless User.me.manual_deselect || event.ctrlKey || event.metaKey
 
-        if (i = @indexOf(uploadId)) != -1
-          @ids.splice(i, 1)
-        else
-          @insert([ uploadId ])
+        $q.when(@ctrl?.pageIds?()).then (pageIds) =>
+          if event.shiftKey && startId? && pageIds? && (i = pageIds.indexOf(startId)) != -1
+            j = pageIds.indexOf(uploadId)
+            if i < j
+              @insert(pageIds.slice(i, j + 1))
+            else
+              @insert(pageIds.slice(j, i + 1))
+          else if (i = @indexOf(uploadId)) != -1
+            @ids.splice(i, 1)
+          else
+            @insert([ uploadId ])
+            startId = uploadId
 
       isSelected: (uploadId) ->
         @indexOf(uploadId) != -1
