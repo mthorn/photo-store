@@ -1,31 +1,13 @@
-.row
+.modal-header
+  %h3.modal-title Profile
+.modal-body.form
+  .form-group{ errors: 'ctrl.errors.email' }
+    %label{ for: 'email' } Email
+    %input.form-control{ type: 'email', 'ng-model' => 'ctrl.view.email' }
 
-  .col-xs-10.col-xs-offset-1
-    %h2 Profile
-
-    .form
-      .form-group{ errors: 'ctrl.errors.email' }
-        %label{ for: 'email' } Email
-        %input.form-control{ type: 'email', 'ng-model' => 'ctrl.user.email' }
-
-      .form-group{ errors: 'ctrl.errors.name' }
-        %label{ for: 'name' } Name
-        %input.form-control{ type: 'text', 'ng-model' => 'ctrl.user.name' }
-
-      %button.btn.btn-primary{ 'busy-click' => 'ctrl.updateProfile()' }
-        Update Profile
-
-    %hr
-
-    %h2 Change Password
-    .form
-      .form-group{ errors: 'ctrl.passwordErrors.password' }
-        %label{ for: 'password' } Password
-        %input.form-control#password{ type: 'password', 'ng-model' => 'ctrl.password.password' }
-
-      .form-group{ errors: 'ctrl.passwordErrors.password_confirmation' }
-        %label{ for: 'password_confirmation' } Confirm Password
-        %input.form-control#password_confirmation{ type: 'password', 'ng-model' => 'ctrl.password.password_confirmation' }
-
-      %button.btn.btn-primary{ 'busy-click' => 'ctrl.updatePassword()' }
-        Save
+  .form-group{ errors: 'ctrl.errors.name' }
+    %label{ for: 'name' } Name
+    %input.form-control{ type: 'text', 'ng-model' => 'ctrl.view.name' }
+.modal-footer
+  %button.btn.btn-primary{ 'busy-click' => 'ctrl.save()' } Save
+  %button.btn.btn-default{ 'ng-click' => '$dismiss()' } Cancel

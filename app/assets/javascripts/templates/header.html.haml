@@ -60,7 +60,7 @@
           %span.caret
         %ul.dropdown-menu
           %li{ 'ng-class' => '{ disabled: ! ctrl.library() }' }
-            %a{ href: '/{{ctrl.libraryId()}}/settings' }
+            %a{ href: '#', 'ng-click' => 'ctrl.settings()' }
               Settings
 
           %li.divider{ role: 'separator' }
@@ -75,8 +75,11 @@
           %span.caret
         %ul.dropdown-menu
           %li
-            %a{ href: '/profile' }
+            %a{ href: '#', 'ng-click' => 'ctrl.profile()' }
               Profile
+          %li
+            %a{ href: '#', 'ng-click' => 'ctrl.password()' }
+              Change Password
           %li
             %a{ href: '/users/sign_out', target: '_self', 'data-method' => 'delete' }
               Sign out

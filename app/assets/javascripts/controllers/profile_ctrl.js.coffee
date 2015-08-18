@@ -1,23 +1,14 @@
 @app.controller 'ProfileCtrl', class ProfileCtrl extends Controller
 
-  @inject '$http', '$window', 'User'
+  @inject '$modalInstance', 'User'
 
   initialize: ->
     @user = @User.me
-    @password = password: '', password_confirmation: ''
+    @view = new @User @user
 
-  updateProfile: ->
+  save: ->
     @errors = null
-    @user.$update().catch((response) => @errors = response.data)
-
-  updatePassword: ->
-    @passwordErrors = null
-    @http(
-      method: 'PUT'
-      url: '/api/user.json'
-      data: @password
-    ).then(=>
-      @window.location.reload()
-    ).catch((response) =>
-      @passwordErrors = response.data
-    )
+    @view.$update().
+      then(=> angular.copy(@view, @user)).
+      then(=> @modalInstance.close()).
+      catch((response) => @errors = response.data)

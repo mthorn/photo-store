@@ -1,12 +1,9 @@
-.row
-
-  .col-xs-10.col-xs-offset-1
-    %h2 Settings
-
-    .form
-      .form-group{ errors: 'ctrl.errors.name' }
-        %label{ for: 'name' } Name
-        %input.form-control{ type: 'text', 'ng-model' => 'ctrl.view.name' }
-
-      %button.btn.btn-primary{ 'busy-click' => 'ctrl.update()' }
-        Update
+.modal-header
+  %h3.modal-title {{ctrl.library.name}}
+.modal-body.form
+  .form-group{ errors: 'ctrl.errors.name' }
+    %label{ for: 'name' } Name
+    %input.form-control{ type: 'text', 'ng-model' => 'ctrl.view.name' }
+.modal-footer
+  %button.btn.btn-primary{ 'busy-click' => 'ctrl.save()' } Save
+  %button.btn.btn-default{ 'ng-click' => '$dismiss()' } Cancel

@@ -1,14 +1,13 @@
 @app.controller 'SettingsCtrl', class SettingsCtrl extends Controller
 
-  @inject '$routeParams', 'Library'
+  @inject '$modalInstance', '$location', 'Library', 'library'
 
   initialize: ->
-    @library = _.findWhere(@Library.mine, id: parseInt(@routeParams.library_id))
-    @library.$get().then =>
-      @view = new @Library @library
+    @library.$get().then => @view = new @Library @library
 
-  update: ->
+  save: ->
     @errors = null
     @view.$update().
       then(=> angular.copy(@view, @library)).
+      then(=> @modalInstance.close()).
       catch((response) => @errors = response.data)
