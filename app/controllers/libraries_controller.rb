@@ -21,7 +21,17 @@ class LibrariesController < ApplicationController
       @library.uploads.where(id: ids).update_all(deleted_at: Time.current)
       @library_membership.update_attributes!(selection: [])
     end
-    head :ok
+    render :show
+  end
+
+  def restore_deleted
+    @library.uploads.deleted.update_all(deleted_at: nil)
+    render :show
+  end
+
+  def remove_deleted
+    @library.uploads.deleted.destroy_all
+    render :show
   end
 
   private

@@ -7,6 +7,8 @@ Rails.application.routes.draw do
     resources :libraries, only: [ :update, :show ] do
       member do
         delete :selected, action: :destroy_selection
+        put :deleted, action: :restore_deleted
+        delete :deleted, action: :remove_deleted
       end
       resources :uploads, only: %i( index create update destroy ) do
         collection do

@@ -6,11 +6,16 @@ class UploadsController < ApplicationController
   def index
     only_id = params[:only_id] == 'true'
 
-    @uploads = @library.uploads.where(state: %w( process ready ), deleted_at: nil)
+    @uploads = @library.uploads.where(state: %w( process ready ))
 
     # filtering
-    if params[:selected] == 'true' && @library_membership.selection.present?
+    if params[:selected] == 'true'
       @uploads = @uploads.where(id: @library_membership.selection)
+    end
+    if params[:deleted] == 'true'
+      @uploads = @uploads.deleted
+    else
+      @uploads = @uploads.where(deleted_at: nil)
     end
 
     # calculate page count before pagination

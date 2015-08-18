@@ -6,4 +6,8 @@ class Library < ActiveRecord::Base
 
   validates :name, presence: true
 
+  def deleted_count
+    self.uploads.deleted.count
+  end
+
 end

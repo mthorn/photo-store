@@ -85,5 +85,8 @@
       deleteSelected: ->
         Library.current.$deleteSelected().then =>
           @ids = []
-          Library.trigger('change')
+          if (params = $location.search()).selected == 'true'
+            $location.search _.omit(params, 'selected')
+          else
+            Library.trigger('change')
 ]

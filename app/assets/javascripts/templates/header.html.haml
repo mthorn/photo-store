@@ -63,6 +63,19 @@
             %a{ href: '#', 'ng-click' => 'ctrl.settings()' }
               Settings
 
+          %li.divider{ role: 'separator', 'ng-if-start' => 'ctrl.library().deleted_count' }
+          %li.dropdown-header
+            {{ctrl.library().deleted_count}} deleted items
+          %li
+            %a{ 'ng-href' => '/{{ctrl.libraryId()}}/gallery?deleted=true' }
+              Review
+          %li
+            %a{ href: '#', 'ng-click' => 'ctrl.removeDeleted()' }
+              Remove
+          %li{ 'ng-if-end' => true }
+            %a{ href: '#', 'ng-click' => 'ctrl.restoreDeleted()' }
+              Restore
+
           %li.divider{ role: 'separator' }
 
           %li{ 'ng-repeat' => 'library in ctrl.Library.mine track by library.id' }

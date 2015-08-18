@@ -1,6 +1,7 @@
 @app.directive 'header', ->
   templateUrl: 'header.html'
   scope: true
+  controllerAs: 'ctrl'
   controller: class extends Controller
     @inject '$location', '$modal', 'User', 'Library', 'config', 'selection'
 
@@ -25,4 +26,16 @@
         templateUrl: 'password.html'
         controller: 'PasswordCtrl as ctrl'
 
-  controllerAs: 'ctrl'
+    removeDeleted: ->
+      @library().$removeDeleted().then =>
+        if (params = @location.search()).deleted == 'true'
+          @location.search _.omit(params, 'deleted')
+        else
+          @Library.trigger('change')
+
+    restoreDeleted: ->
+      @library().$restoreDeleted().then =>
+        if (params = @location.search()).deleted == 'true'
+          @location.search _.omit(params, 'deleted')
+        else
+          @Library.trigger('change')
