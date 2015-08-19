@@ -57,16 +57,26 @@
       getFilesFromEntry = (entry) ->
         waiting += 1
         if entry?.isDirectory
-          entry.createReader().readEntries (entries) ->
-            for entry in entries
-              getFilesFromEntry(entry)
-            decrementWaiting()
+          readDir(entry.createReader())
         else if entry?.isFile
           entry.file (file) ->
             queue.push(file) if file.type in types
             decrementWaiting()
         else
           decrementWaiting()
+
+      readDir = (reader) ->
+        reader.readEntries(
+          ((entries) ->
+            if entries.length == 0
+              decrementWaiting()
+            else
+              for entry in entries
+                getFilesFromEntry(entry)
+              readDir(reader)
+          ),
+          decrementWaiting
+        )
 
       $('html').
         on('dragstart', handleDragStart).
