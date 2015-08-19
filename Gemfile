@@ -31,6 +31,7 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-angular-sanitize'
   gem 'rails-assets-angular-ui-bootstrap-bower'
   gem 'rails-assets-lodash'
+  gem 'rails-assets-sprintf'
 end
 
 group :development, :test do

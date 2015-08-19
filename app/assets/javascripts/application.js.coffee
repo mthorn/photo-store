@@ -9,6 +9,7 @@
 #= require angular-rails-templates
 #= require angular-ui-bootstrap-bower
 #= require lodash
+#= require sprintf
 #
 #= require controllers/controller
 #= require controllers/index_ctrl
