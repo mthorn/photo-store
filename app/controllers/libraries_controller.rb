@@ -30,7 +30,8 @@ class LibrariesController < ApplicationController
   end
 
   def remove_deleted
-    @library.uploads.deleted.destroy_all
+    @library.uploads.deleted.update_all(state: 'destroy')
+    DestroyUploadsJob.perform_later
     render :show
   end
 

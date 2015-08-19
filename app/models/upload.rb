@@ -1,6 +1,8 @@
 class Upload < ActiveRecord::Base
   include DirectUpload
 
+  default_scope { where.not(state: 'destroy') }
+
   belongs_to :uploader, class_name: 'User'
   belongs_to :library
 
@@ -17,7 +19,7 @@ class Upload < ActiveRecord::Base
   validates :modified_at, presence: true
   validates :size, presence: true, numericality: { greater_than: 0 }
   validates :mime, presence: true, format: /\A\w+\/\w+\z/
-  validates :state, inclusion: %w( upload process ready fail )
+  validates :state, inclusion: %w( upload process ready fail destroy )
   validates :imported_at, presence: true
 
   scope :deleted, -> { where.not(deleted_at: nil) }
