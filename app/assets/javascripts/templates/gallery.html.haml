@@ -15,9 +15,9 @@
 
 %div{ 'ng-if' => 'ctrl.items.length != 0' }
   .text-center
-    %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
-      'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
-      'previous-text' => '‹', 'next-text' => '›',
+    %pagination{ 'ng-if' => 'ctrl.items', 'ng-model' => 'ctrl.params.page',
+      'total-items' => 'ctrl.items.count', 'items-per-page' => 'ctrl.params.limit',
+      'max-size' => 5, 'previous-text' => '‹', 'next-text' => '›',
       'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
     %a.pagination-status.hidden-xs{ href: '#', 'ng-hide' => 'ctrl.fetching', 'ng-click' => 'ctrl.fetch()', tooltip: 'Click to Refresh' }
       {{ctrl.items.count}} found
@@ -35,9 +35,9 @@
         %img{ 'ng-switch-when' => 'process', 'ng-src' => '{{ ctrl.placeholderImageUrl }}' }
 
   .text-center
-    %pagination{ 'ng-model' => 'ctrl.params.page', 'total-items' => 'ctrl.items.count',
-      'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
-      'previous-text' => '‹', 'next-text' => '›',
+    %pagination{ 'ng-if' => 'ctrl.items', 'ng-model' => 'ctrl.params.page',
+      'total-items' => 'ctrl.items.count', 'items-per-page' => 'ctrl.params.limit',
+      'max-size' => 5, 'previous-text' => '‹', 'next-text' => '›',
       'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
     %a.pagination-status.hidden-xs{ href: '#', 'ng-hide' => 'ctrl.fetching', 'ng-click' => 'ctrl.fetch()', tooltip: 'Click to Refresh' }
       {{ctrl.items.count}} found
