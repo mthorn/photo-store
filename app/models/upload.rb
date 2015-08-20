@@ -5,6 +5,10 @@ class Upload < ActiveRecord::Base
 
   belongs_to :uploader, class_name: 'User'
   belongs_to :library
+  has_many :tags, dependent: :destroy
+
+  delegate :tag_new, :tag_aspect, :tag_date, :tag_camera,
+    to: :library, prefix: true
 
   direct_upload :file
   serialize :metadata
@@ -29,6 +33,29 @@ class Upload < ActiveRecord::Base
   after_initialize :set_initial_state, if: :new_record?
   def set_initial_state
     self.state ||= 'upload'
+  end
+
+  after_create :auto_tag_new
+  def auto_tag_new
+    self.library.tag_new.to_s.scan(/\S+/).each do |tag|
+      self.tags.create!(name: tag)
+    end
+  end
+
+  after_save :auto_tag_aspect, if: -> { width? && height? && width_changed? && height_changed? && library_tag_aspect }
+  def auto_tag_aspect
+    ratio = self.width.to_f / self.height
+    tag =
+      if ratio >= 3
+        'panoramic'
+      elsif ratio > 1.1
+        'landscape'
+      elsif ratio > 0.9
+        'square'
+      else
+        'portrait'
+      end
+    self.tags.create!(name: tag)
   end
 
   def fetch_and_process_file_in_background

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150817043150) do
+ActiveRecord::Schema.define(version: 20150819042858) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,7 +35,11 @@ ActiveRecord::Schema.define(version: 20150817043150) do
   add_index "admins", ["reset_password_token"], name: "index_admins_on_reset_password_token", unique: true, using: :btree
 
   create_table "libraries", force: :cascade do |t|
-    t.string "name"
+    t.string  "name"
+    t.string  "tag_new",    default: "new"
+    t.boolean "tag_aspect", default: true
+    t.boolean "tag_date",   default: true
+    t.boolean "tag_camera", default: false
   end
 
   create_table "library_memberships", force: :cascade do |t|
@@ -45,6 +49,15 @@ ActiveRecord::Schema.define(version: 20150817043150) do
     t.datetime "updated_at"
     t.text     "selection"
   end
+
+  create_table "tags", force: :cascade do |t|
+    t.integer  "upload_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tags", ["upload_id", "name"], name: "index_tags_on_upload_id_and_name", unique: true, using: :btree
 
   create_table "upload_buffers", force: :cascade do |t|
     t.integer "user_id"

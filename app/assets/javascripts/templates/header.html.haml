@@ -19,7 +19,7 @@
       %li.dropdown
         %a.dropdown-toggle{ 'data-toggle' => 'dropdown', role: 'button', 'aria-haspopup' => 'true', 'aria-expanded' => 'false' }
           Selection
-          %span{ 'ng-hide' => 'ctrl.selection.isEmpty()' } ({{ctrl.selection.count()}})
+          %span.badge{ 'ng-hide' => 'ctrl.selection.isEmpty()' } {{ctrl.selection.count()}}
           %span.caret
         %ul.dropdown-menu
           %li

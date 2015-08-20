@@ -1,9 +1,32 @@
 .modal-header
   %h3.modal-title {{ctrl.library.name}}
-.modal-body.form
-  .form-group{ errors: 'ctrl.errors.name' }
-    %label{ for: 'name' } Name
-    %input.form-control{ type: 'text', 'ng-model' => 'ctrl.view.name' }
+.modal-body.form.form-horizontal
+  .form-group
+    %label.control-label.col-sm-3{ for: 'name' } Name
+    .col-sm-9{ errors: 'ctrl.errors.name' }
+      %input#name.form-control{ type: 'text', 'ng-model' => 'ctrl.view.name' }
+  .form-group
+    %label.control-label.col-sm-3{ for: 'tag_new' } New Upload Tags
+    .col-sm-9{ errors: 'ctrl.errors.tag_new' }
+      %input#tag_new.form-control{ type: 'text', 'ng-model' => 'ctrl.view.tag_new' }
+  .form-group
+    .col-sm-9.col-sm-offset-3
+      .checkbox
+        %label
+          %input{ type: 'checkbox', 'ng-model' => 'ctrl.view.tag_aspect' }
+          Tag Orientation
+  .form-group
+    .col-sm-9.col-sm-offset-3
+      .checkbox
+        %label
+          %input{ type: 'checkbox', 'ng-model' => 'ctrl.view.tag_date' }
+          Tag Month &amp; Year
+  .form-group
+    .col-sm-9.col-sm-offset-3
+      .checkbox
+        %label
+          %input{ type: 'checkbox', 'ng-model' => 'ctrl.view.tag_camera' }
+          Tag Camera
 .modal-footer
   %button.btn.btn-primary{ 'busy-click' => 'ctrl.save()' } Save
   %button.btn.btn-default{ 'ng-click' => '$dismiss()' } Cancel

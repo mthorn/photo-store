@@ -1,13 +1,14 @@
 .modal-header
   %h3.modal-title Profile
-.modal-body.form
-  .form-group{ errors: 'ctrl.errors.email' }
-    %label{ for: 'email' } Email
-    %input.form-control{ type: 'email', 'ng-model' => 'ctrl.view.email' }
-
-  .form-group{ errors: 'ctrl.errors.name' }
-    %label{ for: 'name' } Name
-    %input.form-control{ type: 'text', 'ng-model' => 'ctrl.view.name' }
+.modal-body.form.form-horizontal
+  .form-group
+    %label.control-label.col-sm-3{ for: 'email' } Email
+    .col-sm-9{ errors: 'ctrl.errors.email' }
+      %input#email.form-control{ type: 'email', 'ng-model' => 'ctrl.view.email' }
+  .form-group
+    %label.control-label.col-sm-3{ for: 'name' } Name
+    .col-sm-9{ errors: 'ctrl.errors.name' }
+      %input#name.form-control{ type: 'text', 'ng-model' => 'ctrl.view.name' }
 .modal-footer
   %button.btn.btn-primary{ 'busy-click' => 'ctrl.save()' } Save
   %button.btn.btn-default{ 'ng-click' => '$dismiss()' } Cancel

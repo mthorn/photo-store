@@ -7,6 +7,7 @@ class UploadsController < ApplicationController
     only_id = params[:only_id] == 'true'
 
     @uploads = @library.uploads.where(state: %w( process ready ))
+    @uploads = @uploads.includes(:tags) unless only_id
 
     # filtering
     if params[:selected] == 'true'

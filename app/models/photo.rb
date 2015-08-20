@@ -21,4 +21,19 @@ class Photo < Upload
     end
   end
 
+  after_save :auto_tag_date, if: -> { metadata_changed? && metadata? && self.library_tag_date }
+  def auto_tag_date
+    if (date = self.metadata['DateTime']) && (time = (Time.zone.local(*date.scan(/\d+/)) rescue nil))
+      self.tags.create!(name: time.year.to_s)
+      self.tags.create!(name: time.strftime('%B').downcase) # month
+    end
+  end
+
+  after_save :auto_tag_camera, if: -> { metadata_changed? && metadata? && self.library_tag_camera }
+  def auto_tag_camera
+    if camera = self.metadata['Model']
+      self.tags.create(name: Tag.mangle(camera))
+    end
+  end
+
 end
