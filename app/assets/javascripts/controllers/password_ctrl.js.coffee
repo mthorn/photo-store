@@ -3,16 +3,16 @@
   @inject '$http', '$window'
 
   initialize: ->
-    @password = password: '', password_confirmation: ''
+    @view = password: '', password_confirmation: ''
 
   save: ->
-    @passwordErrors = null
+    @errors = null
     @http(
       method: 'PUT'
       url: '/api/user.json'
-      data: @password
+      data: @view
     ).then(=>
       @window.location.reload()
     ).catch((response) =>
-      @passwordErrors = response.data
+      @errors = response.data
     )

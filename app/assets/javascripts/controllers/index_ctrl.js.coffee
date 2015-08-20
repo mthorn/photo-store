@@ -8,6 +8,7 @@ class @IndexCtrl extends Controller
     @scope.$watch (=> @params), @fetch, true
     @Library.on('change', @fetch)
     @selection.ctrl = @
+    @counter = 0
 
   fetch: =>
     if changed = ! angular.equals(@params, @parseSearchParams())
@@ -17,7 +18,11 @@ class @IndexCtrl extends Controller
       return @fetchAgain = true
 
     @timer?.cancel()
+
+    counter = @counter += 1
     @fetching = @query(@queryParams()).then((data) =>
+      return unless counter == @counter
+
       @items = data.items.map((upload) => new @Upload(upload))
       @items.count = data.count
 
@@ -29,6 +34,7 @@ class @IndexCtrl extends Controller
       @timer?.cancel()
       @timer = @schedule.delay(5000, @fetch)
     ).finally(=>
+      return unless counter == @counter
       @fetching = null
       @fetchAgain = false
     )
@@ -43,6 +49,7 @@ class @IndexCtrl extends Controller
     )
 
   '$on($destroy)': =>
+    @counter += 1
     @timer?.cancel()
     @Library.off('change', @fetch)
     delete @selection.ctrl

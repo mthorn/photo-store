@@ -8,6 +8,12 @@
   }
 }
 
+.pagination-status {
+  margin: 20px;
+  position: absolute;
+  line-height: 34px;
+}
+
 .gallery {
   @extend .clearfix;
   margin: 0 2%;

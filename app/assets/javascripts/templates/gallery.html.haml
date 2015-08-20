@@ -19,6 +19,10 @@
       'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
       'previous-text' => '‹', 'next-text' => '›',
       'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
+    %a.pagination-status.hidden-xs{ href: '#', 'ng-hide' => 'ctrl.fetching', 'ng-click' => 'ctrl.fetch()', tooltip: 'Click to Refresh' }
+      {{ctrl.items.count}} found
+    %span.pagination-status{ 'ng-show' => 'ctrl.fetching' }
+      %i.fa.fa-refresh.fa-spin
 
   .gallery.row
     .col-xs-6.col-sm-4.col-md-3.col-lg-2{ 'ng-repeat' => 'upload in ctrl.items track by upload.id' }
@@ -35,6 +39,10 @@
       'items-per-page' => 'ctrl.params.limit', 'max-size' => 5,
       'previous-text' => '‹', 'next-text' => '›',
       'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
+    %a.pagination-status.hidden-xs{ href: '#', 'ng-hide' => 'ctrl.fetching', 'ng-click' => 'ctrl.fetch()', tooltip: 'Click to Refresh' }
+      {{ctrl.items.count}} found
+    %span.pagination-status{ 'ng-show' => 'ctrl.fetching' }
+      %i.fa.fa-refresh.fa-spin
 
 %p.text-center{ 'ng-if' => 'ctrl.items.count == 0' }
   There are no items in your library. Drag &amp; drop some files here to add
