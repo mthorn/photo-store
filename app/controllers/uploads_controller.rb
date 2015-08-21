@@ -1,7 +1,7 @@
 class UploadsController < ApplicationController
 
   UNIQUE_PARAMS = %i( name size mime )
-  SORTABLE_FIELDS = %w( name created_at )
+  SORTABLE_FIELDS = %w( name created_at taken_at )
 
   def index
     only_id = params[:only_id] == 'true'

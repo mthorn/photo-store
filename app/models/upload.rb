@@ -38,7 +38,7 @@ class Upload < ActiveRecord::Base
   after_create :auto_tag_new
   def auto_tag_new
     self.library.tag_new.to_s.scan(/\S+/).each do |tag|
-      self.tags.create!(name: tag)
+      self.tags.create(name: tag)
     end
   end
 
@@ -55,7 +55,7 @@ class Upload < ActiveRecord::Base
       else
         'portrait'
       end
-    self.tags.create!(name: tag)
+    self.tags.create(name: tag)
   end
 
   def fetch_and_process_file_in_background
