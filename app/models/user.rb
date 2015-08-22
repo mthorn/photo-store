@@ -11,6 +11,18 @@ class User < ActiveRecord::Base
   validates :name, presence: true
   validates :manual_deselect, inclusion: [ true, false ]
 
+  validate :valid_time_zone, if: :time_zone_auto?
+  def valid_time_zone
+    old_zone = Time.zone
+    begin
+      Time.zone = self.time_zone_auto
+    rescue ArgumentError
+      self.errors.add(:time_zone_auto, 'is invalid')
+    ensure
+      Time.zone = old_zone
+    end
+  end
+
   def uploads
     Upload.joins(library: :library_memberships).where(library_memberships: { user_id: self.id })
   end

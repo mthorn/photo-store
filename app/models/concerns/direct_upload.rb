@@ -34,7 +34,7 @@ module DirectUpload
 
         post_data[:policy] = policy = [
           {
-            expiration: 24.hours.from_now.iso8601,
+            expiration: Time.use_zone(nil) { 24.hours.from_now.iso8601 },
             conditions: [
               { bucket: S3_BUCKET_NAME },
               { key: key },

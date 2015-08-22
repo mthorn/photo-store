@@ -1,7 +1,11 @@
 @app.factory 'User', [
-  '$resource', 'config',
-  ($resource,   config) ->
+  '$resource', '$window', 'config',
+  ($resource,   $window,   config) ->
     User = $resource '/api/user.json'
-    User.me = new User(config.user)
+    me = User.me = new User(config.user)
+
+    zone = $window.Intl.DateTimeFormat().resolved.timeZone
+    me.$update(time_zone_auto: zone) if me.time_zone_auto != zone
+
     User
 ]
