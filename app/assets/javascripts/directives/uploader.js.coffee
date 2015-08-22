@@ -25,7 +25,7 @@
           id: i
           name: file.name
           size: file.size
-          mime: file.type
+          mime: file.mime ? file.type
 
         @checking += 1
         $http(
@@ -75,7 +75,7 @@
                   file: file
                   name: file.name
                   size: file.size
-                  mime: file.type
+                  mime: file.mime ? file.type
                   imported_at: importDate
                   library_id: libraryId
               (@current.promise = @current.upload.create()).

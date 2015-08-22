@@ -4,6 +4,10 @@
     TYPES =
       image: [ 'image/gif', 'image/jpeg', 'image/png' ]
       video: [ 'video/mp4', 'video/webm', 'video/x-m4v', 'video/ogg' ]
+    EXTENSIONS =
+      mov: 'video/quicktime'
+      mp4: 'video/mp4'
+      m4v: 'video/x-m4v'
 
     HOST_BLACKLIST = _.compact([
       $window.location.host,
@@ -60,7 +64,13 @@
           readDir(entry.createReader())
         else if entry?.isFile
           entry.file (file) ->
-            queue.push(file) if file.type in types
+            if file.type in types
+              file.mime = file.type
+              queue.push(file)
+            else if file.type == '' && (ext = _.last(file.name.split('.'))) && (type = EXTENSIONS[ext.toLowerCase()])
+              file.mime = type
+              queue.push(file)
+
             decrementWaiting()
         else
           decrementWaiting()
