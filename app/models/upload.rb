@@ -42,8 +42,10 @@ class Upload < ActiveRecord::Base
     end
   end
 
-  after_save :auto_tag_aspect, if: -> { width? && height? && width_changed? && height_changed? && library_tag_aspect }
+  after_save :auto_tag_aspect, if: -> { (self.width_changed? || self.height_changed?) && self.library_tag_aspect }
   def auto_tag_aspect
+    return unless self.width? || self.height?
+
     ratio = self.width.to_f / self.height
     tag =
       if ratio >= 3
@@ -56,6 +58,13 @@ class Upload < ActiveRecord::Base
         'portrait'
       end
     self.tags.create(name: tag)
+  end
+
+  after_save :auto_tag_date, if: -> { self.taken_at_changed? && self.library_tag_date }
+  def auto_tag_date
+    return unless self.taken_at?
+    self.tags.create(name: self.taken_at.year.to_s)
+    self.tags.create(name: self.taken_at.strftime('%B').downcase) # month
   end
 
   def fetch_and_process_file_in_background

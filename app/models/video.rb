@@ -5,8 +5,6 @@ class Video < Upload
   before_validation :update_metadata, if: :file_changed?
   def update_metadata
     if self.file?
-      return if self.width? && self.height?
-
       probe_text = `ffprobe -show_format -show_streams #{self.file.path} 2>/dev/null`
       metadata = probe_text.
         scan(/(?<=\[FORMAT\]).*?(?=\[\/FORMAT\])/m).
@@ -37,9 +35,15 @@ class Video < Upload
       end
 
       self.set_time_taken
-
     else
       self.width = self.height = self.metadata = self.taken_at = nil
+    end
+  end
+
+  after_save :auto_tag_camera, if: -> { self.metadata_changed? && self.library_tag_camera }
+  def auto_tag_camera
+    if camera = self.metadata.try(:[], 'model')
+      self.tags.create(name: Tag.mangle(camera))
     end
   end
 

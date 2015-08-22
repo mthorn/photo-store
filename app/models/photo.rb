@@ -5,7 +5,6 @@ class Photo < Upload
   before_validation :update_metadata, if: :file_changed?
   def update_metadata
     if self.file?
-      return if self.width? && self.height?
       text = `identify -format '%w\n%h\n%[EXIF:*]' '#{self.file.path}'`.strip.split("\n")
       self.width = text.shift.to_i
       self.height = text.shift.to_i
@@ -23,15 +22,9 @@ class Photo < Upload
     end
   end
 
-  after_save :auto_tag_date, if: -> { taken_at_changed? && taken_at? && self.library_tag_date }
-  def auto_tag_date
-    self.tags.create(name: self.taken_at.year.to_s)
-    self.tags.create(name: self.taken_at.strftime('%B').downcase) # month
-  end
-
-  after_save :auto_tag_camera, if: -> { metadata_changed? && metadata? && self.library_tag_camera }
+  after_save :auto_tag_camera, if: -> { self.metadata_changed? && self.library_tag_camera }
   def auto_tag_camera
-    if camera = self.metadata['Model']
+    if camera = self.metadata.try(:[], 'Model')
       self.tags.create(name: Tag.mangle(camera))
     end
   end
