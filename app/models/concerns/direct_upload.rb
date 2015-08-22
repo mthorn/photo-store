@@ -5,102 +5,86 @@ module DirectUpload
     extend ClassMethods
   end
 
-  def direct_upload_key field
-    "uploads/#{self.class.to_s.underscore.dasherize}-#{self.id}-#{field}"
+  # including class needs the following methods:
+  #   * %{field}_size
+  #   * %{field}_block_size
+  #   * process_%{field}_data(iterable)
+
+  def direct_upload_keys field
+    size = self.public_send(:"#{field}_size")
+    block_size = self.public_send(:"#{field}_block_size")
+    (size.to_f / block_size).ceil.times.map do |i|
+      "uploads/#{self.class.to_s.underscore.dasherize}-#{self.id}-#{field}-#{i}"
+    end
   end
 
   def create_direct_upload field
-    key = self.direct_upload_key(field)
+    size = self.public_send(:"#{field}_size")
+    block_size = self.public_send(:"#{field}_block_size")
 
-    if S3
-      url = "https://#{S3_BUCKET_NAME}.#{S3_HOST}/"
-      post_data = {
-        key: "#{key}",
-        AWSAccessKeyId: AWS_ACCESS_KEY_ID,
-        acl: 'private'
-      }
+    posts = self.direct_upload_keys(field).map.with_index do |key, i|
+      offset = i * block_size
+      length = [ size, offset + block_size ].min - offset
+      if S3
+        post_data = {
+          key: "#{key}",
+          AWSAccessKeyId: AWS_ACCESS_KEY_ID,
+          acl: 'private'
+        }
 
-      post_data[:policy] = policy = [
-        {
-          expiration: 24.hours.from_now.iso8601,
-          conditions: [
-            { bucket: S3_BUCKET_NAME },
-            { key: key },
-            { acl: 'private' },
-            [ 'content-length-range', 0, 2 ** 30 ]
-          ]
-        }.to_json
-      ].pack('m').gsub("\n", "")
+        post_data[:policy] = policy = [
+          {
+            expiration: 24.hours.from_now.iso8601,
+            conditions: [
+              { bucket: S3_BUCKET_NAME },
+              { key: key },
+              { acl: 'private' },
+              [ 'content-length-range', length, length ]
+            ]
+          }.to_json
+        ].pack('m').gsub("\n", "")
 
-      post_data[:signature] = [
-        OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), AWS_SECRET_ACCESS_KEY, policy)
-      ].pack('m').gsub("\n", "")
-    else
-      buffer = self.uploader.upload_buffers.create!(key: key)
-      url = "/api/buffers/#{buffer.id}"
-      post_data = {}
+        post_data[:signature] = [
+          OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), AWS_SECRET_ACCESS_KEY, policy)
+        ].pack('m').gsub("\n", "")
+
+        [ "https://#{S3_BUCKET_NAME}.#{S3_HOST}/", post_data, offset, length ]
+      else
+        buffer = self.uploader.upload_buffers.create!(key: key, size: length)
+        [ "/api/buffers/#{buffer.id}", {}, offset, length ]
+      end
     end
 
-    instance_variable_set "@#{field}_post_url", url
-    instance_variable_set "@#{field}_post_data", post_data
+    instance_variable_set "@#{field}_posts", posts
     nil
   end
 
   def fetch_and_process(field)
-    file_data = nil
-    key = self.direct_upload_key(field)
-
-    if S3
-      begin
-        s3_obj = S3.get_object(S3_BUCKET_NAME, key)
-        S3.delete_object(S3_BUCKET_NAME, key)
-        file_data = s3_obj.body
-      rescue Excon::Errors::NotFound
-      end
-    else
-      if buffer = UploadBuffer.find_by(key: key)
-        file_data = buffer.data.read
-        buffer.destroy
-      end
-    end
-
-    if file_data
-      file_name = self.send(:"#{field}_name")
-      file = Tempfile.new(file_name.gsub(/\s+/, '_').split(/(?=\.[^.]+\z)/), encoding: 'BINARY')
-      begin
-        file.write file_data
-        file.rewind
-        self.send(:"process_#{field}", file)
-      ensure
-        file.close
-        file.unlink
-      end
-    else
-      self.send(:"process_#{field}", :not_found)
-    end
+    self.send(:"process_#{field}_data", Iterable.new(self, field))
   end
 
-  def destroy_buffer(field)
-    key = self.direct_upload_key(field)
-
-    if S3
-      begin
-        S3.delete_object(S3_BUCKET_NAME, key)
-      rescue Excon::Errors::NotFound
+  def destroy_buffers(field)
+    self.direct_upload_keys(field).each do |key|
+      if S3
+        begin
+          S3.delete_object(S3_BUCKET_NAME, key)
+        rescue Excon::Errors::NotFound
+        end
+      else
+        UploadBuffer.find_by(key: key).try(:destroy)
       end
-    else
-      UploadBuffer.find_by(key: key).try(:destroy)
     end
   end
 
   module ClassMethods
     def direct_upload *fields
       fields.each do |field|
-        attr_reader :"#{field}_post_url", :"#{field}_post_data"
+        attr_reader :"#{field}_posts"
         attr_accessor :"#{field}_uploaded"
 
+        after_create :create_direct_upload_for_file, unless: :"#{field}?"
         after_commit :"fetch_and_process_#{field}_in_background", if: :"#{field}_uploaded"
-        after_commit :"destroy_#{field}_buffer", on: :destroy
+        after_commit :"destroy_#{field}_buffers", on: :destroy
 
         include(mod = Module.new)
         mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
@@ -113,17 +97,40 @@ module DirectUpload
             ProcessUploadJob.perform_later(self, "#{field}")
           end
 
-          def process_#{field} file
-            if file != :not_found
-              self.update_attributes! :#{field} => file
-            end
-          end
-
-          def destroy_#{field}_buffer
-            self.destroy_buffer :#{field}
+          def destroy_#{field}_buffers
+            self.destroy_buffers :#{field}
           end
         RUBY
       end
+    end
+  end
+
+  class Iterable
+    def initialize upload, field
+      @upload = upload
+      @field = field
+    end
+
+    def each
+      @upload.direct_upload_keys(@field).each.with_index do |key, i|
+        if S3
+          begin
+            s3_obj = S3.get_object(S3_BUCKET_NAME, key)
+            S3.delete_object(S3_BUCKET_NAME, key)
+            yield s3_obj.body
+          rescue Excon::Errors::NotFound
+            yield :not_found
+            break
+          end
+        else
+          if buffer = UploadBuffer.find_by(key: key)
+            block = buffer.data.read
+            buffer.destroy
+            yield block
+          end
+        end
+      end
+      nil
     end
   end
 

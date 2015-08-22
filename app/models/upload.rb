@@ -28,8 +28,6 @@ class Upload < ActiveRecord::Base
 
   scope :deleted, -> { where.not(deleted_at: nil) }
 
-  after_create :create_direct_upload_for_file, unless: :file?
-
   after_initialize :set_initial_state, if: :new_record?
   def set_initial_state
     self.state ||= 'upload'
@@ -67,16 +65,39 @@ class Upload < ActiveRecord::Base
     self.tags.create(name: self.taken_at.strftime('%B').downcase) # month
   end
 
+  def file_size
+    self.size
+  end
+
+  def file_block_size
+    if self.destroyed?
+      self.block_size || self.uploader.upload_block_size
+    else
+      self.block_size ||= self.uploader.upload_block_size
+    end
+  end
+
   def fetch_and_process_file_in_background
     self.update_column(:state, 'process')
     super
   end
 
-  def process_file file
-    if file == :not_found
-      self.update_attributes!(state: 'fail')
-    else
+  def process_file_data blocks
+    file = Tempfile.new(self.name.gsub(/\s+/, '_').split(/(?=\.[^.]+\z)/), encoding: 'BINARY')
+    begin
+      blocks.each do |block|
+        if block == :not_found
+          self.update_attributes!(state: 'fail')
+          return
+        else
+          file.write(block)
+        end
+      end
+
       self.update_attributes!(state: 'ready', file: file)
+    ensure
+      file.close
+      file.unlink
     end
   end
 
@@ -88,10 +109,6 @@ class Upload < ActiveRecord::Base
             else return super
             end
     klass.new attributes, options, &block
-  end
-
-  def file_name
-    self.name
   end
 
 end

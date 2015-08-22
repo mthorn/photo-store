@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150821005315) do
+ActiveRecord::Schema.define(version: 20150822141741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(version: 20150821005315) do
     t.integer "user_id"
     t.string  "key"
     t.string  "data"
+    t.integer "size"
   end
 
   add_index "upload_buffers", ["key"], name: "index_upload_buffers_on_key", unique: true, using: :btree
@@ -86,26 +87,28 @@ ActiveRecord::Schema.define(version: 20150821005315) do
     t.text     "metadata"
     t.datetime "deleted_at"
     t.datetime "taken_at"
+    t.integer  "block_size"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  default: "",    null: false
-    t.string   "encrypted_password",     default: "",    null: false
+    t.string   "email",                  default: "",      null: false
+    t.string   "encrypted_password",     default: "",      null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,     null: false
+    t.integer  "sign_in_count",          default: 0,       null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
     t.inet     "last_sign_in_ip"
-    t.integer  "failed_attempts",        default: 0,     null: false
+    t.integer  "failed_attempts",        default: 0,       null: false
     t.string   "unlock_token"
     t.datetime "locked_at"
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
     t.string   "name"
     t.boolean  "manual_deselect",        default: false
+    t.integer  "upload_block_size",      default: 5242880
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

@@ -78,7 +78,7 @@
                   mime: file.mime ? file.type
                   imported_at: importDate
                   library_id: libraryId
-              (@current.promise = @current.upload.create()).
+              (@current.promise = @current.upload.start()).
                 then(
                   (=>
                     @progress.done += 1
@@ -143,12 +143,11 @@
 
       pause: ->
         @queue.pause()
-        # cancel current file and requeue
-        @current?.promise?.abort()
-        @enqueue([ @current.file ], 'start', @current.upload['imported_at']) if @current?.file?
+        @current?.promise?.pause()
 
       unpause: ->
         @queue.unpause()
+        @current?.promise?.unpause()
 
       cancel: ->
         @skipped = 0
