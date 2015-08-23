@@ -16,7 +16,7 @@ class Photo < Upload
         self.width, self.height = self.height, self.width
       end
 
-      self.set_time_taken
+      self.set_taken_at
     else
       self.width = self.height = self.metadata = self.taken_at = nil
     end
@@ -29,7 +29,7 @@ class Photo < Upload
     end
   end
 
-  def set_time_taken
+  def set_taken_at
     if self.metadata?
       self.taken_at = (date = self.metadata['DateTime']) &&
         (Time.zone.local(*date.scan(/\d+/)) rescue nil) ||
