@@ -17,7 +17,7 @@
       $q.when($.ajax
         url: options.url
         type: options.type || 'POST'
-        data: formData.build(options.data)
+        data: options.data
         headers: _.pick($http.defaults.headers.common, [ 'X-CSRF-Token', 'X-Call-Token' ])
         cache: false
         xhr: ->

@@ -10,7 +10,7 @@ class UploadBuffer < ActiveRecord::Base
   validate :validate_data_size
   def validate_data_size
     if self.size? && self.data? && (size = self.data.size) && size != self.size
-      self.errors.add(:data, "is not the expected size (#{self.size})")
+      self.errors.add(:data, "is not the expected size (#{self.size}), got (#{size})")
     end
   end
 

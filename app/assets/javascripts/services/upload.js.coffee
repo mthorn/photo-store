@@ -13,54 +13,59 @@
 
       paused = cancel = false
       upload = null
-      deferred = $q.defer()
+      uploadDeferred = $q.defer()
+      fileDataDeferred = $q.defer()
 
       uploadNextBlock = ->
         if posts.length == 0
-          deferred.resolve()
+          uploadDeferred.resolve()
           return
         else if cancel
-          deferred.reject('cancel')
+          uploadDeferred.reject('cancel')
         else if paused
           return
 
         post = posts.shift()
         [ url, postData, offset, length ] = post
+        fileDataDeferred.promise.then(
+          ((fileData) ->
+            data = new Uint8Array(fileData, offset, length)
+            block = new Blob([ data ], type: 'application/octet-stream')
 
-        reader = new FileReader
-        reader.onload = ->
-          block = new Blob [ (new Uint8Array(reader.result, offset, length)) ], type: 'application/octet-stream'
-
-          schedule.retryable(->
-            if cancel
-              $q.reject 'cancel'
-            else if paused
-              $q.reject 'paused'
-            else
-              upload = fileUpload
-                url: url
-                data: formData().add(postData).build('file', block)
-              upload.finally(-> upload = null).then(
-                (->
-                  done += length
-                  uploadNextBlock()
-                ),
-                null,
-                ((event) ->
-                  deferred.notify(loaded: done + event.loaded, total: total)
+            schedule.retryable(->
+              if cancel
+                $q.reject 'cancel'
+              else if paused
+                $q.reject 'paused'
+              else
+                upload = fileUpload
+                  url: url
+                  data: formData().add(postData).build('file', block)
+                upload.finally(-> upload = null).then(
+                  (->
+                    done += length
+                    uploadNextBlock()
+                  ),
+                  null,
+                  ((event) ->
+                    uploadDeferred.notify(loaded: done + event.loaded, total: total)
+                    event
+                  )
                 )
-              )
-              upload
-          ).catch((reason) ->
-            posts.unshift(post)
-            deferred.reject(reason) if reason != 'paused'
-          )
+            ).catch((reason) ->
+              posts.unshift(post)
+              uploadDeferred.reject(reason) if reason != 'paused'
+            )
+          ),
+          uploadDeferred.reject
+        )
 
-        reader.onerror = ->
-          deferred.reject('file read error')
-
-        reader.readAsArrayBuffer(file)
         null
+
+      reader = new FileReader
+      reader.onload = -> fileDataDeferred.resolve(reader.result)
+      reader.onerror = fileDataDeferred.reject
+      reader.readAsArrayBuffer(file)
 
       promise = @$save().
         then(=>
@@ -68,7 +73,7 @@
           for post in posts
             total += post.length
           uploadNextBlock()
-          deferred.promise
+          uploadDeferred.promise
         ).
         then(=> schedule.retryable => @$update(file_uploaded: true)).
         catch((reason) =>
@@ -80,7 +85,7 @@
       promise.abort = ->
         cancel = true
         upload?.abort()
-        deferred.reject('cancel')
+        uploadDeferred.reject('cancel')
         null
 
       promise.pause = ->
