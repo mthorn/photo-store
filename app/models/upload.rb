@@ -7,11 +7,16 @@ class Upload < ActiveRecord::Base
   belongs_to :library
   has_many :tags, dependent: :destroy
 
-  delegate :tag_new, :tag_aspect, :tag_date, :tag_camera,
+  delegate :tag_new, :tag_aspect, :tag_date, :tag_camera, :tag_location,
     to: :library, prefix: true
 
   direct_upload :file
   serialize :metadata
+  reverse_geocoded_by :latitude, :longitude, address: :location do |model, results|
+    if geo = results.first
+      model.location = [ geo.city, geo.province_code, geo.country ].compact.join(', ')
+    end
+  end
 
   validates :type, presence: true
   validates :library, presence: true
@@ -25,8 +30,12 @@ class Upload < ActiveRecord::Base
   validates :mime, presence: true, format: /\A\w+\/\w+\z/
   validates :state, inclusion: %w( upload process ready fail destroy )
   validates :imported_at, presence: true
+  validates :latitude, allow_nil: true, numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }
+  validates :longitude, allow_nil: true, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
 
   scope :deleted, -> { where.not(deleted_at: nil) }
+
+  after_validation :reverse_geocode, if: -> { latitude_changed? || longitude_changed? }
 
   after_initialize :set_initial_state, if: :new_record?
   def set_initial_state
@@ -63,6 +72,14 @@ class Upload < ActiveRecord::Base
     return unless self.taken_at?
     self.tags.create(name: self.taken_at.year.to_s)
     self.tags.create(name: self.taken_at.strftime('%B').downcase) # month
+  end
+
+  after_save :auto_tag_location, if: -> { self.location_changed? && self.library_tag_location }
+  def auto_tag_location
+    return unless self.location?
+    self.location.split(/, */).each do |part|
+      self.tags.create(name: part.downcase.gsub(/ +/, '-'))
+    end
   end
 
   def file_size

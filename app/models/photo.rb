@@ -17,8 +17,10 @@ class Photo < Upload
       end
 
       self.set_taken_at
+      self.set_coordinates
     else
-      self.width = self.height = self.metadata = self.taken_at = nil
+      self.width = self.height = self.metadata = self.taken_at =
+        self.latitude = self.longitude = nil
     end
   end
 
@@ -34,6 +36,19 @@ class Photo < Upload
       self.taken_at = (date = self.metadata['DateTime']) &&
         (Time.zone.local(*date.scan(/\d+/)) rescue nil) ||
         self.modified_at || self.imported_at || self.created_at
+    end
+  end
+
+  def set_coordinates
+    if self.metadata?
+      self.latitude, self.longitude = %w( GPSLatitude GPSLongitude ).map do |key|
+        if (dms = self.metadata[key]).present? && (dir = self.metadata[key + 'Ref']).present?
+          d, m, s = dms.split(/, */).map { |r| Rational(*r.split('/')) }
+          (d + (m / 60) + (s / 3600)).to_f * (dir.in?(%w( S W )) ? -1 : 1)
+        else
+          nil
+        end
+      end
     end
   end
 

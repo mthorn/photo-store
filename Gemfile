@@ -22,6 +22,7 @@ gem 'mini_magick'
 gem 'sucker_punch'
 gem 'font-awesome-rails'
 gem 'jquery-rails'
+gem 'geocoder'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-angular'

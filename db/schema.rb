@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150822203539) do
+ActiveRecord::Schema.define(version: 20150823171403) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,10 +36,11 @@ ActiveRecord::Schema.define(version: 20150822203539) do
 
   create_table "libraries", force: :cascade do |t|
     t.string  "name"
-    t.string  "tag_new",    default: "new"
-    t.boolean "tag_aspect", default: true
-    t.boolean "tag_date",   default: true
-    t.boolean "tag_camera", default: false
+    t.string  "tag_new",      default: "new"
+    t.boolean "tag_aspect",   default: true
+    t.boolean "tag_date",     default: true
+    t.boolean "tag_camera",   default: false
+    t.boolean "tag_location", default: true
   end
 
   create_table "library_memberships", force: :cascade do |t|
@@ -88,6 +89,9 @@ ActiveRecord::Schema.define(version: 20150822203539) do
     t.datetime "deleted_at"
     t.datetime "taken_at"
     t.integer  "block_size"
+    t.decimal  "longitude"
+    t.decimal  "latitude"
+    t.string   "location"
   end
 
   create_table "users", force: :cascade do |t|

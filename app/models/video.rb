@@ -35,8 +35,10 @@ class Video < Upload
       end
 
       self.set_taken_at
+      self.set_coordinates
     else
-      self.width = self.height = self.metadata = self.taken_at = nil
+      self.width = self.height = self.metadata = self.taken_at =
+        self.latitude = self.longitude = nil
     end
   end
 
@@ -52,6 +54,12 @@ class Video < Upload
       self.taken_at = (date = self.metadata['date']) &&
         (Time.zone.local(*date.scan(/\d+/)) rescue nil) ||
         self.modified_at || self.imported_at || self.created_at
+    end
+  end
+
+  def set_coordinates
+    if self.metadata? && (location = self.metadata['location']).present?
+      self.latitude, self.longitude = location.scan(/[+-]\d+\.\d+/).map(&:to_f)
     end
   end
 
