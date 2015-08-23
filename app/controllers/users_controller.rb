@@ -14,7 +14,8 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.permit(:name, :email, :password, :password_confirmation, :manual_deselect, :time_zone_auto)
+    params.permit(:name, :email, :password, :password_confirmation,
+      :manual_deselect, :time_zone_auto, :upload_block_size_mib)
   end
 
 end

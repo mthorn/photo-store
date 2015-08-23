@@ -9,6 +9,10 @@
     %label.control-label.col-sm-3{ for: 'name' } Name
     .col-sm-9{ errors: 'ctrl.errors.name' }
       %input#name.form-control{ type: 'text', 'ng-model' => 'ctrl.view.name' }
+  .form-group{ 'tooltip' => 'The maximum amount of upload data that will be discarded if an upload is paused or a transient error occurs with the storage provider.' }
+    %label.control-label.col-sm-3{ for: 'upload_block_size_mib' } Upload Block Size (MiB)
+    .col-sm-9{ errors: 'ctrl.errors.upload_block_size_mib' }
+      %input#upload_block_size_mib.form-control{ type: 'number', 'ng-model' => 'ctrl.view.upload_block_size_mib' }
 .modal-footer
   %button.btn.btn-primary{ 'busy-click' => 'ctrl.save()' } Save
   %button.btn.btn-default{ 'ng-click' => '$dismiss()' } Cancel

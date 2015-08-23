@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
 
   validates :name, presence: true
   validates :manual_deselect, inclusion: [ true, false ]
+  validates :upload_block_size, presence: true, numericality: { greater_than: 0 }
 
   validate :valid_time_zone, if: :time_zone_auto?
   def valid_time_zone
@@ -25,6 +26,14 @@ class User < ActiveRecord::Base
 
   def uploads
     Upload.joins(library: :library_memberships).where(library_memberships: { user_id: self.id })
+  end
+
+  def upload_block_size_mib
+    (value = self.upload_block_size).presence && (value.to_f / (2 ** 20))
+  end
+
+  def upload_block_size_mib=(value)
+    self.upload_block_size = value && (value.to_f * (2 ** 20))
   end
 
 end
