@@ -43,7 +43,7 @@ class LibrariesController < ApplicationController
   end
 
   def library_params
-    @library_params ||= params.permit(:name, :tag_new, :tag_aspect, :tag_date, :tag_camera)
+    @library_params ||= params.permit(:name, :tag_new, :tag_aspect, :tag_date, :tag_camera, :tag_location)
   end
 
   def library_membership_params

@@ -64,21 +64,21 @@ class Upload < ActiveRecord::Base
       else
         'portrait'
       end
-    self.tags.create(name: tag)
+    self.tags.create(name: tag, kind: 'aspect')
   end
 
   after_save :auto_tag_date, if: -> { self.taken_at_changed? && self.library_tag_date }
   def auto_tag_date
     return unless self.taken_at?
-    self.tags.create(name: self.taken_at.year.to_s)
-    self.tags.create(name: self.taken_at.strftime('%B').downcase) # month
+    self.tags.create(name: self.taken_at.year.to_s, kind: 'date')
+    self.tags.create(name: self.taken_at.strftime('%B').downcase, kind: 'date') # month
   end
 
   after_save :auto_tag_location, if: -> { self.location_changed? && self.library_tag_location }
   def auto_tag_location
     return unless self.location?
     self.location.split(/, */).each do |part|
-      self.tags.create(name: part.downcase.gsub(/ +/, '-'))
+      self.tags.create(name: part.downcase.gsub(/ +/, '-'), kind: 'location')
     end
   end
 

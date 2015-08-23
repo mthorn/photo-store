@@ -27,6 +27,12 @@
         %label
           %input{ type: 'checkbox', 'ng-model' => 'ctrl.view.tag_camera' }
           Tag Camera
+  .form-group
+    .col-sm-9.col-sm-offset-3
+      .checkbox
+        %label
+          %input{ type: 'checkbox', 'ng-model' => 'ctrl.view.tag_location' }
+          Tag Location
 .modal-footer
   %button.btn.btn-primary{ 'busy-click' => 'ctrl.save()' } Save
   %button.btn.btn-default{ 'ng-click' => '$dismiss()' } Cancel

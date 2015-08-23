@@ -6,23 +6,21 @@ class Library < ActiveRecord::Base
 
   validates :name, presence: true
   validates :tag_new, format: /\A(?:[a-z0-9][a-z0-9&-]* *)*\z/
-  validates :tag_aspect, inclusion: [ true, false ]
-  validates :tag_date, inclusion: [ true, false ]
-  validates :tag_camera, :boolean, default: false
 
-  after_save :auto_tag_aspect, if: :tag_aspect_changed?
-  def auto_tag_aspect
-    TagJob.perform_later(self, 'auto_tag_aspect') if self.tag_aspect?
+  Tag::AUTO_TAG_KINDS.each do |kind|
+    validates :"tag_#{kind}", inclusion: [ true, false ]
+    after_save :"auto_tag_#{kind}", if: :"tag_#{kind}_changed?"
+    define_method :"auto_tag_#{kind}" do
+      if self.public_send(:"tag_#{kind}?")
+        TagJob.perform_later(self, "auto_tag_#{kind}")
+      else
+        Tag.connection.execute "DELETE FROM tags WHERE id IN (#{self.tags.where(kind: kind).select(:id).to_sql})"
+      end
+    end
   end
 
-  after_save :auto_tag_date, if: :tag_date_changed?
-  def auto_tag_date
-    TagJob.perform_later(self, 'auto_tag_date') if self.tag_date?
-  end
-
-  after_save :auto_tag_camera, if: :tag_camera_changed?
-  def auto_tag_camera
-    TagJob.perform_later(self, 'auto_tag_camera') if self.tag_camera?
+  def tags
+    Tag.joins(:upload).where(uploads: { library_id: self.id })
   end
 
   def deleted_count
