@@ -2,3 +2,18 @@
   padding-top: 0;
   padding-bottom: 0;
 }
+
+.btn-busy {
+  @include opacity(70);
+  cursor: default;
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  &:after {
+    @extend .fa-spin;
+    content: "\f021";
+    margin-left: 5px;
+    display: inline-block;
+  }
+}
