@@ -115,18 +115,17 @@ module DirectUpload
       @upload.direct_upload_keys(@field).each.with_index do |key, i|
         if S3
           begin
-            s3_obj = S3.get_object(S3_BUCKET_NAME, key)
-            S3.delete_object(S3_BUCKET_NAME, key)
-            yield s3_obj.body
+            yield S3.get_object(S3_BUCKET_NAME, key)
           rescue Excon::Errors::NotFound
             yield :not_found
             break
           end
         else
           if buffer = UploadBuffer.find_by(key: key)
-            block = buffer.data.read
-            buffer.destroy
-            yield block
+            yield buffer.data.read
+          else
+            yield :not_found
+            break
           end
         end
       end

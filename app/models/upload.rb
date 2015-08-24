@@ -36,6 +36,7 @@ class Upload < ActiveRecord::Base
   scope :deleted, -> { where.not(deleted_at: nil) }
 
   after_validation :reverse_geocode, if: -> { latitude_changed? || longitude_changed? }
+  after_commit :destroy_file_buffers, if: -> { persisted? && file? && previous_changes[:file].present? }
 
   after_initialize :set_initial_state, if: :new_record?
   def set_initial_state
