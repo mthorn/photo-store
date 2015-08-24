@@ -100,6 +100,7 @@ class UploadsController < ApplicationController
         SELECT name, size, mime
         FROM uploads
         WHERE library_id = #{@library.id}
+        AND state IN ('process', 'ready')
       )
     SQL
     render json: (result.map { |r| r['id'].to_i })
