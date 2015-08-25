@@ -115,7 +115,7 @@ module DirectUpload
       @upload.direct_upload_keys(@field).each.with_index do |key, i|
         if S3
           begin
-            yield S3.get_object(S3_BUCKET_NAME, key)
+            yield S3.get_object(S3_BUCKET_NAME, key).body
           rescue Excon::Errors::NotFound
             yield :not_found
             break

@@ -2,6 +2,7 @@ class BaseUploader < CarrierWave::Uploader::Base
 
   include CarrierWave::MiniMagick
   include Sprockets::Rails::Helper
+  include UploaderExtension
 
   def store_dir
     path = [

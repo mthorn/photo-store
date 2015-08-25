@@ -1,4 +1,4 @@
-module CarrierWave::MiniMagick
+module UploaderExtension
 
   def fix_exif_rotation
     manipulate! do |img|
@@ -21,7 +21,7 @@ module CarrierWave::MiniMagick
 
     frame = Tempfile.new(%w( frame .jpg ), encoding: 'BINARY')
     begin
-      duration = probe.find { |l| l.starts_with?('duration=') }.split('=', 2).last.to_f
+      duration = probe.find { |l| l.starts_with?('duration=') }.try { |line| line.split('=', 2).last.to_f } || 0
       system('ffmpeg', '-y', '-i', current_path, '-ss', (duration * fraction).to_s, '-r', '1', '-t', '1', frame.path)
       return unless $? == 0
 
