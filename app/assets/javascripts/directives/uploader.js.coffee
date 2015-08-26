@@ -101,7 +101,7 @@
                   ),
                   ((currentProgress) =>
                     @current.progress = currentProgress
-                    @rateWindow.push([ Date.now(), @progress.loaded + @current.progress.loaded ])
+                    @rateWindow.push([ now = Date.now(), now, @progress.loaded + @current.progress.loaded ])
                   )
                 ).
                 finally(=>
@@ -137,7 +137,8 @@
           if @rateWindow.length >= 2 # rate = 0 if there aren't 2 entries to compare
             first = @rateWindow[0]
             last = @rateWindow[@rateWindow.length - 1]
-            return (last[1] - first[1]) / ((now - first[0]) / 1000)
+            last[1] = now if now - last[1] > 1000 # return value changes max once per second after last progress update, to prevent infinite digest
+            return Math.max((last[2] - first[2]) / ((last[1] - first[0]) / 1000), 0)
 
         0
 
