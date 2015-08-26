@@ -31,7 +31,10 @@
       .gallery-item{ 'ng-switch' => 'upload.state',
           'ng-click' => 'ctrl.selection.click($event, upload.id)',
           'ng-class' => '{ selected: ctrl.selection.isSelected(upload.id) }' }
-        %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ upload.gallery_url }}', 'while-loading' => '{{ ctrl.placeholderImageUrl }}' }
+
+        .processing.text-center{ 'ng-if' => 'upload.isLoading' }
+          %i.fa.fa-4x.fa-spinner.fa-spin
+        %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ upload.gallery_url }}', 'while-loading' => '{{ ctrl.placeholderImageUrl }}', 'set-loading' => 'upload.isLoading = loading' }
         .processing.text-center{ 'ng-switch-when' => 'process' }
           %i.fa.fa-4x.fa-spinner.fa-spin
         %img{ 'ng-switch-when' => 'process', 'ng-src' => '{{ ctrl.placeholderImageUrl }}' }

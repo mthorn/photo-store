@@ -1,19 +1,25 @@
-@app.directive 'whileLoading', ->
+@app.directive 'whileLoading', [
+  '$parse',
+  ($parse) ->
 
-  scope: true
-  link: (scope, element, attrs) ->
-    img = null
-
-    remove = ->
-      element.show()
-      img?.remove()
+    scope: true
+    link: (scope, element, attrs) ->
       img = null
-      element.off 'load', remove
+      callback = $parse(attrs.setLoading)
 
-    attrs.$observe 'src', ->
-      element.hide()
-      unless img?
-        img = $("<img src='#{attrs.whileLoading}'>").insertAfter(element)
-      element.on 'load', remove
+      remove = ->
+        element.show()
+        callback(scope, loading: false)
+        img?.remove()
+        img = null
+        element.off 'load', remove
 
-    scope.$on '$destroy', remove
+      attrs.$observe 'src', ->
+        element.hide()
+        callback(scope, loading: true)
+        unless img?
+          img = $("<img src='#{attrs.whileLoading}'>").insertAfter(element)
+        element.on 'load', -> scope.$apply(remove)
+
+      scope.$on '$destroy', remove
+]
