@@ -33,6 +33,7 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-angular-ui-bootstrap-bower'
   gem 'rails-assets-lodash'
   gem 'rails-assets-sprintf'
+  gem 'rails-assets-ng-tags-input'
 end
 
 group :development, :test do

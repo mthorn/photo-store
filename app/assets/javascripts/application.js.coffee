@@ -8,6 +8,7 @@
 #= require angular-sanitize
 #= require angular-rails-templates
 #= require angular-ui-bootstrap-bower
+#= require ng-tags-input
 #= require lodash
 #= require sprintf
 #
