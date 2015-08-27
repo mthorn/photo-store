@@ -3,7 +3,7 @@
   DEFAULT_PARAMS = { page: 1, limit: 24, order: '' }
   LIMIT_OPTIONS = [ 12, 24, 48, 96 ]
 
-  @inject '$q'
+  @inject '$q', '$modal'
 
   initialize: ->
     super
@@ -29,3 +29,12 @@
       order: 'id-asc'
       only_id: true
     @query(query).then((data) -> data.items)
+
+  click: (event, upload) ->
+    @selection.click(event, upload.id)
+
+  dblclick: (event, upload) ->
+    @modal.open(
+      templateUrl: 'view_upload.html'
+      scope: angular.extend(@scope.$new(), upload: upload)
+    )

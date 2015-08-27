@@ -29,7 +29,8 @@
   .gallery.row
     .col-xs-6.col-sm-4.col-md-3.col-lg-2{ 'ng-repeat' => 'upload in ctrl.items track by upload.id' }
       .gallery-item{ 'ng-switch' => 'upload.state',
-          'ng-click' => 'ctrl.selection.click($event, upload.id)',
+          'ng-click' => 'ctrl.click($event, upload)',
+          'ng-dblclick' => 'ctrl.dblclick($event, upload)',
           'ng-class' => '{ selected: ctrl.selection.isSelected(upload.id) }' }
 
         .processing.text-center{ 'ng-if' => 'upload.isLoading' }

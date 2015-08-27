@@ -30,6 +30,8 @@
           User.me.manual_deselect
 
       click: (event, uploadId) ->
+        return unless @enabled
+
         @clear() unless User.me.manual_deselect || event.ctrlKey || event.metaKey
 
         $q.when(@ctrl?.pageIds?()).then (pageIds) =>
@@ -46,7 +48,7 @@
             startId = uploadId
 
       isSelected: (uploadId) ->
-        @indexOf(uploadId) != -1
+        @enabled && @indexOf(uploadId) != -1
 
       indexOf: (uploadId) ->
         _.indexOf(@ids, uploadId, true)

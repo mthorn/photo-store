@@ -23,6 +23,16 @@
           %span.caret
         %ul.dropdown-menu
           %li
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.enabled = ! ctrl.selection.enabled' }
+              {{ctrl.selection.enabled && 'Disable' || 'Enable'}}
+          %li
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.manualDeselect("toggle")' }
+              %i.fa{ 'ng-class' => '{ "fa-check": ctrl.selection.manualDeselect() }' }
+              Click to de-select
+
+          %li.divider{ role: 'separator' }
+
+          %li
             %a{ href: '#', 'ng-click' => 'ctrl.selection.clear()' }
               Clear
           %li{ 'ng-show' => 'ctrl.selection.isPageAvailable()' }
@@ -46,13 +56,6 @@
           %li{ 'ng-class' => '{ disabled: ctrl.selection.isEmpty() }' }
             %a{ href: '#', 'ng-click' => 'ctrl.selection.deleteSelected()' }
               Delete
-
-          %li.divider{ role: 'separator' }
-
-          %li
-            %a{ href: '#', 'ng-click' => 'ctrl.selection.manualDeselect("toggle")' }
-              %i.fa{ 'ng-class' => '{ "fa-check": ctrl.selection.manualDeselect() }' }
-              Click to de-select
 
       %li.dropdown
         %a.dropdown-toggle{ 'data-toggle' => 'dropdown', role: 'button', 'aria-haspopup' => 'true', 'aria-expanded' => 'false' }
