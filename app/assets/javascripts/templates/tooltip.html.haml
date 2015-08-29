@@ -1,0 +1,15 @@
+%dl.upload-tooltip
+  %dt Type
+  %dd {{upload.type}} ({{upload.mime}})
+  %dt Name
+  %dd {{upload.name}}
+  %dt Size
+  %dd {{upload.size | bytes}}
+  %dt{ 'ng-show' => 'upload.width' } Dimensions
+  %dd{ 'ng-show' => 'upload.width' } {{upload.width}} x {{upload.height}}
+  %dt{ 'ng-show' => 'upload.taken_at' } Taken
+  %dd{ 'ng-show' => 'upload.taken_at' } {{upload.taken_at | date:"yyyy-MM-dd"}}
+  %dt{ 'ng-show' => 'upload.imported_at' } Imported
+  %dd{ 'ng-show' => 'upload.imported_at' } {{upload.imported_at | date:"yyyy-MM-dd"}}
+  %dt{ 'ng-show' => 'upload.location' } Location
+  %dd{ 'ng-show' => 'upload.location' } {{upload.location}}
