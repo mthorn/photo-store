@@ -1,19 +1,15 @@
-.filter-settings.form.clearfix
-
-  .form-group.col-xs-4.col-sm-3.col-md-2
-    %label{ for: 'limit' } Per page
-    %select#limit.form-control{ 'ng-model' => 'ctrl.params.limit', 'ng-options' => 'e.i as e.i for e in ctrl.limitOptions' }
-
-  .form-group.col-xs-4.col-sm-3.col-md-2
-    %label{ for: 'order' } Sorting
-    %select#order.form-control{ 'ng-model' => 'ctrl.params.order' }
-      %option{ value: '' } default
-      %option{ value: 'name-asc' } name &#8595;
-      %option{ value: 'name-desc' } name &#8593;
-      %option{ value: 'created_at-asc' } upload time &#8595;
-      %option{ value: 'created_at-desc' } upload time &#8593;
-      %option{ value: 'taken_at-asc' } time taken &#8595;
-      %option{ value: 'taken_at-desc' } time taken &#8593;
+.row
+  .col-xs-12
+    %accordion
+      %accordion-group{ 'is-open' => 'queryOpen' }
+        %accordion-heading
+          Options
+          %i.pull-right.fa{ 'ng-class' => '{ "fa-chevron-down": queryOpen, "fa-chevron-right": ! queryOpen }' }
+        %query-settings{ params: 'ctrl.params' }
+          .form-group
+            %label.control-label.col-sm-3{ for: 'limit' } Per page
+            .col-sm-9
+              %select#limit.form-control{ 'ng-model' => 'ctrl.params.limit', 'ng-options' => 'e.i as e.i for e in ctrl.limitOptions' }
 
 %div{ 'ng-if' => 'ctrl.items.length != 0' }
   .text-center

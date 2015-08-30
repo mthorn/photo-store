@@ -5,7 +5,7 @@ class Library < ActiveRecord::Base
   has_many :library_memberships, dependent: :destroy
 
   validates :name, presence: true
-  validates :tag_new, format: /\A(?:[a-z0-9][a-z0-9&-]* *)*\z/
+  validates :tag_new, format: /\A(?:#{Tag::TAG_PATTERN}(?:,#{Tag::TAG_PATTERN})*)?\z/
 
   Tag::AUTO_TAG_KINDS.each do |kind|
     validates :"tag_#{kind}", inclusion: [ true, false ]
@@ -21,6 +21,10 @@ class Library < ActiveRecord::Base
 
   def tags
     Tag.joins(:upload).where(uploads: { library_id: self.id })
+  end
+
+  def tag_counts
+    self.tags.group('tags.name').count
   end
 
   def deleted_count

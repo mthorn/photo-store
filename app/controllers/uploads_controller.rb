@@ -18,6 +18,9 @@ class UploadsController < ApplicationController
     else
       @uploads = @uploads.where(deleted_at: nil)
     end
+    if (tags = params[:tags]).present?
+      @uploads = @uploads.with_tags(tags)
+    end
 
     # calculate page count before pagination
     @count = @uploads.count unless only_id

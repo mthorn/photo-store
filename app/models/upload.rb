@@ -45,7 +45,7 @@ class Upload < ActiveRecord::Base
 
   after_create :auto_tag_new
   def auto_tag_new
-    self.library.tag_new.to_s.scan(/\S+/).each do |tag|
+    self.library.tag_new.to_s.scan(/#{Tag::TAG_PATTERN}/).each do |tag|
       self.tags.create(name: tag)
     end
   end
@@ -80,6 +80,18 @@ class Upload < ActiveRecord::Base
     return unless self.location?
     self.location.split(/, */).each do |part|
       self.tags.create(name: part.downcase.gsub(/ +/, '-'), kind: 'location')
+    end
+  end
+
+  def self.with_tags tags
+    result = self.all
+    tags.split(',').select(&:present?).map(&:strip).inject(self.all) do |scope, tag|
+      if negative = tag.starts_with?('-')
+        tag = tag[1..-1]
+      end
+
+      sub = Tag.where(name: tag).select(:upload_id)
+      scope.where("uploads.id #{negative ? 'NOT IN' : 'IN'} (#{sub.to_sql})")
     end
   end
 

@@ -1,0 +1,25 @@
+.query-settings.form.form-horizontal
+
+  %ng-transclude
+
+  .form-group
+    %label.control-label.col-sm-3{ for: 'order' } Sorting
+    .col-sm-9
+      %select#order.form-control{ 'ng-model' => 'ctrl.params.order' }
+        %option{ value: '' } default
+        %option{ value: 'name-asc' } name &#8595;
+        %option{ value: 'name-desc' } name &#8593;
+        %option{ value: 'created_at-asc' } upload time &#8595;
+        %option{ value: 'created_at-desc' } upload time &#8593;
+        %option{ value: 'taken_at-asc' } time taken &#8595;
+        %option{ value: 'taken_at-desc' } time taken &#8593;
+
+  .form-group
+    %label.control-label.col-sm-3 Tags
+    .col-sm-9
+      %tags-input{ 'ng-model' => 'ctrl.tags', template: 'tag.html',
+          'allowed-tags-pattern' => '^-?[a-z0-9][a-z0-9&-]*$',
+          'add-from-autocomplete-only' => true,
+          placeholder: 'Tags' }
+        %auto-complete{ source: 'ctrl.suggestTags($query)',
+            template: 'tag_suggestion.html', 'min-length' => 1 }

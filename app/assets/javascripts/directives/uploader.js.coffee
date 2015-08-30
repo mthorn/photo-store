@@ -62,6 +62,10 @@
           @rateWindow = [ [ @startTime, 0 ] ]
           $($window).on('beforeunload', @handleBeforeUnload)
 
+          @queue.whenIdle().then =>
+            $($window).off('beforeunload', @handleBeforeUnload)
+            @queue = @progress = @startTime = @rateWindow = null
+
         libraryId = Library.current?.id
         for file in files
           do (file) =>
@@ -108,11 +112,6 @@
                   @current = null
                 )
             ), where)
-
-        if @progress.count == files.length
-          @queue.whenIdle().then =>
-            $($window).off('beforeunload', @handleBeforeUnload)
-            @queue = @progress = @startTime = @rateWindow = null
 
       timeRemaining: ->
         return null unless @startTime
