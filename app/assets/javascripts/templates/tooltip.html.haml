@@ -13,3 +13,5 @@
   %dd{ 'ng-show' => 'upload.imported_at' } {{upload.imported_at | date:"yyyy-MM-dd"}}
   %dt{ 'ng-show' => 'upload.location' } Location
   %dd{ 'ng-show' => 'upload.location' } {{upload.location}}
+  %dt{ 'ng-show' => 'upload.tags.length' } Tags
+  %dd{ 'ng-show' => 'upload.tags.length' } {{upload.tags.join(', ')}}
