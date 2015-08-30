@@ -9,11 +9,23 @@
   controller: class extends Controller
 
     FILTER_FIELDS:
-      name: 'Name'
-      taken_at: 'Date Taken'
-      imported_at: 'Date Imported'
+      type:
+        label: 'Type'
+        type: 'enum'
+      name:
+        label: 'Name'
+        type: 'string'
+      taken_at:
+        label: 'Date Taken'
+        type: 'date'
+      imported_at:
+        label: 'Date Imported'
+        type: 'date'
 
     OPERATORS:
+      enum:
+        eq: 'is'
+        ne: 'is not'
       string:
         eq: 'equals'
         contains: 'contains'
@@ -24,6 +36,11 @@
         le: 'on or before'
         lt: 'before'
 
+    ENUM_OPTIONS:
+      type:
+        Photo: 'Photo'
+        Video: 'Video'
+
     @inject 'Library', 'tagsInputBind'
 
     suggestTags: (query) ->
@@ -33,12 +50,6 @@
         filter((tag) -> tag.slice(0, query.length) == query).
         sort((a, b) -> if a < b then -1 else if a > b then 1 else 0).
         map((tag) -> if negative then "-#{tag}" else tag)
-
-    fieldType: (field) ->
-      if field.match /_at$/
-        'date'
-      else
-        'string'
 
     '$watch(params)': =>
       @unbindTags?()

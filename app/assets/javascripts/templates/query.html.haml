@@ -25,13 +25,15 @@
 
   .form-group{ 'ng-repeat' => 'filter in ctrl.filters' }
     %label.control-label.col-sm-3
-      {{ctrl.FILTER_FIELDS[filter.field]}}
+      {{ctrl.FILTER_FIELDS[filter.field].label}}
       %a.visible-xs-inline{ href: '#', 'ng-click' => 'ctrl.filters.splice($index, 1)' }
         %i.fa.fa-times
     .col-sm-3
       %select.form-control{ 'ng-model' => 'filter.op',
-          'ng-options' => 'key as value for (key, value) in ctrl.OPERATORS[ctrl.fieldType(filter.field)]' }
-    .col-sm-5{ 'ng-switch' => 'ctrl.fieldType(filter.field)' }
+          'ng-options' => 'key as value for (key, value) in ctrl.OPERATORS[ctrl.FILTER_FIELDS[filter.field].type]' }
+    .col-sm-5{ 'ng-switch' => 'ctrl.FILTER_FIELDS[filter.field].type' }
+      %select.form-control{ 'ng-switch-when' => 'enum', 'ng-model' => 'filter.value',
+          'ng-options' => 'key as value for (key, value) in ctrl.ENUM_OPTIONS[filter.field]' }
       %input.form-control{ 'ng-switch-when' => 'string', 'ng-model' => 'filter.value',
           'ng-model-options' => '{ updateOn: "blur change" }' }
       .input-group{ 'ng-switch-when' => 'date' }
@@ -47,6 +49,6 @@
   .form-group
     .col-sm-3.col-sm-offset-3
       %select#new_filter.form-control{ 'ng-model' => 'ctrl.newFilter',
-          'ng-options' => 'key as value for (key, value) in ctrl.FILTER_FIELDS' }
+          'ng-options' => 'key as value.label for (key, value) in ctrl.FILTER_FIELDS' }
         %option{ value: '' } Add a filter...
 

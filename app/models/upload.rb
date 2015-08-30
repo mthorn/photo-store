@@ -1,7 +1,7 @@
 class Upload < ActiveRecord::Base
   include DirectUpload
 
-  FILTER_FIELDS = %w( name taken_at imported_at )
+  FILTER_FIELDS = %w( type name taken_at imported_at )
 
   default_scope { where.not(state: 'destroy') }
 
@@ -104,6 +104,7 @@ class Upload < ActiveRecord::Base
         op, value =
           case op
           when 'eq' then [ '=', value ]
+          when 'ne' then [ '!=', value ]
           when 'le' then [ '<=', value ]
           when 'lt' then [ '<', value ]
           when 'ge' then [ '>=', value ]
