@@ -11,8 +11,10 @@ class @IndexCtrl extends Controller
     @counter = 0
 
   fetch: =>
-    if changed = ! angular.equals(@params, @parseSearchParams())
-      @location.search(@params)
+    params = _.pick(@params, (v) -> v?)
+
+    if changed = ! angular.equals(params, @parseSearchParams())
+      @location.search(params)
 
     if ! changed && (@fetching || @fetchAgain)
       return @fetchAgain = true

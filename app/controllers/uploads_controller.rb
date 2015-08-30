@@ -21,6 +21,9 @@ class UploadsController < ApplicationController
     if (tags = params[:tags]).present?
       @uploads = @uploads.with_tags(tags)
     end
+    if (filters = params[:filters]).present?
+      @uploads = @uploads.with_filters(filters)
+    end
 
     # calculate page count before pagination
     @count = @uploads.count unless only_id

@@ -1,6 +1,8 @@
 class Upload < ActiveRecord::Base
   include DirectUpload
 
+  FILTER_FIELDS = %w( name taken_at imported_at )
+
   default_scope { where.not(state: 'destroy') }
 
   belongs_to :uploader, class_name: 'User'
@@ -84,7 +86,6 @@ class Upload < ActiveRecord::Base
   end
 
   def self.with_tags tags
-    result = self.all
     tags.split(',').select(&:present?).map(&:strip).inject(self.all) do |scope, tag|
       if negative = tag.starts_with?('-')
         tag = tag[1..-1]
@@ -92,6 +93,33 @@ class Upload < ActiveRecord::Base
 
       sub = Tag.where(name: tag).select(:upload_id)
       scope.where("uploads.id #{negative ? 'NOT IN' : 'IN'} (#{sub.to_sql})")
+    end
+  end
+
+  def self.with_filters filters
+    JSON.parse(filters).inject(self.all) do |scope, filter|
+      field, op, value = filter['field'], filter['op'], filter['value']
+      if field.in? FILTER_FIELDS
+        value = (Time.zone.parse(value).to_date rescue nil) if field.ends_with?('_at')
+        op, value =
+          case op
+          when 'eq' then [ '=', value ]
+          when 'le' then [ '<=', value ]
+          when 'lt' then [ '<', value ]
+          when 'ge' then [ '>=', value ]
+          when 'gt' then [ '>', value ]
+          when 'contains' then [ 'ILIKE', "%#{value.gsub(/([%_\\])/, '\\\\\1')}%" ]
+          else [ nil, nil ]
+          end
+
+        if op && value.present?
+          scope.where("uploads.#{field} #{op} ?", value)
+        else
+          scope
+        end
+      else
+        scope
+      end
     end
   end
 
