@@ -51,6 +51,9 @@
           %li.divider{ role: 'separator' }
 
           %li{ 'ng-class' => '{ disabled: ctrl.selection.isEmpty() }' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.editTags()' }
+              Add/Remove Tags
+          %li{ 'ng-class' => '{ disabled: ctrl.selection.isEmpty() }' }
             %a{ href: '#', 'ng-click' => 'ctrl.selection.review()' }
               Review
           %li{ 'ng-class' => '{ disabled: ctrl.selection.isEmpty() }' }

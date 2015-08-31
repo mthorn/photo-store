@@ -1,6 +1,6 @@
 @app.factory 'selection', [
-  '$rootScope', '$location', '$http', '$route', '$q', 'Library', 'User',
-  ($rootScope,   $location,   $http,   $route,   $q,   Library,   User) ->
+  '$rootScope', '$location', '$http', '$route', '$q', '$modal', 'Library', 'User',
+  ($rootScope,   $location,   $http,   $route,   $q,   $modal,   Library,   User) ->
 
     $rootScope.$watch (-> Library.current), (lib) ->
       setIds(lib.selection ||= [])
@@ -101,4 +101,14 @@
             $location.search _.omit(params, 'selected')
           else
             Library.trigger('change')
+
+      editTags: ->
+        $modal.open(
+          templateUrl: 'tags_edit.html'
+          scope: angular.extend $rootScope.$new(),
+            heading: "Add/Remove Tags (#{@count()} items selected)"
+        ).result.then((tags) ->
+          tags = _.map(tags, 'text').join(',')
+          Library.current.$updateSelected(tags: tags)
+        )
 ]

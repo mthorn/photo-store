@@ -5,6 +5,9 @@
       deleteSelected:
         method: 'DELETE'
         url: '/api/libraries/:id/selected.json'
+      updateSelected:
+        method: 'PUT'
+        url: '/api/libraries/:id/selected.json'
       restoreDeleted:
         method: 'PUT'
         url: '/api/libraries/:id/deleted.json'

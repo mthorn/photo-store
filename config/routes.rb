@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   scope 'api' do
     resources :libraries, only: [ :update, :show ] do
       member do
+        put :selected, action: :update_selection
         delete :selected, action: :destroy_selection
         put :deleted, action: :restore_deleted
         delete :deleted, action: :remove_deleted

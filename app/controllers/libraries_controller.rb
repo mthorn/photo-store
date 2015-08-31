@@ -16,6 +16,11 @@ class LibrariesController < ApplicationController
   def show
   end
 
+  def update_selection
+    @library_membership.update_selected(params.permit(:tags))
+    render :show
+  end
+
   def destroy_selection
     if (ids = @library_membership.selection).present?
       @library.uploads.where(id: ids).update_all(deleted_at: Time.current)
