@@ -50,3 +50,7 @@
       upload.tags = _.map(tags, 'text')
       upload.$update()
     )
+
+  restore: (upload) ->
+    upload.deleted_at = null
+    upload.$update().then(=> @fetch())

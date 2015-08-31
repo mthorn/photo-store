@@ -4,6 +4,10 @@
     %a{ href: '#', 'ng-click' => 'ctrl.editTags(upload)' }
       Edit Tags
 
+  %li{ role: 'menuitem', 'ng-show' => 'upload.deleted_at' }
+    %a{ href: '#', 'ng-click' => 'ctrl.restore(upload)' }
+      Restore
+
   %li.dropdown-header Info
 
   %li{ role: 'menuitem' }
