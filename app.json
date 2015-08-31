@@ -1,0 +1,47 @@
+{
+  "name": "Photo Store",
+  "description": "Simple self-managed photo library application.",
+  "repository": "https://github.com/mthorn/photo-store",
+  "keywords": [ "rails", "angularjs", "s3", "photo" ],
+  "env": {
+    "SECRET_TOKEN": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    },
+    "WEB_CONCURRENCY": "1",
+    "MAX_THREADS": "3",
+    "DB_POOL": "6",
+    "WORKER_COUNT": "2",
+    "HOST": {
+      "description": "Name of server hosting the application, should be <your app name>.herokuapp.com",
+      "required": false
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "description": "Access key ID from your Amazon S3 user."
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "Secret access key from your Amazon S3 user."
+    },
+    "S3_BUCKET_NAME": {
+      "description": "Name of S3 bucket."
+    },
+    "S3_REGION": {
+      "description": "S3 region. Enter 'us-east-1' for US or 'eu-west-1' for EU."
+    }
+  },
+  "addons": [
+    "heroku-postgresql:hobby-dev",
+    "sendgrid:starter"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/brooks/heroku-buildpack-ffmpeg-x264"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-ruby"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "bundle exec rake db:migrate"
+  }
+}
