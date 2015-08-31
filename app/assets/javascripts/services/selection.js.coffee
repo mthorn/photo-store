@@ -107,6 +107,7 @@
           templateUrl: 'tags_edit.html'
           scope: angular.extend $rootScope.$new(),
             heading: "Add/Remove Tags (#{@count()} items selected)"
+            negatives: true
         ).result.then((tags) ->
           tags = _.map(tags, 'text').join(',')
           Library.current.$updateSelected(tags: tags)

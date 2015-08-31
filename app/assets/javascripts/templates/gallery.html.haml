@@ -29,9 +29,11 @@
           'ng-dblclick' => 'ctrl.dblclick($event, upload)',
           'ng-class' => '{ selected: ctrl.selection.isSelected(upload.id) }' }
 
-        %span.icon-type.fa-stack.fa-lg{ 'popover-template' => '"tooltip.html"', 'popover-trigger' => 'mouseenter', 'popover-placement' => 'bottom' }
-          %i.fa.fa-stack-2x.fa-square.fa-inverse
-          %i.fa.fa-stack-1x{ 'ng-class' => '{ "fa-info": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }' }
+        .dropdown{ dropdown: true }
+          %a.icon-type{ href: '#', id: 'upload{{::upload.id}}', 'dropdown-toggle' => true }
+            %i.fa.fa-stack-2x.fa-square.fa-inverse
+            %i.fa.fa-stack-1x{ 'ng-class' => '{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }' }
+          %ul.dropdown-menu{ 'template-url' => 'upload_dropdown.html', 'aria-labelledby' => 'upload{{::upload.id}}' }
 
         .processing.text-center{ 'ng-if' => 'upload.isLoading' }
           %i.fa.fa-4x.fa-spinner.fa-spin

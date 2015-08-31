@@ -30,8 +30,8 @@
 
     .icon-type {
       position: absolute;
-      right: 0;
-      top: 0;
+      top: 4px;
+      right: 24px;
       font-size: 14px;
     }
 
@@ -55,6 +55,12 @@
 
 }
 
-dl.upload-tooltip {
-  margin-bottom: 0;
+ul.dropdown-menu > li > span {
+  display: block;
+  padding: 0 20px;
+
+  & > strong:after {
+    display: inline;
+    content: ':';
+  }
 }

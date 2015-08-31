@@ -117,7 +117,7 @@ class UploadsController < ApplicationController
   def upload_params
     @upload_params ||= params.permit(
       :file, :modified_at, :name, :size, :mime, :description, :file_uploaded,
-      :imported_at)
+      :imported_at, tags: [])
   end
 
 end

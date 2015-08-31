@@ -1,0 +1,40 @@
+%ul.dropdown-menu
+
+  %li{ role: 'menuitem' }
+    %a{ href: '#', 'ng-click' => 'ctrl.editTags(upload)' }
+      Edit Tags
+
+  %li.dropdown-header Info
+
+  %li{ role: 'menuitem' }
+    %span
+      %strong Type
+      {{upload.type}} ({{upload.mime}})
+  %li{ role: 'menuitem' }
+    %span
+      %strong Name
+      {{upload.name}}
+  %li{ role: 'menuitem' }
+    %span
+      %strong Size
+      {{upload.size | bytes}}
+  %li{ role: 'menuitem', 'ng-show' => 'upload.width' }
+    %span
+      %strong Dimensions
+      {{upload.width}} x {{upload.height}}
+  %li{ role: 'menuitem', 'ng-show' => 'upload.taken_at' }
+    %span
+      %strong Taken
+      {{upload.taken_at | date:"yyyy-MM-dd"}}
+  %li{ role: 'menuitem', 'ng-show' => 'upload.imported_at' }
+    %span
+      %strong Imported
+      {{upload.imported_at | date:"yyyy-MM-dd"}}
+  %li{ role: 'menuitem', 'ng-show' => 'upload.location' }
+    %span
+      %strong Location
+      {{upload.location}}
+  %li{ role: 'menuitem', 'ng-show' => 'upload.tags.length' }
+    %span
+      %strong Tags
+      {{upload.tags.join(', ')}}

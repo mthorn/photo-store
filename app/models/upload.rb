@@ -7,7 +7,7 @@ class Upload < ActiveRecord::Base
 
   belongs_to :uploader, class_name: 'User'
   belongs_to :library
-  has_many :tags, dependent: :destroy
+  has_many :tags, dependent: :destroy, autosave: true
 
   delegate :tag_new, :tag_aspect, :tag_date, :tag_camera, :tag_location,
     to: :library, prefix: true
@@ -168,6 +168,19 @@ class Upload < ActiveRecord::Base
             else return super
             end
     klass.new attributes, options, &block
+  end
+
+  def tags=(new_tags)
+    if new_tags.is_a?(Array) && new_tags.all? { |tag| tag.is_a? String }
+      self.tags.each do |existing|
+        existing.mark_for_destruction if new_tags.delete(existing.name).nil?
+      end
+      new_tags.each do |new_tag|
+        self.tags.build(name: new_tag)
+      end
+    else
+      super
+    end
   end
 
 end

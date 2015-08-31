@@ -35,6 +35,18 @@
 
   dblclick: (event, upload) ->
     @modal.open(
-      templateUrl: 'view_upload.html'
+      templateUrl: 'upload_lightbox.html'
       scope: angular.extend(@scope.$new(), upload: upload)
+    )
+
+  editTags: (upload) ->
+    @modal.open(
+      templateUrl: 'tags_edit.html'
+      scope: angular.extend @scope.$new(),
+        heading: "Tags"
+        tags: upload.tags.map((tag) -> text: tag)
+        negatives: false
+    ).result.then((tags) ->
+      upload.tags = _.map(tags, 'text')
+      upload.$update()
     )
