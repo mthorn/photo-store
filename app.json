@@ -4,17 +4,11 @@
   "repository": "https://github.com/mthorn/photo-store",
   "keywords": [ "rails", "angularjs", "s3", "photo" ],
   "env": {
-    "SECRET_TOKEN": {
-      "description": "A secret key for verifying the integrity of signed cookies.",
-      "generator": "secret"
+    "ADMIN_EMAIL": {
+      "description": "Your email address, required to create your user account (account creation email is sent here)."
     },
-    "WEB_CONCURRENCY": "1",
-    "MAX_THREADS": "3",
-    "DB_POOL": "6",
-    "WORKER_COUNT": "2",
     "HOST": {
-      "description": "Name of server hosting the application, should be <your app name>.herokuapp.com",
-      "required": false
+      "description": "Name of server hosting the application, should be <your app name>.herokuapp.com"
     },
     "AWS_ACCESS_KEY_ID": {
       "description": "Access key ID from your Amazon S3 user."
@@ -27,7 +21,15 @@
     },
     "S3_REGION": {
       "description": "S3 region. Enter 'us-east-1' for US or 'eu-west-1' for EU."
-    }
+    },
+    "SECRET_TOKEN": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    },
+    "WEB_CONCURRENCY": "1",
+    "MAX_THREADS": "3",
+    "DB_POOL": "6",
+    "WORKER_COUNT": "2"
   },
   "addons": [
     "heroku-postgresql:hobby-dev",
@@ -42,6 +44,6 @@
     }
   ],
   "scripts": {
-    "postdeploy": "bundle exec rake db:migrate"
+    "postdeploy": "bundle exec rake db:migrate admin:create"
   }
 }
