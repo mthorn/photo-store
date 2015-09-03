@@ -25,10 +25,9 @@
     @q.when(@items.map((item) -> item.id))
 
   allPageIds: ->
-    query = angular.extend _.omit(@queryParams(), [ 'offset', 'limit' ]),
+    @query angular.extend _.omit(@queryParams(), [ 'offset', 'limit' ]),
       order: 'id-asc'
       only_id: true
-    @query(query).then((data) -> data.items)
 
   click: (event, upload) ->
     @selection.click(event, upload.id)

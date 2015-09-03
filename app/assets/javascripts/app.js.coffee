@@ -18,7 +18,7 @@
       requireBase: false
 
     $routeProvider.when '/',
-      redirectTo: "/#{config.defaultLibraryId}/gallery"
+      redirectTo: "/#{config.user.default_library_id}/gallery"
 
     $routeProvider.when '/:library_id/gallery',
       templateUrl: 'gallery.html'

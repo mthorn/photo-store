@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150901043420) do
+ActiveRecord::Schema.define(version: 20150903035633) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -96,6 +96,7 @@ ActiveRecord::Schema.define(version: 20150901043420) do
     t.boolean  "manual_deselect",        default: false
     t.integer  "upload_block_size",      default: 5242880
     t.string   "time_zone_auto"
+    t.integer  "default_library_id"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

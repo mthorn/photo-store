@@ -7,10 +7,12 @@ class User < ActiveRecord::Base
   has_many :libraries, through: :library_memberships, dependent: :destroy
   has_many :library_memberships, dependent: :destroy
   has_many :upload_buffers, dependent: :destroy
+  belongs_to :default_library, class_name: 'Library'
 
   validates :name, presence: true
   validates :manual_deselect, inclusion: [ true, false ]
   validates :upload_block_size, presence: true, numericality: { greater_than: 0 }
+  validates :default_library, presence: true
 
   validate :valid_time_zone, if: :time_zone_auto?
   def valid_time_zone
@@ -21,6 +23,13 @@ class User < ActiveRecord::Base
       self.errors.add(:time_zone_auto, 'is invalid')
     ensure
       Time.zone = old_zone
+    end
+  end
+
+  validate :default_library_membership
+  def default_library_membership
+    if ! self.library_memberships.where(library_id: self.default_library_id).exists?
+      self.errors.add(:default_library_id, 'not a member')
     end
   end
 

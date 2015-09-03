@@ -82,9 +82,9 @@
             %a{ href: '#', 'ng-click' => 'ctrl.restoreDeleted()' }
               Restore
 
-          %li.divider{ role: 'separator' }
+          %li.divider{ role: 'separator', 'ng-if-start' => 'ctrl.Library.mine.length > 1' }
 
-          %li{ 'ng-repeat' => 'library in ctrl.Library.mine track by library.id' }
+          %li{ 'ng-repeat' => 'library in ctrl.Library.mine track by library.id', 'ng-if-end' => true }
             %a{ 'ng-href' => '/{{library.id}}/gallery' }
               {{library.name}}
 

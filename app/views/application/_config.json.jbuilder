@@ -12,5 +12,4 @@ if user_signed_in?
   json.libraries current_user.library_memberships.includes(:library) do |library_membership|
     json.partial! 'libraries/library', library_membership: library_membership
   end
-  json.defaultLibraryId current_user.library_ids.first
 end

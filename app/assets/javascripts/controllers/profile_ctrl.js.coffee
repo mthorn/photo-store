@@ -1,6 +1,6 @@
 @app.controller 'ProfileCtrl', class ProfileCtrl extends Controller
 
-  @inject '$modalInstance', 'User'
+  @inject '$modalInstance', 'User', 'Library'
 
   initialize: ->
     @user = @User.me
