@@ -18,7 +18,7 @@ class Tag < ActiveRecord::Base
   end
 
   def self.bulk_remove(library, upload_ids, tags)
-    self.in_library(library).where(name: tags).delete_all
+    self.in_library(library).where(upload_id: upload_ids, name: tags).delete_all
   end
 
   def self.bulk_add(library, upload_ids, tags)
