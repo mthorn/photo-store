@@ -33,13 +33,13 @@
           %li.divider{ role: 'separator' }
 
           %li
-            %a{ href: '#', 'ng-click' => 'ctrl.selection.clear()' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.clear()', shortcut: 'c' }
               Clear
           %li{ 'ng-show' => 'ctrl.selection.isPageAvailable()' }
-            %a{ href: '#', 'ng-click' => 'ctrl.selection.togglePage(true)' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.togglePage(true)', shortcut: 'p' }
               Select all on page
           %li{ 'ng-show' => 'ctrl.selection.isAllPagesAvailable()' }
-            %a{ href: '#', 'ng-click' => 'ctrl.selection.toggleAllPages(true)' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.toggleAllPages(true)', shortcut: 'a' }
               Select all on all pages
           %li{ 'ng-show' => 'ctrl.selection.isPageAvailable() && ctrl.selection.manualDeselect()' }
             %a{ href: '#', 'ng-click' => 'ctrl.selection.togglePage(false)' }
@@ -51,13 +51,13 @@
           %li.divider{ role: 'separator' }
 
           %li{ 'ng-class' => '{ disabled: ctrl.selection.isEmpty() }' }
-            %a{ href: '#', 'ng-click' => 'ctrl.selection.editTags()' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.editTags()', shortcut: 't' }
               Add/Remove Tags
           %li{ 'ng-class' => '{ disabled: ctrl.selection.isEmpty() }' }
             %a{ href: '#', 'ng-click' => 'ctrl.selection.review()' }
               Review
           %li{ 'ng-class' => '{ disabled: ctrl.selection.isEmpty() }' }
-            %a{ href: '#', 'ng-click' => 'ctrl.selection.deleteSelected()' }
+            %a{ href: '#', 'ng-click' => 'ctrl.selection.deleteSelected()', shortcut: 'd' }
               Delete
 
       %li.dropdown
@@ -66,7 +66,7 @@
           %span.caret
         %ul.dropdown-menu
           %li{ 'ng-class' => '{ disabled: ! ctrl.library() }' }
-            %a{ href: '#', 'ng-click' => 'ctrl.settings()' }
+            %a{ href: '#', 'ng-click' => 'ctrl.settings()', shortcut: 's' }
               Settings
 
           %li.divider{ role: 'separator', 'ng-if-start' => 'ctrl.library().deleted_count' }

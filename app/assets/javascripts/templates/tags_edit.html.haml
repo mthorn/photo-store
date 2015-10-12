@@ -5,7 +5,7 @@
     .col-sm-12
       %tags-input{ 'ng-model' => 'tags', template: 'tag.html',
           'allowed-tags-pattern' => '^{{negatives && "-?" || ""}}[a-z0-9][a-z0-9&-]*$',
-          'min-length' => 2, 'add-on-space' => 'true' }
+          'min-length' => 2, 'add-on-space' => 'true', autofocus: true }
 .modal-footer
   %button.btn.btn-primary{ 'busy-click' => '$close(tags)' } Save
   %button.btn.btn-default{ 'ng-click' => '$dismiss()' } Cancel

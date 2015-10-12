@@ -103,6 +103,7 @@
             Library.trigger('change')
 
       editTags: ->
+        return if @count() == 0
         $modal.open(
           templateUrl: 'tags_edit.html'
           scope: angular.extend $rootScope.$new(),
