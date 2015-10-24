@@ -5,7 +5,16 @@ class LibraryMembership < ActiveRecord::Base
 
   serialize :selection
 
-  validates :selection, allow_nil: true, array: { numericality: { only_integer: true } }
+  validate :selection_array_of_integers
+  def selection_array_of_integers
+    return if self.selection.blank?
+
+    if ! self.selection.is_a?(Array)
+      self.errors.add(:selection, 'not an array')
+    elsif self.selection.any? { |i| ! i.is_a?(Integer) }
+      self.errors.add(:selection, 'contains invalid element(s)')
+    end
+  end
 
   def update_selected params
     return true if self.selection.blank?
