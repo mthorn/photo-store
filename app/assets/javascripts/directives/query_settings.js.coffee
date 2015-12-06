@@ -55,6 +55,8 @@
       @newFilter = null
 
     '$watchEquality(filters)': =>
+      return unless @params
+
       unless @filters
         delete @params.filters
         return
