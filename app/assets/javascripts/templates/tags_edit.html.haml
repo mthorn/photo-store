@@ -6,6 +6,9 @@
       %tags-input{ 'ng-model' => 'tags', template: 'tag.html',
           'allowed-tags-pattern' => '^{{negatives && "-?" || ""}}[a-z0-9][a-z0-9&-]*$',
           'min-length' => 2, 'add-on-space' => 'true', autofocus: true }
+        %auto-complete{ source: 'library.suggestTags($query)',
+            template: 'tag_suggestion.html', 'debounce-delay' => 0,
+            'min-length' => 1, 'load-on-empty' => 'true', 'load-on-down-arrow' => 'true' }
 .modal-footer
   %button.btn.btn-primary{ 'busy-click' => '$close(tags)' } Save
   %button.btn.btn-default{ 'ng-click' => '$dismiss()' } Cancel

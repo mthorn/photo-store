@@ -17,8 +17,8 @@
   .form-group
     %label.control-label.col-sm-3 Tags
     .col-sm-9
-      %tags-input{ 'ng-model' => 'ctrl.tags', template: 'tag.html', 'add-from-autocomplete-only' => 'true' }
-        %auto-complete{ source: 'ctrl.suggestTags($query)',
+      %tags-input{ 'ng-model' => 'ctrl.tags', template: 'tag.html', 'add-from-autocomplete-only' => 'true', 'min-length' => 2 }
+        %auto-complete{ source: 'ctrl.Library.current.suggestTags($query)',
             template: 'tag_suggestion.html', 'debounce-delay' => 0,
             'min-length' => 1, 'load-on-empty' => 'true', 'load-on-focus' => 'true' }
 

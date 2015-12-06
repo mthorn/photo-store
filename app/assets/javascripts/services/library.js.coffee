@@ -22,5 +22,13 @@
     $rootScope.$watch (-> $routeParams.library_id), (id = config.user.default_library_id) ->
       Library.current = _.findWhere(Library.mine, id: parseInt(id))
 
+    Library::suggestTags = (query) ->
+      if negative = query[0] == '-'
+        query = query.slice(1)
+      Object.keys(@tag_counts).
+        filter((tag) -> tag.slice(0, query.length) == query).
+        sort((a, b) -> if a < b then -1 else if a > b then 1 else 0).
+        map((tag) -> if negative then "-#{tag}" else tag)
+
     Library
 ]

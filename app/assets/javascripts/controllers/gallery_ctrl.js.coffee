@@ -45,6 +45,7 @@
         heading: "Tags"
         tags: upload.tags.map((tag) -> text: tag)
         negatives: false
+        library: @Library.current
     ).result.then((tags) ->
       upload.tags = _.map(tags, 'text')
       upload.$update()
