@@ -3,11 +3,14 @@
   LIMIT = 100
 
   parseSearchParams: =>
-    i: parseInt(@location.search().i || 0)
+    r = angular.extend({ i: 0 }, @location.search())
+    r.i = Math.max(0, parseInt(r.i))
+    r
 
   queryParams: ->
-    limit: LIMIT
-    offset: @getOffset()
+    angular.extend _.pick(@params, 'order', 'tags', 'filters'),
+      limit: LIMIT
+      offset: @getOffset()
 
   upload: ->
     @items?[@params.i - @getOffset()]
