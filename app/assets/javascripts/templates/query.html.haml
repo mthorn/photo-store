@@ -17,11 +17,10 @@
   .form-group
     %label.control-label.col-sm-3 Tags
     .col-sm-9
-      %tags-input{ 'ng-model' => 'ctrl.tags', template: 'tag.html',
-          'allowed-tags-pattern' => '^-?[a-z0-9][a-z0-9&-]*$',
-          'add-from-autocomplete-only' => true, 'min-length' => 2 }
+      %tags-input{ 'ng-model' => 'ctrl.tags', template: 'tag.html', 'add-from-autocomplete-only' => 'true' }
         %auto-complete{ source: 'ctrl.suggestTags($query)',
-            template: 'tag_suggestion.html', 'min-length' => 1 }
+            template: 'tag_suggestion.html', 'debounce-delay' => 0,
+            'min-length' => 1, 'load-on-empty' => 'true', 'load-on-focus' => 'true' }
 
   .form-group{ 'ng-repeat' => 'filter in ctrl.filters' }
     %label.control-label.col-sm-3
