@@ -1,2 +1,2 @@
 json.(user, :id, :name, :email, :manual_deselect, :time_zone_auto,
-      :upload_block_size_mib, :default_library_id)
+      :upload_block_size_mib, :default_library_id, :admin)

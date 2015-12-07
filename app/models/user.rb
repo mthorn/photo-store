@@ -26,13 +26,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  validate :default_library_membership
-  def default_library_membership
-    if ! self.library_memberships.where(library_id: self.default_library_id).exists?
-      self.errors.add(:default_library_id, 'not a member')
-    end
-  end
-
   def uploads
     Upload.joins(library: :library_memberships).where(library_memberships: { user_id: self.id })
   end

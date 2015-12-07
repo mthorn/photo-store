@@ -14,6 +14,13 @@
       removeDeleted:
         method: 'DELETE'
         url: '/api/libraries/:id/deleted.json'
+      adminIndex:
+        method: 'GET'
+        url: '/api/admin/libraries.json'
+        isArray: true
+      adminCreate:
+        method: 'POST'
+        url: '/api/admin/libraries.json'
 
     angular.extend Library, Observable
 

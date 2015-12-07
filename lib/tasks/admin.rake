@@ -5,7 +5,8 @@ namespace :admin do
     user = User.create!(
       name: 'Admin',
       email: ENV['ADMIN_EMAIL'],
-      password: Devise.friendly_token
+      password: Devise.friendly_token,
+      admin: true
     )
     user.libraries.create!(name: 'My Library')
     user.send_reset_password_instructions

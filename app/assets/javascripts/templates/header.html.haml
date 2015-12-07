@@ -14,6 +14,8 @@
         %a{ 'ng-href' => '/{{ctrl.libraryId()}}/gallery', 'ng-class' => '{ active: ctrl.path() == "/gallery" }' } Gallery
       %li
         %a{ 'ng-href' => '/{{ctrl.libraryId()}}/slides', 'ng-class' => '{ active: ctrl.path() == "/slides" }' } Slideshow
+      %li{ 'ng-show' => 'ctrl.User.me.admin' }
+        %a{ href: '/admin/libraries', 'ng-class' => '{ active: ctrl.pathStartsWith("/admin/") }' } Admin
 
     %ul.nav.navbar-nav.navbar-right
       %li.dropdown

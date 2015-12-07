@@ -18,6 +18,10 @@ Rails.application.routes.draw do
     end
     post 'buffers/:id' => 'buffers#save'
     resource :user, only: :update
+
+    namespace :admin do
+      resources :libraries, only: [ :index, :create, :show ]
+    end
   end
 
   get 'uploaded_files/:id(/:version)' => 'uploaded_files#show', version: /\w+/
@@ -28,6 +32,7 @@ Rails.application.routes.draw do
       app.get :gallery
       app.get :slides
     end
+    app.get 'admin/*path'
   end
 
 end

@@ -8,6 +8,7 @@
     library: => @Library.current
     libraryId: -> @library()?.id
     path: -> @location.path()
+    pathStartsWith: (str) -> _.startsWith(@path(), str)
 
     settings: ->
       @modal.open

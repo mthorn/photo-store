@@ -29,4 +29,8 @@
       templateUrl: 'slides.html'
       controller: 'SlidesCtrl as ctrl'
       reloadOnSearch: false
+
+    $routeProvider.when '/admin/libraries',
+      templateUrl: 'admin/libraries.html'
+      controller: 'AdminLibrariesCtrl as ctrl'
 ]
