@@ -11,6 +11,8 @@ class @IndexCtrl extends Controller
     @counter = 0
 
   fetch: =>
+    return if @destroyed
+
     params = _.pick(@params, (v) -> v?)
 
     if changed = ! angular.equals(params, @parseSearchParams())
@@ -51,6 +53,7 @@ class @IndexCtrl extends Controller
     )
 
   '$on($destroy)': =>
+    @destroyed = true
     @counter += 1
     @timer?.cancel()
     @Library.off('change', @fetch)

@@ -3,23 +3,25 @@ class UploadsController < ApplicationController
   UNIQUE_PARAMS = %i( name size mime )
   SORTABLE_FIELDS = %w( name created_at taken_at )
 
+  before_filter :authorize_upload!, only: [ :create, :update, :destroy, :check ]
+
   def index
     only_id = params[:only_id] == 'true'
 
-    @uploads = @library.uploads.where(state: %w( process ready ))
+    @uploads = @library_membership.uploads.where(state: %w( process ready ))
     @uploads = @uploads.includes(:tags) unless only_id
 
     # filtering
     if params[:selected] == 'true'
       @uploads = @uploads.where(id: @library_membership.selection)
     end
-    if params[:deleted] == 'true'
+    if params[:deleted] == 'true' && @library_membership.can_upload?
       @uploads = @uploads.deleted
     else
       @uploads = @uploads.where(deleted_at: nil)
     end
     if (tags = params[:tags]).present?
-      @uploads = @uploads.with_tags(tags)
+      @uploads = @uploads.with_tags(tags.split(',').select(&:present?).map(&:strip))
     end
     if (filters = params[:filters]).present?
       @uploads = @uploads.with_filters(filters)

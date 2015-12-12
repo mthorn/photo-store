@@ -4,6 +4,8 @@ class ApplicationController < ActionController::Base
   around_filter :set_time_zone, if: :user_signed_in?
   before_filter :load_library
 
+  protected
+
   def set_time_zone
     old_zone = Time.zone
     Time.zone = current_user.time_zone_auto
@@ -15,10 +17,23 @@ class ApplicationController < ActionController::Base
   end
 
   def load_library
-    if (id = params[:library_id]).present?
+    if (id = request.path_parameters[:library_id]).present?
       @library_membership = current_user.library_memberships.find_by!(library_id: id)
       @library = @library_membership.library
     end
   end
 
+  def authorize_owner!
+    if @library_membership.nil? || ! @library_membership.owner?
+      head :forbidden
+    end
+  end
+
+  def authorize_upload!
+    if @library_membership.nil? || ! @library_membership.can_upload?
+      head :forbidden
+    end
+  end
+
 end
+

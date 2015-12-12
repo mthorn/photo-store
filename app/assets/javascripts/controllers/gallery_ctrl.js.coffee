@@ -43,11 +43,11 @@
       templateUrl: 'tags_edit.html'
       scope: angular.extend @scope.$new(),
         heading: "Tags"
-        tags: upload.tags.map((tag) -> text: tag)
+        tags: upload.tags
         negatives: false
         library: @Library.current
     ).result.then((tags) ->
-      upload.tags = _.map(tags, 'text')
+      upload.tags = tags
       upload.$update()
     )
 

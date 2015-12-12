@@ -15,6 +15,7 @@ Rails.application.routes.draw do
           post :check
         end
       end
+      resources :roles, only: %i( index create update destroy )
     end
     post 'buffers/:id' => 'buffers#save'
     resource :user, only: :update

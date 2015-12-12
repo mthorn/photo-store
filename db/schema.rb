@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151207052509) do
+ActiveRecord::Schema.define(version: 20151208033742) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,15 @@ ActiveRecord::Schema.define(version: 20151207052509) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "selection"
+    t.integer  "role_id"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.integer "library_id"
+    t.boolean "owner",         default: false
+    t.string  "name"
+    t.boolean "can_upload",    default: false
+    t.text    "restrict_tags"
   end
 
   create_table "tags", force: :cascade do |t|

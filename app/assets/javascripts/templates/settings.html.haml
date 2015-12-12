@@ -8,8 +8,8 @@
   .form-group
     %label.control-label.col-sm-3 New Upload Tags
     .col-sm-9{ errors: 'ctrl.errors.tag_new' }
-      %tags-input{ 'ng-model' => 'ctrl.tag_new', template: 'tag.html',
-          'allowed-tags-pattern' => '^[a-z0-9][a-z0-9&-]*$',
+      %tags-input{ 'ng-model' => 'ctrl.tag_new', 'tags-model' => 'ctrl.view.tag_new',
+          template: 'tag.html', 'allowed-tags-pattern' => '^[a-z0-9][a-z0-9&-]*$',
           placeholder: 'Tags', 'min-length' => '2', 'add-on-space' => 'true' }
   .form-group
     .col-sm-9.col-sm-offset-3

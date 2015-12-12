@@ -3,9 +3,19 @@ class Library < ActiveRecord::Base
   has_many :uploads, dependent: :destroy
   has_many :users, through: :library_memberships, dependent: :destroy
   has_many :library_memberships, dependent: :destroy
+  has_many :roles, dependent: :destroy
 
   validates :name, presence: true
   validates :tag_new, format: /\A(?:#{Tag::TAG_PATTERN}(?:,#{Tag::TAG_PATTERN})*)?\z/
+
+  after_create :create_owner_role
+  def create_owner_role
+    self.roles.create!(
+      owner: true,
+      name: 'owner',
+      can_upload: true
+    )
+  end
 
   Tag::AUTO_TAG_KINDS.each do |kind|
     validates :"tag_#{kind}", inclusion: [ true, false ]
@@ -14,7 +24,7 @@ class Library < ActiveRecord::Base
       if self.public_send(:"tag_#{kind}?")
         TagJob.perform_later(self, "auto_tag_#{kind}")
       else
-        Tag.connection.execute "DELETE FROM tags WHERE id IN (#{self.tags.where(kind: kind).select(:id).to_sql})"
+        self.tags.where(kind: kind).delete_all
       end
     end
   end
@@ -29,6 +39,10 @@ class Library < ActiveRecord::Base
 
   def deleted_count
     self.uploads.deleted.count
+  end
+
+  def owner_role
+    self.roles.where(owner: true).first
   end
 
 end

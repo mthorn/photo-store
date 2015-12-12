@@ -1,0 +1,40 @@
+.modal-header
+  %h3.modal-title {{ctrl.library.name}} Roles
+.modal-body
+
+  %table.table
+    %thead
+      %th Name
+      %th Upload?
+      %th Restrict Tags
+    %tbody
+      %tr{ 'ng-repeat' => 'role in ctrl.roles | orderBy:"id" track by role.id' }
+        %td{ 'ng-class' => '{ "has-error": role.errors.name }' }
+          %input.form-control{ type: 'text', 'ng-model' => 'role.name',
+              'ng-change' => 'role.changed = true', 'ng-disabled' => 'role.owner' }
+        %td
+          %input{ type: 'checkbox', 'ng-model' => 'role.can_upload',
+              'ng-change' => 'role.changed = true', 'ng-disabled' => 'role.owner' }
+        %td
+          %tags-input{ 'ng-model' => '$restrict_tags', 'ng-if' => '! role.owner',
+              'tags-model' => 'role.restrict_tags', 'tags-model-type' => 'array',
+              template: 'tag.html', 'allowed-tags-pattern' => '^-?[a-z0-9][a-z0-9&-]*$',
+              'min-length' => 2, 'add-on-space' => 'true',
+              'on-tag-added' => 'role.changed = true', 'on-tag-removed' => 'role.changed = true' }
+            %auto-complete{ source: 'ctrl.library.suggestTags($query)',
+                template: 'tag_suggestion.html', 'debounce-delay' => 0,
+                'min-length' => 1, 'load-on-empty' => 'true', 'load-on-down-arrow' => 'true' }
+        %td
+          %button.btn.btn-default{ 'ng-click' => 'ctrl.save(role)',
+              'ng-disabled' => '! role.changed', 'ng-hide' => 'role.owner' }
+            Save
+        %td
+          %button.btn.btn-default{ 'ng-click' => 'ctrl.destroy(role)', 'ng-hide' => 'role.owner' }
+            Remove
+
+      %tr
+        %td
+          %button.btn.btn-default{ 'ng-click' => 'ctrl.new()' } New
+
+.modal-footer
+  %button.btn.btn-default{ 'ng-click' => '$close()' } Close

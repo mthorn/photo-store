@@ -10,12 +10,12 @@
       {{ctrl.library().name}}
   .collapse.navbar-collapse#nav_content
     %ul.nav.navbar-nav
-      %li
-        %a{ 'ng-href' => '/{{ctrl.libraryId()}}/gallery', 'ng-class' => '{ active: ctrl.path() == "/gallery" }' } Gallery
-      %li
-        %a{ 'ng-href' => '/{{ctrl.libraryId()}}/slides', 'ng-class' => '{ active: ctrl.path() == "/slides" }' } Slideshow
-      %li{ 'ng-show' => 'ctrl.User.me.admin' }
-        %a{ href: '/admin/libraries', 'ng-class' => '{ active: ctrl.pathStartsWith("/admin/") }' } Admin
+      %li{ 'ng-class' => '{ active: ctrl.pathEndsWith("/gallery") }' }
+        %a{ 'ng-href' => '/{{ctrl.libraryId()}}/gallery' } Gallery
+      %li{ 'ng-class' => '{ active: ctrl.pathEndsWith("/slides") }' }
+        %a{ 'ng-href' => '/{{ctrl.libraryId()}}/slides' } Slideshow
+      %li{ 'ng-show' => 'ctrl.User.me.admin', 'ng-class' => '{ active: ctrl.pathStartsWith("/admin/") }' }
+        %a{ href: '/admin/libraries' } Admin
 
     %ul.nav.navbar-nav.navbar-right
       %li.dropdown
@@ -70,6 +70,9 @@
           %li{ 'ng-class' => '{ disabled: ! ctrl.library() }' }
             %a{ href: '#', 'ng-click' => 'ctrl.settings()', shortcut: 's' }
               Settings
+          %li{ 'ng-show' => 'ctrl.library()["owner?"]' }
+            %a{ href: '#', 'ng-click' => 'ctrl.roles()', shortcut: 'r' }
+              Roles
 
           %li.divider{ role: 'separator', 'ng-if-start' => 'ctrl.library().deleted_count' }
           %li.dropdown-header

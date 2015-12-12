@@ -111,7 +111,6 @@
             negatives: true
             library: Library.current
         ).result.then((tags) ->
-          tags = _.map(tags, 'text').join(',')
           Library.current.$updateSelected(tags: tags)
         )
 ]

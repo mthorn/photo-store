@@ -86,7 +86,7 @@ class Upload < ActiveRecord::Base
   end
 
   def self.with_tags tags
-    tags.split(',').select(&:present?).map(&:strip).inject(self.all) do |scope, tag|
+    tags.inject(self.all) do |scope, tag|
       if negative = tag.starts_with?('-')
         tag = tag[1..-1]
       end

@@ -21,6 +21,10 @@
         "already completed files will not be duplicated."
 
       import: (files) ->
+        if ! Library.current['can_upload?']
+          $modal.open(templateUrl: 'can_not_upload.html')
+          return
+
         checks = files.map (file, i) ->
           id: i
           name: file.name

@@ -8,7 +8,13 @@ namespace :admin do
       password: Devise.friendly_token,
       admin: true
     )
-    user.libraries.create!(name: 'My Library')
+    library = Library.create!(
+      name: 'My Library'
+    )
+    user.library_memberships.create!(
+      library: library,
+      role: library.owner_role
+    )
     user.send_reset_password_instructions
   end
 

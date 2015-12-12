@@ -41,12 +41,7 @@
         Photo: 'Photo'
         Video: 'Video'
 
-    @inject 'Library', 'tagsInputBind'
-
-    '$watch(params)': =>
-      @unbindTags?()
-      return unless @params
-      @unbindTags = @tagsInputBind([ @, 'tags' ], [ @params, 'tags' ])
+    @inject 'Library'
 
     '$watch(newFilter)': =>
       return unless @newFilter
@@ -73,6 +68,3 @@
     '$watch(params.filters)': (filters) =>
       return unless filters
       @filters = JSON.parse(filters)
-
-    '$on($destroy)': =>
-      @unbindTags?()

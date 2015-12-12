@@ -9,6 +9,7 @@
     libraryId: -> @library()?.id
     path: -> @location.path()
     pathStartsWith: (str) -> _.startsWith(@path(), str)
+    pathEndsWith: (str) -> _.endsWith(@path(), str)
 
     settings: ->
       @modal.open
@@ -16,6 +17,14 @@
         controller: 'SettingsCtrl as ctrl'
         resolve:
           library: @library
+
+    roles: ->
+      @modal.open
+        templateUrl: 'roles.html'
+        controller: 'RolesCtrl as ctrl'
+        resolve:
+          library: @library
+        size: 'lg'
 
     profile: ->
       @modal.open

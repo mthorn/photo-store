@@ -14,7 +14,10 @@ class Admin::LibrariesController < ApplicationController
 
       if @library.save && @user.update_attributes(default_library_id: @user.default_library_id || @library.id)
         render :show
-        @library.users << @user
+        @user.library_memberships.create!(
+          library: @library,
+          role: @library.owner_role
+        )
         @user.send_reset_password_instructions if invite
       else
         render json: @library.errors.to_hash.merge(user: @user.errors.to_hash), status: :unprocessable_entity

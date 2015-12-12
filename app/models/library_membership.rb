@@ -2,8 +2,15 @@ class LibraryMembership < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :library
+  belongs_to :role
+
+  delegate :uploads, :can_upload?, :owner?, to: :role
 
   serialize :selection
+
+  validates :user, presence: true
+  validates :library, presence: true
+  validates :role, presence: true
 
   validate :selection_array_of_integers
   def selection_array_of_integers
@@ -13,6 +20,15 @@ class LibraryMembership < ActiveRecord::Base
       self.errors.add(:selection, 'not an array')
     elsif self.selection.any? { |i| ! i.is_a?(Integer) }
       self.errors.add(:selection, 'contains invalid element(s)')
+    end
+  end
+
+  validate :role_in_library
+  def role_in_library
+    return if self.role.blank? || self.library.blank?
+
+    if self.role.library_id != self.library_id
+      self.errors.add(:role_id, 'is not in the library')
     end
   end
 
@@ -31,5 +47,4 @@ class LibraryMembership < ActiveRecord::Base
     end
   end
 
-  true
 end
