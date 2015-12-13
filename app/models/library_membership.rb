@@ -9,7 +9,7 @@ class LibraryMembership < ActiveRecord::Base
   serialize :selection
 
   validates :user, presence: true
-  validates :library, presence: true
+  validates :library, presence: true, uniqueness: { scope: :user_id }
   validates :role, presence: true
 
   validate :selection_array_of_integers

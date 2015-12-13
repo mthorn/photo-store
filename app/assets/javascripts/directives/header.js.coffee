@@ -26,6 +26,14 @@
           library: @library
         size: 'lg'
 
+    members: ->
+      @modal.open
+        templateUrl: 'members.html'
+        controller: 'MembersCtrl as ctrl'
+        resolve:
+          library: @library
+        size: 'lg'
+
     profile: ->
       @modal.open
         templateUrl: 'profile.html'

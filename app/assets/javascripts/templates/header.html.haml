@@ -73,6 +73,9 @@
           %li{ 'ng-show' => 'ctrl.library()["owner?"]' }
             %a{ href: '#', 'ng-click' => 'ctrl.roles()', shortcut: 'r' }
               Roles
+          %li{ 'ng-show' => 'ctrl.library()["owner?"]' }
+            %a{ href: '#', 'ng-click' => 'ctrl.members()', shortcut: 'm' }
+              Members
 
           %li.divider{ role: 'separator', 'ng-if-start' => 'ctrl.library().deleted_count' }
           %li.dropdown-header

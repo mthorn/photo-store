@@ -1,0 +1,35 @@
+.modal-header
+  %h3.modal-title {{ctrl.library.name}} Members
+.modal-body
+
+  %table.table
+    %thead
+      %th Name
+      %th Email
+      %th Role
+    %tbody
+      %tr{ 'ng-repeat' => 'member in ctrl.members | orderBy:"id" track by member.id' }
+        %td{ 'ng-class' => '{ "has-error": member.errors.name }' }
+          %input.form-control{ type: 'text', 'ng-model' => 'member.name',
+              'ng-change' => 'member.changed = true', 'ng-disabled' => 'member.me' }
+        %td{ 'ng-class' => '{ "has-error": member.errors.email }' }
+          %input.form-control{ type: 'email', 'ng-model' => 'member.email',
+              'ng-change' => 'member.changed = true', 'ng-disabled' => 'member.me' }
+        %td
+          %select.form-control{ 'ng-model' => 'member.role_id',
+              'ng-change' => 'member.changed = true', 'ng-disabled' => 'member.me',
+              'ng-options' => 'role.id as role.name for role in ctrl.roles' }
+        %td
+          %button.btn.btn-default{ 'ng-click' => 'ctrl.save(member)',
+              'ng-disabled' => '! member.changed', 'ng-hide' => 'member.me' }
+            Save
+        %td
+          %button.btn.btn-default{ 'ng-click' => 'ctrl.destroy(member)', 'ng-hide' => 'member.me' }
+            Remove
+
+      %tr
+        %td
+          %button.btn.btn-default{ 'ng-click' => 'ctrl.new()' } New
+
+.modal-footer
+  %button.btn.btn-default{ 'ng-click' => '$close()' } Close
