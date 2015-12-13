@@ -24,6 +24,8 @@ Rails.application.routes.draw do
     namespace :admin do
       resources :libraries, only: [ :index, :create, :show ]
     end
+
+    post 'jserror' => 'jserrors#log'
   end
 
   get 'uploaded_files/:id(/:version)' => 'uploaded_files#show', version: /\w+/
