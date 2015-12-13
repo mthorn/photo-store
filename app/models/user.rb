@@ -38,4 +38,14 @@ class User < ActiveRecord::Base
     self.upload_block_size = value && (value.to_f * (2 ** 20))
   end
 
+  def time_zone_auto=(value)
+    if value.is_a?(Integer) || value =~ /\A-?\d+\z/
+      utc_offset = value.to_i * -60
+      tz = ActiveSupport::Timezone.all.find { |tz| tz.now.utc_offset == utc_offset }
+      super(tz.name) if tz
+    else
+      super
+    end
+  end
+
 end

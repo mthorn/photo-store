@@ -3,7 +3,7 @@
   scope: true
   controllerAs: 'ctrl'
   controller: class extends Controller
-    @inject '$location', '$modal', 'User', 'Library', 'config', 'selection'
+    @inject '$location', '$modal', 'User', 'Library', 'config', 'selection', 'uploader'
 
     library: => @Library.current
     libraryId: -> @library()?.id
@@ -57,3 +57,13 @@
           @location.search _.omit(params, 'deleted')
         else
           @Library.trigger('change')
+
+  link: (scope, element, attr, ctrl) ->
+    fileInput = $('<input type="file" multiple accept="image/*,video/*">')
+    scope.upload = ->
+      fileInput.click()
+      null
+    fileInput.on 'change', ->
+      if (files = _.map(fileInput[0].files)).length
+        ctrl.uploader.import(files)
+        fileInput.val('')

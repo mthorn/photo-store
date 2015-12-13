@@ -14,6 +14,8 @@
         %a{ 'ng-href' => '/{{ctrl.libraryId()}}/gallery' } Gallery
       %li{ 'ng-class' => '{ active: ctrl.pathEndsWith("/slides") }' }
         %a{ 'ng-href' => '/{{ctrl.libraryId()}}/slides' } Slideshow
+      %li{ 'ng-show' => 'ctrl.library()["can_upload?"]' }
+        %a{ href: '#', 'ng-click' => 'upload()' } Upload
       %li{ 'ng-show' => 'ctrl.User.me.admin', 'ng-class' => '{ active: ctrl.pathStartsWith("/admin/") }' }
         %a{ href: '/admin/libraries' } Admin
 

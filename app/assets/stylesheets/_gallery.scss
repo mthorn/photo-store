@@ -1,8 +1,10 @@
-.gallery-filters {
-  position: relative;
+@media (min-width: 768px) {
+  .gallery-filters {
+    position: relative;
 
-  .closed {
-    position: absolute;
+    .closed {
+      position: absolute;
+    }
   }
 }
 

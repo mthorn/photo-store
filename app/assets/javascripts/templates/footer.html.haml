@@ -1,35 +1,36 @@
-.text-right.text-warning{ 'ng-show' => 'ctrl.errors.length' }
-  %a{ href: '#', 'ng-click' => 'ctrl.viewErrors()' }
-    {{ctrl.errors.length}} files failed to upload.
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.retryAll()' } Retry
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.errors = []' } Clear
+.text-right.text-warning{ 'ng-show' => 'uploader.errors.length' }
+  %a{ href: '#', 'ng-click' => 'uploader.viewErrors()' }
+    {{uploader.errors.length}} files failed to upload.
+  %button.btn.btn-default{ 'ng-click' => 'uploader.retryAll()' } Retry
+  %button.btn.btn-default{ 'ng-click' => 'uploader.errors = []' } Clear
 
-%h1.file-drop-target.bg-primary{ 'file-drop' => 'ctrl.import(files)', 'ng-class' => '{ checking: ctrl.checking > 0 }' }
+%h1.file-drop-target.bg-primary{ 'file-drop' => 'uploader.import(files)', 'ng-class' => '{ checking: uploader.checking > 0 }' }
   %span.reading
     %i.fa.fa-spin.fa-spinner
     Preparing files...
-  %span.hover{ 'ng-hide' => 'ctrl.progress.count' }
+  %span.hover{ 'ng-hide' => 'uploader.progress.count' }
     Drop files to start import!
-  %span.hover{ 'ng-show' => 'ctrl.progress.count' }
+  %span.hover{ 'ng-show' => 'uploader.progress.count' }
     Drop files to add to import!
 
-.bg-info.text-center{ 'ng-show' => 'ctrl.progress' }
-  %button.btn.btn-default{ 'ng-hide' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.pause()' } Pause
-  %button.btn.btn-default{ 'ng-show' => 'ctrl.queue.isPaused', 'ng-click' => 'ctrl.unpause()' } Continue
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.cancel()' } Cancel
+.bg-info.text-center{ 'ng-show' => 'uploader.progress' }
+  %button.btn.btn-default{ 'ng-hide' => 'uploader.queue.isPaused', 'ng-click' => 'uploader.pause()' } Pause
+  %button.btn.btn-default{ 'ng-show' => 'uploader.queue.isPaused', 'ng-click' => 'uploader.unpause()' } Continue
+  %button.btn.btn-default{ 'ng-click' => 'uploader.cancel()' } Cancel
   Uploading:
-  %span {{ctrl.progress.done + 1}} / {{ctrl.progress.count}} files,
-  %span {{ctrl.progress.loaded + (ctrl.current.progress.loaded || 0) | bytes}} / {{ctrl.progress.total | bytes}},
-  %span{ 'ng-show' => 'ctrl.skipped', tooltip: 'Files are skipped if they are already in the library.' }
-    {{ctrl.skipped}} files skipped,
-  %span{ 'ng-show' => 'ctrl.timeRemaining()' }
-    {{ctrl.timeRemaining() | duration}} remaining,
-    {{ctrl.uploadRate() | bytes}}/s
-  %span{ 'ng-hide' => 'ctrl.timeRemaining()' }
+  %span {{uploader.progress.done + 1}} / {{uploader.progress.count}} files,
+  %span {{uploader.progress.loaded + (uploader.current.progress.loaded || 0) | bytes}} / {{uploader.progress.total | bytes}},
+  %span{ 'ng-show' => 'uploader.skipped', tooltip: 'Files are skipped if they are already in the library.' }
+    {{uploader.skipped}} files skipped,
+  %span{ 'ng-show' => 'uploader.timeRemaining()' }
+    {{uploader.timeRemaining() | duration}} remaining,
+    {{uploader.uploadRate() | bytes}}/s
+  %span{ 'ng-hide' => 'uploader.timeRemaining()' }
     calculating time remaining...
 
-.ng-info.text-center{ 'ng-show' => '! ctrl.progress && ctrl.skipped' }
-  Import complete, {{ctrl.skipped}} files that are already in the library were skipped.
-  %button.btn.btn-default{ 'ng-click' => 'ctrl.skipped = 0' } Close
+.ng-info.text-center{ 'ng-show' => '! uploader.progress && uploader.skipped' }
+  Import complete, {{uploader.skipped}} files that are already in the library were skipped.
+  %button.btn.btn-default{ 'ng-click' => 'uploader.skipped = 0' } Close
 
-%progressbar{ 'ng-if' => 'ctrl.progress', max: 'ctrl.progress.total', value: 'ctrl.progress.loaded + (ctrl.current.progress.loaded || 0)' }
+%progressbar{ 'ng-if' => 'uploader.progress', max: 'uploader.progress.total',
+    value: 'uploader.progress.loaded + (uploader.current.progress.loaded || 0)' }
