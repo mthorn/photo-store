@@ -1,8 +1,8 @@
 .gallery-filters.row
   .col-xs-10.col-xs-offset-1{ 'ng-class' => '{ "col-sm-10": ctrl.queryOpen, "col-sm-2": ! ctrl.queryOpen, closed: ! ctrl.queryOpen }' }
-    %accordion
-      %accordion-group{ 'is-open' => 'ctrl.queryOpen' }
-        %accordion-heading
+    %uib-accordion
+      %uib-accordion-group{ 'is-open' => 'ctrl.queryOpen' }
+        %uib-accordion-heading
           Options
           %i.pull-right.fa{ 'ng-class' => '{ "fa-chevron-down": ctrl.queryOpen, "fa-chevron-right": ! ctrl.queryOpen }' }
         %query-settings{ params: 'ctrl.params' }
@@ -13,11 +13,11 @@
 
 %div{ 'ng-if' => 'ctrl.items.length != 0' }
   .text-center
-    %pagination.top{ 'ng-if' => 'ctrl.items', 'ng-model' => 'ctrl.params.page',
+    %uib-pagination.top{ 'ng-if' => 'ctrl.items', 'ng-model' => 'ctrl.params.page',
       'total-items' => 'ctrl.items.count', 'items-per-page' => 'ctrl.params.limit',
       'max-size' => 5, 'previous-text' => '‹', 'next-text' => '›',
       'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
-    %a.pagination-status.hidden-xs{ href: '#', 'ng-hide' => 'ctrl.fetching', 'ng-click' => 'ctrl.fetch()', tooltip: 'Click to Refresh' }
+    %a.pagination-status.hidden-xs{ href: '#', 'ng-hide' => 'ctrl.fetching', 'ng-click' => 'ctrl.fetch()', 'uib-tooltip' => 'Click to Refresh' }
       {{ctrl.items.count}} found
     %span.pagination-status{ 'ng-show' => 'ctrl.fetching' }
       %i.fa.fa-refresh.fa-spin
@@ -29,8 +29,8 @@
           'ng-dblclick' => 'ctrl.dblclick($event, upload)',
           'ng-class' => '{ selected: ctrl.selection.isSelected(upload.id) }' }
 
-        .dropdown{ dropdown: true }
-          %a.icon-type{ href: '#', id: 'upload{{::upload.id}}', 'dropdown-toggle' => true }
+        .dropdown{ 'uib-dropdown' => true }
+          %a.icon-type{ href: '#', id: 'upload{{::upload.id}}', 'uib-dropdown-toggle' => true }
             %i.fa.fa-stack-2x.fa-square.fa-inverse
             %i.fa.fa-stack-1x{ 'ng-class' => '{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }' }
           %ul.dropdown-menu{ 'template-url' => 'upload_dropdown.html', 'aria-labelledby' => 'upload{{::upload.id}}' }
@@ -43,11 +43,11 @@
         %img{ 'ng-switch-when' => 'process', 'ng-src' => '{{ ctrl.placeholderImageUrl }}' }
 
   .text-center
-    %pagination{ 'ng-if' => 'ctrl.items', 'ng-model' => 'ctrl.params.page',
+    %uib-pagination{ 'ng-if' => 'ctrl.items', 'ng-model' => 'ctrl.params.page',
       'total-items' => 'ctrl.items.count', 'items-per-page' => 'ctrl.params.limit',
       'max-size' => 5, 'previous-text' => '‹', 'next-text' => '›',
       'boundary-links' => 'true', 'first-text' => '«', 'last-text' => '»' }
-    %a.pagination-status.hidden-xs{ href: '#', 'ng-hide' => 'ctrl.fetching', 'ng-click' => 'ctrl.fetch()', tooltip: 'Click to Refresh' }
+    %a.pagination-status.hidden-xs{ href: '#', 'ng-hide' => 'ctrl.fetching', 'ng-click' => 'ctrl.fetch()', 'uib-tooltip' => 'Click to Refresh' }
       {{ctrl.items.count}} found
     %span.pagination-status{ 'ng-show' => 'ctrl.fetching' }
       %i.fa.fa-refresh.fa-spin

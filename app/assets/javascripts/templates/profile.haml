@@ -14,7 +14,7 @@
     .col-sm-9{ errors: 'ctrl.errors.default_library_id' }
       %select#default_library_id.form-control{ type: 'text', 'ng-model' => 'ctrl.view.default_library_id',
         'ng-options' => 'lib.id as lib.name for lib in ctrl.Library.mine' }
-  .form-group{ 'tooltip' => 'The maximum amount of upload data that will be discarded if an upload is paused or a transient error occurs with the storage provider.' }
+  .form-group{ 'uib-tooltip' => 'The maximum amount of upload data that will be discarded if an upload is paused or a transient error occurs with the storage provider.' }
     %label.control-label.col-sm-3{ for: 'upload_block_size_mib' } Upload Block Size (MiB)
     .col-sm-9{ errors: 'ctrl.errors.upload_block_size_mib' }
       %input#upload_block_size_mib.form-control{ type: 'number', 'ng-model' => 'ctrl.view.upload_block_size_mib' }

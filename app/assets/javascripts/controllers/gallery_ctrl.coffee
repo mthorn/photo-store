@@ -3,7 +3,7 @@
   DEFAULT_PARAMS = { page: 1, limit: 24, order: '' }
   LIMIT_OPTIONS = [ 12, 24, 48, 96 ]
 
-  @inject '$q', '$modal'
+  @inject '$q', '$uibModal'
 
   initialize: ->
     super
@@ -33,7 +33,7 @@
     @selection.click(event, upload.id)
 
   dblclick: (event, upload) ->
-    @modal.open(
+    @uibModal.open(
       templateUrl: 'upload_lightbox.html'
       scope: angular.extend(@scope.$new(), upload: upload)
     )

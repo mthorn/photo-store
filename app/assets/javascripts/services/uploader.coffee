@@ -1,6 +1,6 @@
 @app.factory 'uploader', [
-  '$rootScope', '$window', '$modal', '$http', 'schedule', 'Upload', 'Library',
-  ($rootScope,   $window,   $modal,   $http,   schedule,   Upload,   Library) ->
+  '$rootScope', '$window', '$uibModal', '$http', 'schedule', 'Upload', 'Library',
+  ($rootScope,   $window,   $uibModal,   $http,   schedule,   Upload,   Library) ->
 
     RATE_WINDOW_SIZE = 30000
 
@@ -88,7 +88,7 @@
 
       import: (files) ->
         if ! Library.current['can_upload?']
-          $modal.open(templateUrl: 'can_not_upload.html')
+          $uibModal.open(templateUrl: 'can_not_upload.html')
           return
 
         checks = files.map (file, i) ->
@@ -164,7 +164,7 @@
         svc.errors.splice(0, svc.errors.length)
 
       viewErrors: ->
-        $modal.open(
+        $uibModal.open(
           templateUrl: 'errors.html'
           scope: scope = angular.extend($rootScope.$new(),
             errors: svc.errors

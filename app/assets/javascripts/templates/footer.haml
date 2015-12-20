@@ -20,7 +20,7 @@
   Uploading:
   %span {{uploader.progress.done + 1}} / {{uploader.progress.count}} files,
   %span {{uploader.progress.loaded + (uploader.current.progress.loaded || 0) | bytes}} / {{uploader.progress.total | bytes}},
-  %span{ 'ng-show' => 'uploader.skipped', tooltip: 'Files are skipped if they are already in the library.' }
+  %span{ 'ng-show' => 'uploader.skipped', 'uib-tooltip' => 'Files are skipped if they are already in the library.' }
     {{uploader.skipped}} files skipped,
   %span{ 'ng-show' => 'uploader.timeRemaining()' }
     {{uploader.timeRemaining() | duration}} remaining,
@@ -32,5 +32,5 @@
   Import complete, {{uploader.skipped}} files that are already in the library were skipped.
   %button.btn.btn-default{ 'ng-click' => 'uploader.skipped = 0' } Close
 
-%progressbar{ 'ng-if' => 'uploader.progress', max: 'uploader.progress.total',
+%uib-progressbar{ 'ng-if' => 'uploader.progress', max: 'uploader.progress.total',
     value: 'uploader.progress.loaded + (uploader.current.progress.loaded || 0)' }

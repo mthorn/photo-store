@@ -6,7 +6,7 @@
 #= require angular-route
 #= require angular-animate
 #= require angular-sanitize
-#= require angular-rails-templates
+#= require angular-rails4-templates
 #= require angular-ui-bootstrap-bower
 #= require ng-tags-input
 #= require lodash

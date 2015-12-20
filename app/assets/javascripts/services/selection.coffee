@@ -1,6 +1,6 @@
 @app.factory 'selection', [
-  '$rootScope', '$location', '$http', '$route', '$q', '$modal', 'Library', 'User',
-  ($rootScope,   $location,   $http,   $route,   $q,   $modal,   Library,   User) ->
+  '$rootScope', '$location', '$http', '$route', '$q', '$uibModal', 'Library', 'User',
+  ($rootScope,   $location,   $http,   $route,   $q,   $uibModal,   Library,   User) ->
 
     $rootScope.$watch (-> Library.current), (lib) ->
       setIds(lib.selection ||= [])
@@ -104,7 +104,7 @@
 
       editTags: ->
         return if @count() == 0
-        $modal.open(
+        $uibModal.open(
           templateUrl: 'tags_edit.html'
           scope: angular.extend $rootScope.$new(),
             heading: "Add/Remove Tags (#{@count()} items selected)"

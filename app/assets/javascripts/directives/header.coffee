@@ -3,7 +3,7 @@
   scope: true
   controllerAs: 'ctrl'
   controller: class extends Controller
-    @inject '$location', '$modal', 'User', 'Library', 'config', 'selection', 'uploader'
+    @inject '$location', '$uibModal', 'User', 'Library', 'config', 'selection', 'uploader'
 
     library: => @Library.current
     libraryId: -> @library()?.id
@@ -12,14 +12,14 @@
     pathEndsWith: (str) -> _.endsWith(@path(), str)
 
     settings: ->
-      @modal.open
+      @uibModal.open
         templateUrl: 'settings.html'
         controller: 'SettingsCtrl as ctrl'
         resolve:
           library: @library
 
     roles: ->
-      @modal.open
+      @uibModal.open
         templateUrl: 'roles.html'
         controller: 'RolesCtrl as ctrl'
         resolve:
@@ -27,7 +27,7 @@
         size: 'lg'
 
     members: ->
-      @modal.open
+      @uibModal.open
         templateUrl: 'members.html'
         controller: 'MembersCtrl as ctrl'
         resolve:
@@ -35,12 +35,12 @@
         size: 'lg'
 
     profile: ->
-      @modal.open
+      @uibModal.open
         templateUrl: 'profile.html'
         controller: 'ProfileCtrl as ctrl'
 
     password: ->
-      @modal.open
+      @uibModal.open
         templateUrl: 'password.html'
         controller: 'PasswordCtrl as ctrl'
 
