@@ -2,8 +2,13 @@
   %query-settings{ 'ng-show' => 'queryOpen', params: 'ctrl.params' }
   %i.fa.fa-search{ 'ng-hide' => 'queryOpen' }
 
-.slides{ 'ng-if' => 'ctrl.items.count != 0', 'ng-switch' => 'ctrl.upload().state' }
-  %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ ctrl.upload().large_url }}', 'vertical-center' => 'ctrl.upload()' }
+.slides{ 'ng-if' => 'ctrl.items.count != 0', 'ng-switch' => 'upload.state' }
+  .dropdown{ 'uib-dropdown' => true, 'is-open' => 'dropdown', 'ng-mouseleave' => 'dropdown = false' }
+    %span.icon-type{ 'ng-mouseenter' => 'dropdown = true' }
+      %i.fa.fa-stack-1x.icon-type{ 'ng-class' => '{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }' }
+    %ul.uib-dropdown-menu{ 'template-url' => 'upload_dropdown.html', 'aria-labelledby' => 'upload{{upload.id}}' }
+
+  %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ upload.large_url }}', 'vertical-center' => 'upload' }
   .processing.text-center{ 'ng-switch-when' => 'process' }
     %i.fa.fa-spinner.fa-spin
 

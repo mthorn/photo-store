@@ -1,16 +1,18 @@
 .slides-filters {
-  position: relative;
-  top: -10px;
   margin: 10px;
   padding: 10px;
   border-radius: 10px;
 
   &.closed {
+    position: absolute;
+    top: 50px;
     width: 60px;
     font-size: 20px;
   }
 
   &.open {
+    position: relative;
+    top: -10px;
     background: white;
   }
 }
@@ -62,6 +64,20 @@
     color: #ccc;
     font-size: 20vh;
     margin-top: 30vh;
+  }
+
+  .icon-type {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .dropdown-menu {
+    right: 0;
+    left: initial;
   }
 
 }

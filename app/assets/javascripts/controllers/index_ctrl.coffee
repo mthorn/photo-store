@@ -1,7 +1,7 @@
 class @IndexCtrl extends Controller
 
-  @inject '$http', '$window', '$location', '$routeParams', 'Upload', 'Library',
-    'schedule', 'placeholderImageUrl', 'selection'
+  @inject '$http', '$window', '$location', '$routeParams', '$uibModal',
+    'Upload', 'Library', 'schedule', 'placeholderImageUrl', 'selection'
 
   initialize: ->
     @scope.$watch @parseSearchParams, ((@params) =>), true
@@ -51,6 +51,25 @@ class @IndexCtrl extends Controller
     ).then((response) ->
       response.data
     )
+
+  editTags: (upload) ->
+    @uibModal.open(
+      templateUrl: 'tags_edit.html'
+      scope: angular.extend (scope = @scope.$new()),
+        heading: "Tags"
+        tags: upload.tags
+        negatives: false
+        library: @Library.current
+    ).result.then((tags) ->
+      upload.tags = tags
+      upload.$update()
+    ).finally(->
+      scope.$destroy()
+    )
+
+  restore: (upload) ->
+    upload.deleted_at = null
+    upload.$update().then(=> @fetch())
 
   '$on($destroy)': =>
     @destroyed = true

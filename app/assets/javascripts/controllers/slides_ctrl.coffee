@@ -6,7 +6,9 @@
 
   initialize: ->
     super
-    @scope.$watch (=> @upload()), @updateCache
+    @scope.$watch (=> @upload()), (upload) =>
+      @scope.upload = upload
+      @updateCache()
 
   parseSearchParams: =>
     r = angular.extend({ i: 0 }, @location.search())

@@ -3,7 +3,7 @@
   DEFAULT_PARAMS = { page: 1, limit: 24, order: '' }
   LIMIT_OPTIONS = [ 12, 24, 48, 96 ]
 
-  @inject '$q', '$uibModal'
+  @inject '$q'
 
   initialize: ->
     super
@@ -37,20 +37,3 @@
       templateUrl: 'upload_lightbox.html'
       scope: angular.extend(@scope.$new(), upload: upload)
     )
-
-  editTags: (upload) ->
-    @modal.open(
-      templateUrl: 'tags_edit.html'
-      scope: angular.extend @scope.$new(),
-        heading: "Tags"
-        tags: upload.tags
-        negatives: false
-        library: @Library.current
-    ).result.then((tags) ->
-      upload.tags = tags
-      upload.$update()
-    )
-
-  restore: (upload) ->
-    upload.deleted_at = null
-    upload.$update().then(=> @fetch())
