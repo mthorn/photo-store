@@ -27,8 +27,9 @@
   updateCache: =>
     return unless @items?
 
-    i = @params.i
-    offset = @getOffset()
-    for j in _.range(i, Math.min(i + CACHE_AHEAD, LIMIT))
-      if (upload = @items[j])?
+    i = @params.i - @getOffset()
+    for j in _.range(0, CACHE_AHEAD)
+      if (upload = @items[i + j])?
+        @imageCache.store(upload.large_url)
+      if (upload = @items[i - j])?
         @imageCache.store(upload.large_url)
