@@ -1,6 +1,6 @@
 class UploadsController < ApplicationController
 
-  UNIQUE_PARAMS = %i( name size mime )
+  UNIQUE_PARAMS = %i( size mime md5sum )
   SORTABLE_FIELDS = %w( name created_at taken_at )
 
   before_filter :authorize_upload!, only: [ :create, :update, :destroy, :check ]
@@ -104,8 +104,12 @@ class UploadsController < ApplicationController
           }.join(',')
         }
       ) checks
-      WHERE (checks.column2, checks.column3, checks.column4) NOT IN (
-        SELECT name, size, mime
+      WHERE (#{
+        UNIQUE_PARAMS.size.times.map { |i|
+          "checks.column#{i + 2}"
+        }.join(', ')
+      }) NOT IN (
+        SELECT #{UNIQUE_PARAMS.join(', ')}
         FROM uploads
         WHERE library_id = #{@library.id}
         AND state IN ('process', 'ready')
@@ -119,7 +123,7 @@ class UploadsController < ApplicationController
   def upload_params
     @upload_params ||= params.permit(
       :file, :modified_at, :name, :size, :mime, :file_uploaded, :imported_at,
-      :deleted_at, tags: [])
+      :deleted_at, :md5sum, tags: [])
   end
 
 end

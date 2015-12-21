@@ -23,13 +23,14 @@ class Upload < ActiveRecord::Base
   validates :type, presence: true
   validates :library, presence: true
   validates :uploader, presence: true
-  validates :name, presence: true, uniqueness: {
-    scope: [ :library_id, :size, :mime ],
-    message: 'has already been uploaded'
-  }
+  validates :name, presence: true
   validates :modified_at, presence: true
   validates :size, presence: true, numericality: { greater_than: 0 }
   validates :mime, presence: true, format: /\A\w+\/\w+\z/
+  validates :md5sum, presence: true, format: /\A[0-9a-f]{32}\z/, uniqueness: {
+    scope: [ :library_id, :size, :mime ],
+    message: 'has already been uploaded'
+  }
   validates :state, inclusion: %w( upload process ready fail destroy )
   validates :imported_at, presence: true
   validates :latitude, allow_nil: true, numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }

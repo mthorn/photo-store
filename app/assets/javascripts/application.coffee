@@ -11,6 +11,7 @@
 #= require ng-tags-input
 #= require lodash
 #= require sprintf
+#= require spark-md5
 #
 #= require controllers/controller
 #= require controllers/index_ctrl

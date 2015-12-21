@@ -1,6 +1,6 @@
 @app.factory 'uploader', [
-  '$rootScope', '$window', '$uibModal', '$http', 'schedule', 'Upload', 'Library',
-  ($rootScope,   $window,   $uibModal,   $http,   schedule,   Upload,   Library) ->
+  '$rootScope', '$window', '$uibModal', '$http', '$q', 'schedule', 'spark', 'Upload', 'Library',
+  ($rootScope,   $window,   $uibModal,   $http,   $q,   schedule,   spark,   Upload,   Library) ->
 
     RATE_WINDOW_SIZE = 30000
 
@@ -26,16 +26,16 @@
         rateWindow = [ [ startTime, 0 ] ]
         $($window).on('beforeunload', handleBeforeUnload)
 
-        svc.queue.whenIdle().then =>
+        svc.queue.whenIdle().then ->
           $($window).off('beforeunload', handleBeforeUnload)
           svc.queue = svc.progress = startTime = rateWindow = null
 
       libraryId = Library.current?.id
       for file in files
-        do (file) =>
+        do (file) ->
           svc.progress.count += 1
           svc.progress.total += file.size
-          svc.queue((=>
+          svc.queue((->
             svc.current =
               file: file
               upload: new Upload
@@ -44,15 +44,16 @@
                 name: file.name
                 size: file.size
                 mime: file.mime ? file.type
+                md5sum: file.md5sum
                 imported_at: importDate
                 library_id: libraryId
             (svc.current.promise = svc.current.upload.start()).
               then(
-                (=>
+                (->
                   svc.progress.done += 1
                   svc.progress.loaded += file.size
                 ),
-                ((reason) =>
+                ((reason) ->
                   if angular.equals(reason.data, name: [ 'has already been uploaded' ])
                     svc.skipped += 1
                     svc.progress.done += 1
@@ -67,12 +68,12 @@
                         reason: reason
                       )
                 ),
-                ((currentProgress) =>
+                ((currentProgress) ->
                   svc.current.progress = currentProgress
                   rateWindow.push([ now = Date.now(), now, svc.progress.loaded + svc.current.progress.loaded ])
                 )
               ).
-              finally(=>
+              finally(->
                 svc.current = null
               )
           ), where)
@@ -91,18 +92,21 @@
           $uibModal.open(templateUrl: 'can_not_upload.html')
           return
 
-        checks = files.map (file, i) ->
-          id: i
-          name: file.name
-          size: file.size
-          mime: file.mime ? file.type
+        $q.all(spark.md5file(file) for file in files).then(->
+          checks = files.map (file, i) ->
+            id: i
+            name: file.name
+            size: file.size
+            mime: file.mime ? file.type
+            md5sum: file.md5sum
 
-        svc.checking += 1
-        $http(
-          method: 'POST'
-          url: "/api/libraries/#{Library.current?.id}/uploads/check.json"
-          data: { is_new: checks }
-        ).then((response) =>
+          svc.checking += 1
+          $http(
+            method: 'POST'
+            url: "/api/libraries/#{Library.current?.id}/uploads/check.json"
+            data: { is_new: checks }
+          )
+        ).then((response) ->
           newFiles = []
           for i in response.data
             newFiles.push(files[i])
@@ -113,7 +117,7 @@
           if svc.progress
             svc.progress.count += skipped
             svc.progress.done += skipped
-        ).finally(=>
+        ).finally(->
           svc.checking -= 1
         )
 

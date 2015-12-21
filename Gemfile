@@ -33,6 +33,7 @@ source 'https://rails-assets.org' do
   gem 'rails-assets-lodash'
   gem 'rails-assets-sprintf'
   gem 'rails-assets-ng-tags-input'
+  gem 'rails-assets-spark-md5'
 end
 
 group :development, :test do
