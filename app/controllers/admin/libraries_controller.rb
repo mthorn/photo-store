@@ -1,7 +1,5 @@
 class Admin::LibrariesController < ApplicationController
 
-  before_filter :authorize_admin!
-
   def index
     @libraries = Library.all
   end
@@ -34,12 +32,6 @@ class Admin::LibrariesController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email).merge(password: Devise.friendly_token)
-  end
-
-  def authorize_admin!
-    if ! current_user.admin?
-      head :forbidden
-    end
   end
 
 end

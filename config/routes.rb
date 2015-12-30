@@ -23,6 +23,7 @@ Rails.application.routes.draw do
 
     namespace :admin do
       resources :libraries, only: [ :index, :create, :show ]
+      resources :jobs, only: :create
     end
 
     post 'jserror' => 'jserrors#log'

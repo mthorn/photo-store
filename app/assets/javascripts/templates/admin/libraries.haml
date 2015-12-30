@@ -30,3 +30,17 @@
     .form-group
       .col-sm-offset-3.col-sm-10
         %button.btn.btn-default{ 'ng-click' => 'ctrl.create()' } Create
+
+  %h3 Run Job
+
+  .form.form-horizontal
+    .form-group
+      %label.control-label.col-sm-3{ for: 'job' } Job
+      .col-sm-4
+        %select.form-control{ 'ng-model' => 'selectedJob' }
+          %option{ value: 'SetCoordinatesJob' } SetCoordinatesJob
+          %option{ value: 'SetMd5sumJob' } SetMd5sumJob
+          %option{ value: 'SetTakenAtJob' } SetTakenAtJob
+      .col-sm-1
+        %button.btn.btn-default{ 'ng-click' => 'ctrl.runJob(selectedJob)' } Run
+      .col-sm-4 {{ctrl.jobStatus}}
