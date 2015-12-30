@@ -1,5 +1,5 @@
 @app.controller 'AdminLibrariesCtrl', class extends Controller
-  @inject 'Library', '$http'
+  @inject 'Library', '$http', '$interval'
 
   initialize: ->
     @load()
@@ -8,15 +8,14 @@
       user:
         name: 'Admin'
 
-  load: ->
+    @reloader = @$interval(@load, 60000)
+
+  load: =>
     @Library.adminIndex().$promise.then((@libraries) =>)
 
   create: ->
     @errors = null
-    @Library.adminCreate(@view).$promise.then(
-      (=> @load()),
-      ((response) => @errors = response.data)
-    )
+    @Library.adminCreate(@view).$promise.then(@load, ((response) => @errors = response.data))
 
   runJob: (job) ->
     @jobStatus = null
@@ -28,3 +27,6 @@
       (=> @jobStatus = "#{job} started"),
       (=> @jobStatus = "#{job} error")
     )
+
+  '$on($destroy)': =>
+    @$interval.cancel(@reloader)
