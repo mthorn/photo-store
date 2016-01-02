@@ -16,11 +16,11 @@
     "AWS_SECRET_ACCESS_KEY": {
       "description": "Secret access key from your Amazon S3 user."
     },
+    "AWS_REGION": {
+      "description": "S3 region. Enter 'us-east-1' for US or 'eu-west-1' for EU."
+    },
     "S3_BUCKET_NAME": {
       "description": "Name of S3 bucket."
-    },
-    "S3_REGION": {
-      "description": "S3 region. Enter 'us-east-1' for US or 'eu-west-1' for EU."
     },
     "SECRET_TOKEN": {
       "description": "A secret key for verifying the integrity of signed cookies.",

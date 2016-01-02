@@ -39,4 +39,9 @@ module UploaderExtension
     end
   end
 
+  def placeholder(format)
+    File.write(current_path, '')
+    @format = format
+  end
+
 end

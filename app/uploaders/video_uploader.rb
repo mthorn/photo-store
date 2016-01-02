@@ -24,6 +24,10 @@ class VideoUploader < BaseUploader
     end
   end
 
+  version :transcoded do
+    process placeholder: :mp4
+  end
+
   def extension_white_list
     %w( mp4 m4v mov )
   end

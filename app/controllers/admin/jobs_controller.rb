@@ -2,7 +2,7 @@ class Admin::JobsController < ApplicationController
 
   def create
     name = params[:name]
-    if name =~ /\ASet\w+Job\z/
+    if name =~ /\ASet\w+Job\z/ || name == 'CreateMissingTranscodesJob'
       name.constantize.perform_later
       head :ok
     else

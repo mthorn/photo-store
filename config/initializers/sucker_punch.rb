@@ -7,3 +7,16 @@ ActiveJob::QueueAdapters::SuckerPunchAdapter::JobWrapper.workers((ENV['WORKER_CO
 if defined? Rails::Server
   RestartInterruptedUploadProcessingJob.perform_later
 end
+
+class ActiveJob::QueueAdapters::SuckerPunchAdapter
+  def self.enqueue_at(job, timestamp)
+    delay = timestamp - Time.current.to_f
+    JobWrapper.new.async.later delay, job.serialize
+  end
+
+  class JobWrapper
+    def later(sec, data)
+      after(sec) { perform(data) }
+    end
+  end
+end

@@ -142,7 +142,7 @@ class Upload < ActiveRecord::Base
     super
   end
 
-  def process_file_data blocks
+  def process_file_data(blocks, final_state = 'ready')
     file = Tempfile.new(self.name.gsub(/\s+/, '_').split(/(?=\.[^.]+\z)/), encoding: 'BINARY')
     begin
       blocks.each do |block|
@@ -154,7 +154,7 @@ class Upload < ActiveRecord::Base
         end
       end
 
-      self.update_attributes!(state: 'ready', file: file)
+      self.update_attributes!(state: final_state, file: file)
     ensure
       file.close
       file.unlink

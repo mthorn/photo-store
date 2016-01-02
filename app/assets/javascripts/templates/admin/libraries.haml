@@ -41,6 +41,7 @@
           %option{ value: 'SetCoordinatesJob' } SetCoordinatesJob
           %option{ value: 'SetMd5sumJob' } SetMd5sumJob
           %option{ value: 'SetTakenAtJob' } SetTakenAtJob
+          %option{ value: 'CreateMissingTranscodesJob' } CreateMissingTranscodesJob
       .col-sm-1
         %button.btn.btn-default{ 'ng-click' => 'ctrl.runJob(selectedJob)' } Run
       .col-sm-4 {{ctrl.jobStatus}}

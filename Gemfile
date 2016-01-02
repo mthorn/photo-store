@@ -22,6 +22,7 @@ gem 'sucker_punch'
 gem 'font-awesome-rails'
 gem 'jquery-rails'
 gem 'geocoder'
+gem 'aws-sdk'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-angular'

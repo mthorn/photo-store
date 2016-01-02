@@ -35,5 +35,7 @@
   dblclick: (event, upload) ->
     @uibModal.open(
       templateUrl: 'upload_lightbox.html'
-      scope: angular.extend(@scope.$new(), upload: upload)
+      scope: angular.extend(scope = @scope.$new(), upload: upload)
+    ).result.finally(->
+      scope.$destroy()
     )

@@ -60,11 +60,11 @@ class @IndexCtrl extends Controller
         tags: upload.tags
         negatives: false
         library: @Library.current
-    ).result.then((tags) ->
+    ).result.finally(->
+      scope.$destroy()
+    ).then((tags) ->
       upload.tags = tags
       upload.$update()
-    ).finally(->
-      scope.$destroy()
     )
 
   restore: (upload) ->

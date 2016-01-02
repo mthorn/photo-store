@@ -63,4 +63,60 @@ class Video < Upload
     end
   end
 
+  def process_file_data(blocks)
+    if TRANSCODER
+      super(blocks, 'process')
+      if self.state == 'process'
+        self.create_transcode_job
+        CheckTranscodesJob.set(wait: 5.seconds).perform_later
+      end
+    else
+      super
+    end
+    nil
+  end
+
+  def check_transcode
+    job = TRANSCODER.read_job(id: self.external_job_id)
+    case job.job.status
+      when 'Complete'
+        logger.debug "Transcode #{self.external_job_id} complete"
+        self.update_attributes(state: 'ready')
+      when 'Error'
+        logger.debug "Transcode #{self.external_job_id} error"
+        self.update_attributes(state: 'fail')
+    end
+  end
+
+  def create_transcode_job
+    output = self.file.transcoded.path
+    output_folder = output.sub(/[^\/]*\z/, '')
+    output_file_name = File.basename(output)
+
+    begin
+      S3.delete_object(S3_BUCKET_NAME, output)
+    rescue Excon::Errors::NotFound
+    end
+
+    job_id = TRANSCODER.create_job(
+      pipeline_id: ELASTIC_TRANSCODER_PIPELINE_ID,
+      input: {
+        key: self.file.path
+      },
+      output_key_prefix: output_folder,
+      outputs: [
+        {
+          key: output_file_name,
+          preset_id: ELASTIC_TRANSCODER_PRESET_ID
+        }
+      ]
+    )[:job][:id]
+
+    logger.debug "Created transcode job #{job_id}"
+    self.update_columns(
+      external_job_id: job_id,
+      state: 'process'
+    )
+  end
+
 end
