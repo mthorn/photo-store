@@ -1,4 +1,5 @@
 .modal-body.view-upload{ 'ng-switch' => 'upload.type', 'lightbox-size' => 'upload' }
   %img{ 'ng-switch-when' => 'Photo', 'ng-src' => '{{ upload.large_url }}' }
   %video{ 'ng-switch-when' => 'Video', 'ng-src' => '{{ upload.video_url }}',
-    'ng-poster' => '{{ upload.large_url }}', autoplay: true, controls: true }
+    'ng-poster' => '{{ upload.large_url }}', autoplay: true, controls: true,
+    'click-play-pause' => true }

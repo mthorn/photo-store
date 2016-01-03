@@ -26,11 +26,10 @@
 
       scope.$watch attrs.verticalCenter, (desc) ->
         image = desc
+        setMargin()
 
       $($window).on('resize', setMargin)
-      element.on('load', setMargin)
 
       scope.$on '$destroy', ->
         $($window).off('resize', setMargin)
-        element.off('load', setMargin)
 ]

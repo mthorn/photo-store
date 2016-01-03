@@ -2,14 +2,17 @@
   %query-settings{ 'ng-show' => 'queryOpen', params: 'ctrl.params' }
   %i.fa.fa-search{ 'ng-hide' => 'queryOpen' }
 
-.slides{ 'ng-if' => 'ctrl.items.count != 0', 'ng-switch' => 'upload.state' }
+.slides{ 'ng-if' => 'ctrl.items.count != 0' }
   .dropdown{ 'uib-dropdown' => true, 'is-open' => 'dropdown', 'ng-mouseleave' => 'dropdown = false' }
     %span.icon-type{ 'ng-mouseenter' => 'dropdown = true' }
       %i.fa.fa-stack-1x.icon-type{ 'ng-class' => '{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }' }
     %ul.uib-dropdown-menu{ 'template-url' => 'upload_dropdown.html', 'aria-labelledby' => 'upload{{upload.id}}' }
 
-  %img{ 'ng-switch-when' => 'ready', 'ng-src' => '{{ upload.large_url }}', 'vertical-center' => 'upload' }
-  .processing.text-center{ 'ng-switch-when' => 'process' }
+  %img{ 'ng-if' => 'upload.state == "ready" && upload.type == "Photo"', 'ng-src' => '{{ upload.large_url }}', 'vertical-center' => 'upload' }
+  %video{ 'ng-if' => 'upload.state == "ready" && upload.type == "Video"', 'ng-src' => '{{ upload.video_url }}',
+    'ng-poster' => '{{ upload.large_url }}', autoplay: true, controls: true, 'vertical-center' => 'upload',
+    'click-play-pause' => true }
+  .processing.text-center{ 'ng-if' => 'upload.state == "process"' }
     %i.fa.fa-spinner.fa-spin
 
   %button.btn#prev{ 'ng-click' => 'ctrl.params.i = ctrl.params.i - 1', 'ng-hide' => 'ctrl.params.i <= 0' }
