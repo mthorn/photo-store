@@ -71,6 +71,17 @@ class @IndexCtrl extends Controller
     upload.deleted_at = null
     upload.$update().then(=> @fetch())
 
+  delete: (upload) ->
+    (
+      if upload.deleted_at?
+        upload.$delete()
+      else
+        upload.deleted_at = new Date
+        upload.$update()
+    ).then(=>
+      @fetch()
+    )
+
   '$on($destroy)': =>
     @destroyed = true
     @counter += 1
