@@ -4,8 +4,11 @@ end
 
 ActiveJob::QueueAdapters::SuckerPunchAdapter::JobWrapper.workers((ENV['WORKER_COUNT'] || 2).to_i)
 
-if defined? Rails::Server
+if defined?(Rails::Server) || ENV['DYNO'] =~ /\Aweb\./
   RestartInterruptedUploadProcessingJob.perform_later
+  CheckTranscodesJob.perform_later
+else
+  Rails.logger.debug 'Not a web server process'
 end
 
 class ActiveJob::QueueAdapters::SuckerPunchAdapter
