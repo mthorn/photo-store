@@ -82,6 +82,9 @@ class @IndexCtrl extends Controller
       @fetch()
     )
 
+  anyFilters: ->
+    @params.tags || @params.filters
+
   '$on($destroy)': =>
     @destroyed = true
     @counter += 1
