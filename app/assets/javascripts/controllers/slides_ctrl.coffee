@@ -35,3 +35,6 @@
         @imageCache.store(upload.large_url) if upload.type == 'Photo'
       if (upload = @items[i - j])?
         @imageCache.store(upload.large_url) if upload.type == 'Photo'
+
+  change: (delta) ->
+    @params.i = Math.min(Math.max(@params.i + delta, 0), @items.count - 1)

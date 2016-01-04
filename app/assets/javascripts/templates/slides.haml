@@ -2,7 +2,7 @@
   %query-settings{ 'ng-show' => 'queryOpen', params: 'ctrl.params' }
   %i.fa.fa-search{ 'ng-hide' => 'queryOpen' }
 
-.slides{ 'ng-if' => 'ctrl.items.count != 0' }
+.slides{ 'ng-if' => 'ctrl.items.count != 0', 'ng-swipe-left' => 'ctrl.change(1)', 'ng-swipe-right' => 'ctrl.change(-1)' }
   .dropdown{ 'uib-dropdown' => true, 'is-open' => 'dropdown', 'ng-mouseleave' => 'dropdown = false' }
     %span.icon-type{ 'ng-mouseenter' => 'dropdown = true' }
       %i.fa.fa-stack-1x.icon-type{ 'ng-class' => '{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }' }
@@ -15,9 +15,9 @@
   .processing.text-center{ 'ng-if' => 'upload.state == "process"' }
     %i.fa.fa-spinner.fa-spin
 
-  %button.btn#prev{ 'ng-click' => 'ctrl.params.i = ctrl.params.i - 1', 'ng-hide' => 'ctrl.params.i <= 0' }
+  %button.btn#prev{ 'ng-click' => 'ctrl.change(-1)', 'ng-hide' => 'ctrl.params.i <= 0' }
     %i.fa.fa-chevron-left
-  %button.btn#next{ 'ng-click' => 'ctrl.params.i = ctrl.params.i + 1', 'ng-hide' => 'ctrl.params.i >= ctrl.items.count - 1' }
+  %button.btn#next{ 'ng-click' => 'ctrl.change(1)', 'ng-hide' => 'ctrl.params.i >= ctrl.items.count - 1' }
     %i.fa.fa-chevron-right
 
 %p.text-center{ 'ng-if' => 'ctrl.items.count == 0' }

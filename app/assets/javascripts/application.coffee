@@ -5,6 +5,7 @@
 #= require angular-resource
 #= require angular-route
 #= require angular-animate
+#= require angular-touch
 #= require angular-sanitize
 #= require angular-rails4-templates
 #= require angular-ui-bootstrap-bower
