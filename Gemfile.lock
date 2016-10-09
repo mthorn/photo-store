@@ -221,6 +221,7 @@ GEM
     haml (4.0.7)
       tilt
     hitimes (1.2.3)
+    httpclient (2.8.2.4)
     i18n (0.7.0)
     inflecto (0.0.2)
     ipaddress (0.8.0)
@@ -352,6 +353,7 @@ DEPENDENCIES
   font-awesome-rails
   geocoder
   haml
+  httpclient
   jbuilder
   jquery-rails
   letter_opener

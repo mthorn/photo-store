@@ -23,6 +23,7 @@ gem 'font-awesome-rails'
 gem 'jquery-rails'
 gem 'geocoder'
 gem 'aws-sdk'
+gem 'httpclient'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-angular'
