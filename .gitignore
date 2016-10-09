@@ -29,3 +29,6 @@
 
 /development.dump
 /chrome.zip
+
+/public/assets
+/env.sh
