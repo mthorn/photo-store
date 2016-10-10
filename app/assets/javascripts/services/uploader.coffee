@@ -3,6 +3,7 @@
   ($rootScope,   $window,   $uibModal,   $http,   $q,   schedule,   spark,   Upload,   Library) ->
 
     RATE_WINDOW_SIZE = 30000
+    MOBILE = !! $window.navigator.userAgent.match(/\bmobile\b/i)
 
     startTime = rateWindow = lastTimeRemaining = lastTimeRemainingCalculatedAt = undefined
 
@@ -36,46 +37,49 @@
           svc.progress.count += 1
           svc.progress.total += file.size
           svc.queue((->
-            svc.current =
-              file: file
-              upload: new Upload
-                modified_at: file.lastModifiedDate
+            $q.when(
+              spark.md5file(file) unless file.md5sum?
+            ).then(->
+              svc.current =
                 file: file
-                name: file.name
-                size: file.size
-                mime: file.mime ? file.type
-                md5sum: file.md5sum
-                imported_at: importDate
-                library_id: libraryId
-            (svc.current.promise = svc.current.upload.start()).
-              then(
-                (->
+                upload: new Upload
+                  modified_at: file.lastModifiedDate
+                  file: file
+                  name: file.name
+                  size: file.size
+                  mime: file.mime ? file.type
+                  md5sum: file.md5sum
+                  imported_at: importDate
+                  library_id: libraryId
+              (svc.current.promise = svc.current.upload.start())
+            ).then(
+              (->
+                svc.progress.done += 1
+                svc.progress.loaded += file.size
+              ),
+              ((reason) ->
+                if angular.equals(reason.data, name: [ 'has already been uploaded' ])
+                  svc.skipped += 1
                   svc.progress.done += 1
-                  svc.progress.loaded += file.size
-                ),
-                ((reason) ->
-                  if angular.equals(reason.data, name: [ 'has already been uploaded' ])
-                    svc.skipped += 1
-                    svc.progress.done += 1
-                    svc.progress.total -= file.size
-                  else
-                    svc.progress.count -= 1
-                    svc.progress.total -= file.size
-                    if reason != 'cancel'
-                      svc.errors.push(
-                        file: svc.current.file
-                        importDate: importDate
-                        reason: reason
-                      )
-                ),
-                ((currentProgress) ->
-                  svc.current.progress = currentProgress
-                  rateWindow.push([ now = Date.now(), now, svc.progress.loaded + svc.current.progress.loaded ])
-                )
-              ).
-              finally(->
-                svc.current = null
+                  svc.progress.total -= file.size
+                else
+                  svc.progress.count -= 1
+                  svc.progress.total -= file.size
+                  if reason != 'cancel'
+                    svc.errors.push(
+                      file: svc.current.file
+                      importDate: importDate
+                      reason: reason
+                    )
+              ),
+              ((currentProgress) ->
+                svc.current.progress = currentProgress
+                rateWindow.push([ now = Date.now(), now, svc.progress.loaded + svc.current.progress.loaded ])
               )
+            ).
+            finally(->
+              svc.current = null
+            )
           ), where)
 
 
@@ -92,7 +96,10 @@
           $uibModal.open(templateUrl: 'can_not_upload.html')
           return
 
-        $q.all(spark.md5file(file) for file in files).then(->
+        $q.when(
+          if MOBILE
+            $q.all(files.map((file) -> spark.md5file(file)))
+        ).then(->
           checks = files.map (file, i) ->
             id: i
             name: file.name
@@ -104,7 +111,9 @@
           $http(
             method: 'POST'
             url: "/api/libraries/#{Library.current?.id}/uploads/check.json"
-            data: { is_new: checks }
+            data:
+              columns: (if MOBILE then [ 'size', 'mime', 'md5sum' ] else [ 'name', 'size', 'mime' ])
+              is_new: checks
           )
         ).then((response) ->
           newFiles = []

@@ -1,7 +1,7 @@
 class UploadsController < ApplicationController
 
-  UNIQUE_PARAMS = %i( size mime md5sum )
   SORTABLE_FIELDS = %w( name created_at taken_at )
+  AVAILABLE_CHECK_COLUMNS = %w( name size mime md5sum )
 
   before_filter :authorize_upload!, only: [ :create, :update, :destroy, :check ]
 
@@ -89,7 +89,12 @@ class UploadsController < ApplicationController
   end
 
   def check
-    check_keys = [ :id ] + UNIQUE_PARAMS
+    if (unique_params = params[:columns]).blank? || (unique_params - AVAILABLE_CHECK_COLUMNS).present?
+      head :bad_request
+      return
+    end
+
+    check_keys = [ :id ] + unique_params
     checks = params[:is_new].presence || []
     result = Upload.connection.execute <<-SQL
       SELECT checks.column1 AS id
@@ -105,11 +110,11 @@ class UploadsController < ApplicationController
         }
       ) checks
       WHERE (#{
-        UNIQUE_PARAMS.size.times.map { |i|
+        unique_params.size.times.map { |i|
           "checks.column#{i + 2}"
         }.join(', ')
       }) NOT IN (
-        SELECT #{UNIQUE_PARAMS.join(', ')}
+        SELECT #{unique_params.join(', ')}
         FROM uploads
         WHERE library_id = #{@library.id}
         AND state IN ('process', 'ready')
