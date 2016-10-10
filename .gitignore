@@ -7,7 +7,6 @@
 /db/*.sqlite3
 
 # Ignore all logfiles and tempfiles.
-/public/*uploads
 /public/assets/source_maps
 /log/*.log
 /tmp
@@ -32,3 +31,4 @@
 
 /public/assets
 /env.sh
+/private

@@ -36,11 +36,19 @@ else
   AWS_TRANSCODER = nil
 end
 
-CarrierWave.configure do |config|
-  config.cache_dir = "#{::Rails.env}_uploads/tmp"
+if CARRIERWAVE_STORAGE == :file && Rails.env.production?
+  Rails.application.configure do
+    config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
+  end
+end
 
+CarrierWave.configure do |config|
+  config.cache_dir = "#{::Rails.root}/private/#{::Rails.env}_uploads/tmp"
   config.storage = CARRIERWAVE_STORAGE
-  config.fog_credentials = fog_credentials
-  config.fog_directory = S3_BUCKET_NAME
-  config.fog_public = false
+
+  if CARRIERWAVE_STORAGE == :fog
+    config.fog_credentials = fog_credentials
+    config.fog_directory = S3_BUCKET_NAME
+    config.fog_public = false
+  end
 end
