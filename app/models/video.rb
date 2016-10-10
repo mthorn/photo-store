@@ -64,7 +64,7 @@ class Video < Upload
   end
 
   def process_file_data(blocks)
-    if TRANSCODER
+    if AWS_TRANSCODER
       super(blocks, 'process')
       if self.state == 'process'
         self.create_transcode_job
@@ -77,7 +77,7 @@ class Video < Upload
   end
 
   def check_transcode
-    job = TRANSCODER.read_job(id: self.external_job_id)
+    job = AWS_TRANSCODER.read_job(id: self.external_job_id)
     case job.job.status
       when 'Complete'
         logger.debug "Transcode #{self.external_job_id} complete"
@@ -98,7 +98,7 @@ class Video < Upload
     rescue Excon::Errors::NotFound
     end
 
-    job_id = TRANSCODER.create_job(
+    job_id = AWS_TRANSCODER.create_job(
       pipeline_id: ELASTIC_TRANSCODER_PIPELINE_ID,
       input: {
         key: self.file.path

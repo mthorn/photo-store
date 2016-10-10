@@ -7,6 +7,9 @@ ELASTIC_TRANSCODER_PRESET_ID = ENV['ELASTIC_TRANSCODER_PRESET_ID'].presence || '
 
 aws_available = [ AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET_NAME ].all?(&:present?)
 
+CARRIERWAVE_STORAGE = ENV['CARRIERWAVE_STORAGE'].presence.try(:to_sym) || (aws_available ? :fog : :file)
+TRANSCODE_METHOD = ENV['TRANSCODE_METHOD'].presence.try(:to_sym) || (CARRIERWAVE_STORAGE == :fog ? :aws : :ffmpeg)
+
 if aws_available
   S3_HOST = AWS_REGION == 'us-east-1' ? 's3.amazonaws.com' : "s3-#{AWS_REGION}.amazonaws.com"
 
@@ -19,25 +22,25 @@ if aws_available
 
   S3 = Fog::Storage.new fog_credentials
 
-  TRANSCODER = Aws::ElasticTranscoder::Client.new(
-    region: AWS_REGION,
-    access_key_id: AWS_ACCESS_KEY_ID,
-    secret_access_key: AWS_SECRET_ACCESS_KEY
-  )
+  if TRANSCODE_METHOD == :aws
+    AWS_TRANSCODER = Aws::ElasticTranscoder::Client.new(
+      region: AWS_REGION,
+      access_key_id: AWS_ACCESS_KEY_ID,
+      secret_access_key: AWS_SECRET_ACCESS_KEY
+    )
+  else
+    AWS_TRANSCODER = nil
+  end
 else
   S3 = nil
-  TRANSCODER = nil
+  AWS_TRANSCODER = nil
 end
 
 CarrierWave.configure do |config|
   config.cache_dir = "#{::Rails.env}_uploads/tmp"
 
-  if aws_available
-    config.storage = :fog
-    config.fog_credentials = fog_credentials
-    config.fog_directory = S3_BUCKET_NAME
-    config.fog_public = false
-  else
-    config.storage = :file
-  end
+  config.storage = CARRIERWAVE_STORAGE
+  config.fog_credentials = fog_credentials
+  config.fog_directory = S3_BUCKET_NAME
+  config.fog_public = false
 end
