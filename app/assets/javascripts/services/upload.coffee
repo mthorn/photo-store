@@ -14,7 +14,7 @@
       paused = cancel = false
       upload = null
       uploadDeferred = $q.defer()
-      fileDataDeferred = $q.defer()
+      fileDataPromise = null
 
       uploadNextBlock = ->
         if posts.length == 0
@@ -27,10 +27,15 @@
 
         post = posts.shift()
         [ url, postData, offset, length ] = post
-        fileDataDeferred.promise.then(
+        fileDataPromise.then(
           ((fileData) ->
-            data = new Uint8Array(fileData, offset, length)
-            block = new Blob([ data ], type: 'application/octet-stream')
+            if fileData
+              block = new Blob(
+                [ new Uint8Array(fileData, offset, length) ],
+                type: 'application/octet-stream'
+              )
+            else
+              block = file
 
             schedule.retryable(->
               if cancel
@@ -62,16 +67,22 @@
 
         null
 
-      reader = new FileReader
-      reader.onload = -> fileDataDeferred.resolve(reader.result)
-      reader.onerror = fileDataDeferred.reject
-      reader.readAsArrayBuffer(file)
-
       promise = @$save().
         then(=>
           posts = @file_posts
           for post in posts
             total += post.length
+
+          if posts.length == 1
+            fileDataPromise = $q.when()
+          else
+            fileDataDeferred = $q.defer()
+            fileDataPromise = fileDataDeferred.promise
+            reader = new FileReader
+            reader.onload = -> fileDataDeferred.resolve(reader.result)
+            reader.onerror = fileDataDeferred.reject
+            reader.readAsArrayBuffer(file)
+
           uploadNextBlock()
           uploadDeferred.promise
         ).

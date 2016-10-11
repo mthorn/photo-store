@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
 
   validates :name, presence: true
   validates :manual_deselect, inclusion: [ true, false ]
-  validates :upload_block_size, presence: true, numericality: { greater_than: 0 }
+  validates :upload_block_size, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :default_library, presence: true
 
   validate :valid_time_zone, if: :time_zone_auto?

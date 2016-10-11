@@ -12,7 +12,7 @@
           attrs = key
           fileName = val
           for key, val of attrs
-            if attrs.hasOwnProperty(key) && key[0] != '$' && ! angular.isFunction(val)
+            if attrs.hasOwnProperty(key) && key[0] != '$' && ! angular.isFunction(val) && angular.isDefined(val)
               if val instanceof Blob && fileName
                 @data.append key, val, fileName
               else

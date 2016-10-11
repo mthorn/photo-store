@@ -27,7 +27,7 @@ class Upload < ActiveRecord::Base
   validates :modified_at, presence: true
   validates :size, presence: true, numericality: { greater_than: 0 }
   validates :mime, presence: true, format: /\A\w+\/\w+\z/
-  validates :md5sum, presence: true, format: /\A[0-9a-f]{32}\z/, uniqueness: {
+  validates :md5sum, allow_nil: true, format: /\A[0-9a-f]{32}\z/, uniqueness: {
     scope: [ :library_id, :size, :mime ],
     message: 'has already been uploaded'
   }
@@ -84,6 +84,11 @@ class Upload < ActiveRecord::Base
     self.location.split(/, */).each do |part|
       self.tags.create(name: part.downcase.gsub(/ +/, '-'), kind: 'location')
     end
+  end
+
+  before_update :auto_set_md5sum, unless: :md5sum?
+  def auto_set_md5sum
+    self.md5sum = Digest::MD5.hexdigest(File.read(self.file.path)) if self.file?
   end
 
   def self.with_tags tags
@@ -154,7 +159,9 @@ class Upload < ActiveRecord::Base
         end
       end
 
-      self.update_attributes!(state: final_state, file: file)
+      if ! self.update_attributes(state: final_state, file: file)
+        self.destroy # invalid, md5sum conflict
+      end
     ensure
       file.close
       file.unlink

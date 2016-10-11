@@ -13,6 +13,7 @@ module DirectUpload
   def direct_upload_keys field
     size = self.public_send(:"#{field}_size")
     block_size = self.public_send(:"#{field}_block_size")
+    block_size = size if block_size <= 0
     (size.to_f / block_size).ceil.times.map do |i|
       "uploads/#{self.class.to_s.underscore.dasherize}-#{self.id}-#{field}-#{i}"
     end
@@ -25,7 +26,7 @@ module DirectUpload
     posts = self.direct_upload_keys(field).map.with_index do |key, i|
       offset = i * block_size
       length = [ size, offset + block_size ].min - offset
-      if S3
+      if CARRIERWAVE_STORAGE == :fog
         post_data = {
           key: "#{key}",
           AWSAccessKeyId: AWS_ACCESS_KEY_ID,
@@ -65,7 +66,7 @@ module DirectUpload
 
   def destroy_buffers(field)
     self.direct_upload_keys(field).each do |key|
-      if S3
+      if CARRIERWAVE_STORAGE == :fog
         begin
           S3.delete_object(S3_BUCKET_NAME, key)
         rescue Excon::Errors::NotFound
@@ -113,7 +114,7 @@ module DirectUpload
 
     def each
       @upload.direct_upload_keys(@field).each.with_index do |key, i|
-        if S3
+        if CARRIERWAVE_STORAGE == :fog
           begin
             yield S3.get_object(S3_BUCKET_NAME, key).body
           rescue Excon::Errors::NotFound

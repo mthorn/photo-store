@@ -37,49 +37,46 @@
           svc.progress.count += 1
           svc.progress.total += file.size
           svc.queue((->
-            $q.when(
-              spark.md5file(file) unless file.md5sum?
-            ).then(->
-              svc.current =
+            svc.current =
+              file: file
+              upload: new Upload
+                modified_at: file.lastModifiedDate
                 file: file
-                upload: new Upload
-                  modified_at: file.lastModifiedDate
-                  file: file
-                  name: file.name
-                  size: file.size
-                  mime: file.mime ? file.type
-                  md5sum: file.md5sum
-                  imported_at: importDate
-                  library_id: libraryId
-              (svc.current.promise = svc.current.upload.start())
-            ).then(
-              (->
-                svc.progress.done += 1
-                svc.progress.loaded += file.size
-              ),
-              ((reason) ->
-                if angular.equals(reason.data, name: [ 'has already been uploaded' ])
-                  svc.skipped += 1
+                name: file.name
+                size: file.size
+                mime: file.mime ? file.type
+                md5sum: file.md5sum
+                imported_at: importDate
+                library_id: libraryId
+            (svc.current.promise = svc.current.upload.start()).
+              then(
+                (->
                   svc.progress.done += 1
-                  svc.progress.total -= file.size
-                else
-                  svc.progress.count -= 1
-                  svc.progress.total -= file.size
-                  if reason != 'cancel'
-                    svc.errors.push(
-                      file: svc.current.file
-                      importDate: importDate
-                      reason: reason
-                    )
-              ),
-              ((currentProgress) ->
-                svc.current.progress = currentProgress
-                rateWindow.push([ now = Date.now(), now, svc.progress.loaded + svc.current.progress.loaded ])
+                  svc.progress.loaded += file.size
+                ),
+                ((reason) ->
+                  if angular.equals(reason.data, name: [ 'has already been uploaded' ])
+                    svc.skipped += 1
+                    svc.progress.done += 1
+                    svc.progress.total -= file.size
+                  else
+                    svc.progress.count -= 1
+                    svc.progress.total -= file.size
+                    if reason != 'cancel'
+                      svc.errors.push(
+                        file: svc.current.file
+                        importDate: importDate
+                        reason: reason
+                      )
+                ),
+                ((currentProgress) ->
+                  svc.current.progress = currentProgress
+                  rateWindow.push([ now = Date.now(), now, svc.progress.loaded + svc.current.progress.loaded ])
+                )
+              ).
+              finally(->
+                svc.current = null
               )
-            ).
-            finally(->
-              svc.current = null
-            )
           ), where)
 
 
