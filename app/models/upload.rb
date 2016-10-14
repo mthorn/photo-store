@@ -93,9 +93,21 @@ class Upload < ApplicationRecord
 
   after_commit :backup
   def backup
-    if CARRIERWAVE_STORAGE == :file && S3 && ! self.destroyed?
-      BackupUploadJob.set(priority: 0).perform_later(self.id, 'original')
-      BackupUploadJob.set(priority: 1).perform_later(self.id, self.file.versions.keys.map(&:to_s))
+    if CARRIERWAVE_STORAGE == :file && S3
+      if self.destroyed?
+        BackupDestroyJob.set(priority: 1).perform_later(@destroy_paths)
+      else
+        BackupUploadJob.set(priority: 0).perform_later(self.id, 'original')
+        BackupUploadJob.set(priority: 1).perform_later(self.id, self.file.versions.keys.map(&:to_s))
+      end
+    end
+  end
+
+  before_destroy :cache_destroy_paths
+  def cache_destroy_paths
+    if CARRIERWAVE_STORAGE == :file
+      file = self.file
+      @destroy_paths = [ file.path ] + file.versions.values.map(&:path)
     end
   end
 

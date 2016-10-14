@@ -5,7 +5,9 @@ class BackupUploadJob < ApplicationJob
   PREFIX = "#{::Rails.root}/private/"
 
   def perform(upload_id, *versions)
-    upload = Upload.find(upload_id)
+    upload = Upload.find_by(id: upload_id)
+    return unless upload
+
     file = upload.file
 
     versions.flatten.each do |version|
