@@ -23,7 +23,7 @@
       %i.fa.fa-refresh.fa-spin
 
   .gallery.row
-    .col-xs-6.col-sm-4.col-md-3.col-lg-2{ 'ng-repeat' => 'upload in ctrl.items track by upload.id' }
+    .gallery-gutters.col-xs-6.col-sm-4.col-md-3.col-lg-2{ 'ng-repeat' => 'upload in ctrl.items track by upload.id' }
       .gallery-item{ 'ng-switch' => 'upload.state',
           'ng-click' => 'ctrl.click($event, upload)',
           'ng-dblclick' => 'ctrl.dblclick($event, upload)',
@@ -31,8 +31,7 @@
 
         .dropdown{ 'uib-dropdown' => true }
           %a.icon-type{ href: '#', id: 'upload{{::upload.id}}', 'uib-dropdown-toggle' => true }
-            %i.fa.fa-stack-2x.fa-square.fa-inverse
-            %i.fa.fa-stack-1x{ 'ng-class' => '{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }' }
+            %i.fa{ 'ng-class' => '{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }' }
           %ul.dropdown-menu{ 'uib-dropdown-menu' => true, 'template-url' => 'upload_dropdown.html', 'aria-labelledby' => 'upload{{::upload.id}}' }
 
         .processing.text-center{ 'ng-if' => 'upload.isLoading' }
