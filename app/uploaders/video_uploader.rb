@@ -34,7 +34,12 @@ class VideoUploader < BaseUploader
 
   def fog_attributes
     mime = self.model.mime
-    { 'Content-Type' => (MIME_OVERRIDES[mime] || mime) }
+    { 'Content-Type' => self.content_type }
+  end
+
+  def content_type
+    mime = super
+    MIME_OVERRIDES[mime] || mime
   end
 
 end

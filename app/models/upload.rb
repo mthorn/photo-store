@@ -91,6 +91,14 @@ class Upload < ApplicationRecord
     self.md5sum = Digest::MD5.hexdigest(File.read(self.file.path)) if self.file?
   end
 
+  after_commit :backup
+  def backup
+    if CARRIERWAVE_STORAGE == :file && S3 && ! self.destroyed?
+      BackupUploadJob.set(priority: 0).perform_later(self.id, 'original')
+      BackupUploadJob.set(priority: 1).perform_later(self.id, self.file.versions.keys.map(&:to_s))
+    end
+  end
+
   def self.with_tags tags
     tags.inject(self.all) do |scope, tag|
       if negative = tag.starts_with?('-')
