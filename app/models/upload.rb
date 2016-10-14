@@ -1,4 +1,4 @@
-class Upload < ActiveRecord::Base
+class Upload < ApplicationRecord
   include DirectUpload
 
   FILTER_FIELDS = %w( type name taken_at imported_at )
@@ -168,14 +168,14 @@ class Upload < ActiveRecord::Base
     end
   end
 
-  def self.new(attributes = {}, options = {}, &block)
+  def self.new(attributes = {}, &block)
     return super unless self == Upload
     klass = case attributes[:mime]
             when /\Aimage\// then Photo
             when /\Avideo\// then Video
             else return super
             end
-    klass.new attributes, options, &block
+    klass.new attributes, &block
   end
 
   def tags=(new_tags)

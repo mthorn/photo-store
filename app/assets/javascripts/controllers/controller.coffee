@@ -30,7 +30,7 @@ class @Controller
 
           do (expr) =>
             props = expr.split('.')
-            expr = => _.inject(props, ((obj, prop) -> obj?[prop]), @)
+            expr = => _.reduce(props, ((obj, prop) -> obj?[prop]), @)
 
             if scopeFn == '$watchEquality'
               @scope.$watch(expr, fn, true)

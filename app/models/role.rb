@@ -1,4 +1,4 @@
-class Role < ActiveRecord::Base
+class Role < ApplicationRecord
 
   belongs_to :library
   has_many :library_memberships
@@ -19,7 +19,7 @@ class Role < ActiveRecord::Base
 
   before_destroy :prevent_owner_destroy
   def prevent_owner_destroy
-    self.destroyable?
+    throw(:abort) unless self.destroyable?
   end
 
   def destroyable?

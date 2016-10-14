@@ -5,7 +5,7 @@ class Admin::LibrariesController < ApplicationController
   end
 
   def create
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       @library = Library.new(library_params)
       @user = User.where(email: user_params[:email]).first_or_initialize(user_params)
       invite = @user.new_record?

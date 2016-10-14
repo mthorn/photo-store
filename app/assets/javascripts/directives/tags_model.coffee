@@ -26,7 +26,7 @@
 
     assignModel = (model, value) ->
       path = model.split('.')
-      obj = _.inject(_.initial(path), ((obj, attr) -> obj?[attr]), scope)
+      obj = _.reduce(_.initial(path), ((obj, attr) -> obj?[attr]), scope)
       obj?[_.last(path)] = value
 
     assignTagsModel = (value) -> assignModel(attrs.tagsModel, value)

@@ -1,4 +1,4 @@
-class Tag < ActiveRecord::Base
+class Tag < ApplicationRecord
 
   AUTO_TAG_KINDS = %w( aspect date camera location )
   TAG_PATTERN = '[a-z0-9][a-z0-9&-]*'

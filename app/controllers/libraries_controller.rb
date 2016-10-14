@@ -1,8 +1,8 @@
 class LibrariesController < ApplicationController
 
-  before_filter :load_library
-  before_filter :authorize_owner!, only: :update
-  before_filter :authorize_upload!, only: [ :destroy_selection, :restore_deleted, :remove_deleted ]
+  before_action :load_library
+  before_action :authorize_owner!, only: :update
+  before_action :authorize_upload!, only: [ :destroy_selection, :restore_deleted, :remove_deleted ]
 
   def update
     Library.transaction do

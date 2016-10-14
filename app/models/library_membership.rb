@@ -1,4 +1,4 @@
-class LibraryMembership < ActiveRecord::Base
+class LibraryMembership < ApplicationRecord
 
   belongs_to :user
   belongs_to :library

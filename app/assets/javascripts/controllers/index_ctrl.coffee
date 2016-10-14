@@ -30,7 +30,7 @@ class @IndexCtrl extends Controller
       @items = data.items.map((upload) => new @Upload(upload))
       @items.count = data.count
 
-      if @fetchAgain || _.any(@items, state: 'process')
+      if @fetchAgain || _.some(@items, state: 'process')
         @timer?.cancel()
         @timer = @schedule.delay(5000, @fetch)
       null

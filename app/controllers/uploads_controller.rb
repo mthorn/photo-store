@@ -3,7 +3,7 @@ class UploadsController < ApplicationController
   SORTABLE_FIELDS = %w( name created_at taken_at )
   AVAILABLE_CHECK_COLUMNS = %w( name size mime md5sum )
 
-  before_filter :authorize_upload!, only: [ :create, :update, :destroy, :check ]
+  before_action :authorize_upload!, only: [ :create, :update, :destroy, :check ]
 
   def index
     only_id = params[:only_id] == 'true'

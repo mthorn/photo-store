@@ -1,8 +1,8 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
-  before_filter :authenticate_user!, unless: :devise_controller?
-  around_filter :set_time_zone, if: :user_signed_in?
-  before_filter :load_library
+  before_action :authenticate_user!, unless: :devise_controller?
+  around_action :set_time_zone, if: :user_signed_in?
+  before_action :load_library
 
   protected
 

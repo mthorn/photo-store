@@ -1,7 +1,7 @@
 class RolesController < ApplicationController
 
-  before_filter :authorize_owner!
-  before_filter :load_role
+  before_action :authorize_owner!
+  before_action :load_role
 
   def index
     @roles = @library.roles

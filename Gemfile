@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-ruby '2.2.1'
+ruby '2.3.1'
 
-gem 'rails', '~> 4'
+gem 'rails', '~> 5'
 gem 'pg'
 gem 'sass-rails'
 gem 'uglifier'
@@ -18,12 +18,15 @@ gem 'angular-rails4-templates', github: 'warewolf-ca/angular-rails4-templates'
 gem 'carrierwave'
 gem 'fog'
 gem 'mini_magick'
-gem 'sucker_punch'
 gem 'font-awesome-rails'
 gem 'jquery-rails'
 gem 'geocoder'
 gem 'aws-sdk'
 gem 'httpclient'
+gem 'foreman'
+
+gem 'sucker_punch', require: false
+gem 'delayed_job_active_record'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-angular'

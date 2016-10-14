@@ -1,4 +1,4 @@
-class Library < ActiveRecord::Base
+class Library < ApplicationRecord
 
   has_many :uploads, dependent: :destroy
   has_many :users, through: :library_memberships, dependent: :destroy

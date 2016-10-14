@@ -1,4 +1,4 @@
-class UploadBuffer < ActiveRecord::Base
+class UploadBuffer < ApplicationRecord
 
   belongs_to :user
 

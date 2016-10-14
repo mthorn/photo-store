@@ -51,7 +51,7 @@
         @enabled && @indexOf(uploadId) != -1
 
       indexOf: (uploadId) ->
-        _.indexOf(@ids, uploadId, true)
+        _.sortedIndexOf(@ids, uploadId)
 
       insert: (ids) ->
         setIds(@ids.concat(ids))

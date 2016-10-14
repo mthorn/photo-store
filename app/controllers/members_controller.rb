@@ -1,14 +1,14 @@
 class MembersController < ApplicationController
 
-  before_filter :authorize_owner!
-  before_filter :load_member
+  before_action :authorize_owner!
+  before_action :load_member
 
   def index
     @library_memberships = @library.library_memberships.includes(:user)
   end
 
   def create
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       @user = User.where(email: user_params[:email]).first_or_initialize(user_params) do |m|
         m.password = Devise.friendly_token
         m.default_library = @library

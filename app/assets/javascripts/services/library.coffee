@@ -27,7 +27,7 @@
     Library.mine = config.libraries.map((library) -> new Library(library))
 
     $rootScope.$watch (-> $routeParams.library_id), (id = config.user.default_library_id) ->
-      Library.current = _.findWhere(Library.mine, id: parseInt(id))
+      Library.current = _.find(Library.mine, id: parseInt(id))
 
     Library::suggestTags = (query) ->
       if negative = query[0] == '-'

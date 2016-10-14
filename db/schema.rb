@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,10 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161010044830) do
+ActiveRecord::Schema.define(version: 20161014183756) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer  "priority",   default: 0, null: false
+    t.integer  "attempts",   default: 0, null: false
+    t.text     "handler",                null: false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+  end
 
   create_table "libraries", force: :cascade do |t|
     t.string  "name"
@@ -48,18 +62,16 @@ ActiveRecord::Schema.define(version: 20161010044830) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "kind"
+    t.index ["upload_id", "name"], name: "index_tags_on_upload_id_and_name", unique: true, using: :btree
   end
-
-  add_index "tags", ["upload_id", "name"], name: "index_tags_on_upload_id_and_name", unique: true, using: :btree
 
   create_table "upload_buffers", force: :cascade do |t|
     t.integer "user_id"
     t.string  "key"
     t.string  "data"
     t.integer "size"
+    t.index ["key"], name: "index_upload_buffers_on_key", unique: true, using: :btree
   end
-
-  add_index "upload_buffers", ["key"], name: "index_upload_buffers_on_key", unique: true, using: :btree
 
   create_table "uploads", force: :cascade do |t|
     t.string   "type"
@@ -110,10 +122,9 @@ ActiveRecord::Schema.define(version: 20161010044830) do
     t.string   "time_zone_auto"
     t.integer  "default_library_id"
     t.boolean  "admin",                  default: false
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+    t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true, using: :btree
   end
-
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-  add_index "users", ["unlock_token"], name: "index_users_on_unlock_token", unique: true, using: :btree
 
 end
