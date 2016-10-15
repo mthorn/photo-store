@@ -16,20 +16,22 @@ class BackupUploadJob < ApplicationJob
 
       size = File.size(path)
       key = path.sub(PREFIX, '')
+      data = proc { File.read(path, encoding: 'BINARY') }
       begin
         head = S3.head_object(S3_BUCKET_NAME, key)
-        if (existing_size = head.headers['Content-Length'].to_i) == size
+        if (existing_size = head.headers['Content-Length'].to_i) == size &&
+            (existing_md5sum = head.headers['ETag'].scan(/\w+/).first) == Digest::MD5.hexdigest(data[])
           logger.debug "#{key} backup present"
           next
         else
-          logger.debug "#{key} backup present but incomplete (#{existing_size})"
+          logger.debug "#{key} backup present but outdated (#{existing_size}, #{existing_md5sum})"
         end
       rescue Excon::Error::NotFound
         logger.debug "#{key} not found"
       end
 
       logger.info "Backing up #{key} to S3, #{size} bytes"
-      S3.put_object(S3_BUCKET_NAME, key, File.read(path, encoding: 'BINARY'), {
+      S3.put_object(S3_BUCKET_NAME, key, data[], {
         'Content-Type' => uploader.content_type,
         'x-amz-acl' => 'private'
       })

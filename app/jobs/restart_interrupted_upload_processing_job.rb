@@ -1,7 +1,5 @@
 class RestartInterruptedUploadProcessingJob < ApplicationJob
 
-  queue_as :default
-
   def perform
     count = 0
     Upload.where(state: 'process', file: nil).find_each do |upload|

@@ -1,7 +1,5 @@
 class CreateMissingTranscodesJob < ApplicationJob
 
-  queue_as :default
-
   def perform
     return unless TRANSCODE_METHOD == :aws
     Video.

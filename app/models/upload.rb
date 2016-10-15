@@ -211,4 +211,16 @@ class Upload < ApplicationRecord
     end
   end
 
+  def recreate_versions!
+    begin
+      uploader = self.file
+      uploader.cache_stored_file!
+      uploader.retrieve_from_cache!(uploader.cache_name)
+      uploader.recreate_versions!
+      self.save!
+    rescue => e
+      Rails.logger.warn "#{self.class.to_s}(#{self.id})#recreate_versions_for(#{column.inspect}): #{e.to_s}"
+    end
+  end
+
 end

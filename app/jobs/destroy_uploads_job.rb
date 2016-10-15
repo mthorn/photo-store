@@ -1,7 +1,5 @@
 class DestroyUploadsJob < ApplicationJob
 
-  queue_as :default
-
   def perform
     uploads = Upload.unscoped.where(state: 'destroy')
     locked_uploads = uploads.lock('FOR UPDATE NOWAIT')

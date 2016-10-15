@@ -1,7 +1,5 @@
 class CheckAwsTranscodesJob < ApplicationJob
 
-  queue_as :default
-
   def perform
     requeue = false
     videos = Video.where(state: 'process').where.not(external_job_id: nil)

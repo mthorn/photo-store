@@ -1,5 +1,7 @@
 class ApplicationJob < ActiveJob::Base
 
+  queue_as :default
+
   class << self
     attr_accessor :perform_needs_new_connection
 
