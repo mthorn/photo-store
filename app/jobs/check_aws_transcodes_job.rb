@@ -1,4 +1,4 @@
-class CheckTranscodesJob < ApplicationJob
+class CheckAwsTranscodesJob < ApplicationJob
 
   queue_as :default
 
@@ -10,7 +10,7 @@ class CheckTranscodesJob < ApplicationJob
       Video.transaction do
         begin
           if video = locked_videos.find_by(id: video.id)
-            video.check_transcode
+            video.check_aws_transcode
             requeue ||= video.state == 'process'
           end
         rescue ActiveRecord::StatementInvalid
@@ -19,7 +19,7 @@ class CheckTranscodesJob < ApplicationJob
       end
     end
   ensure
-    CheckTranscodesJob.set(wait: 5.seconds).perform_later if requeue
+    CheckAwsTranscodesJob.set(wait: 5.seconds).perform_later if requeue
   end
 
 end

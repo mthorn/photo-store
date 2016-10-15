@@ -64,11 +64,11 @@ class Video < Upload
   end
 
   def process_file_data(blocks)
-    if AWS_TRANSCODER
+    if TRANSCODE_METHOD == :aws
       super(blocks, 'process')
       if self.state == 'process'
-        self.create_transcode_job
-        CheckTranscodesJob.set(wait: 5.seconds).perform_later
+        self.create_aws_transcode_job
+        CheckAwsTranscodesJob.set(wait: 5.seconds).perform_later
       end
     else
       super
@@ -76,7 +76,7 @@ class Video < Upload
     nil
   end
 
-  def check_transcode
+  def check_aws_transcode
     job = AWS_TRANSCODER.read_job(id: self.external_job_id)
     case job.job.status
       when 'Complete'
@@ -88,7 +88,7 @@ class Video < Upload
     end
   end
 
-  def create_transcode_job
+  def create_aws_transcode_job
     output = self.file.transcoded.path
     output_folder = output.sub(/[^\/]*\z/, '')
     output_file_name = File.basename(output)

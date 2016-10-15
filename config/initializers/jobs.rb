@@ -18,7 +18,7 @@ when 'sucker_punch'
   ActiveJob::QueueAdapters::SuckerPunchAdapter::JobWrapper.workers((ENV['WORKER_COUNT'] || 2).to_i)
 
   RestartInterruptedUploadProcessingJob.perform_later
-  CheckTranscodesJob.perform_later
+  CheckAwsTranscodesJob.perform_later
 
   ApplicationJob.perform_needs_new_connection = true
 
