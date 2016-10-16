@@ -9,7 +9,7 @@
           .form-group
             %label.control-label.col-sm-3{ for: 'limit' } Per page
             .col-sm-9
-              %select#limit.form-control{ 'ng-model' => 'ctrl.params.limit', 'ng-options' => 'e.i as e.i for e in ctrl.limitOptions' }
+              %select#limit.form-control{ 'ng-model' => 'ctrl.params.limit', 'ng-options' => 'e.value as e.label for e in ctrl.limitOptions' }
 
 %div{ 'ng-if' => 'ctrl.items.length != 0' }
   .text-center

@@ -1,11 +1,8 @@
-class @IndexCtrl extends Controller
-
-  @inject '$http', '$window', '$location', '$routeParams', '$uibModal',
-    'Upload', 'Library', 'schedule', 'placeholderImageUrl', 'selection'
+class @IndexCtrl extends SearchBaseCtrl
+  @inject '$http', '$routeParams', '$uibModal', 'Upload', 'Library',
+    'schedule', 'placeholderImageUrl', 'selection'
 
   initialize: ->
-    @scope.$watch @parseSearchParams, ((@params) =>), true
-    @scope.$watch (=> @params), @fetch, true
     @Library.on('change', @fetch)
     @selection.ctrl = @
     @counter = 0
@@ -13,12 +10,7 @@ class @IndexCtrl extends Controller
   fetch: =>
     return if @destroyed
 
-    params = _.pick(@params, (v) -> v?)
-
-    if changed = ! angular.equals(params, @parseSearchParams())
-      @location.search(params)
-
-    if ! changed && (@fetching || @fetchAgain)
+    if @fetching || @fetchAgain
       return @fetchAgain = true
 
     @timer?.cancel()
@@ -91,3 +83,6 @@ class @IndexCtrl extends Controller
     @timer?.cancel()
     @Library.off('change', @fetch)
     delete @selection.ctrl
+
+  '$watchChange(params)': ->
+    @search(@params)

@@ -1,4 +1,4 @@
-@app.controller 'PasswordCtrl', class PasswordCtrl extends Controller
+@app.controller 'PasswordCtrl', class PasswordCtrl extends BaseCtrl
 
   @inject '$http', '$window'
 

@@ -1,4 +1,4 @@
-class @Controller
+class @BaseCtrl
 
   @$inject = [ '$scope' ]
 
@@ -24,15 +24,20 @@ class @Controller
         # create reference equality watches for functions named
         # '$watch(_expr_)' and create object equality watches for functions
         # named '$watchEquality(_expr_)'
-        if (m = name.match(/^(\$(?:watch|on|watchEquality))\((.+)\)$/))
+        if (m = name.match(/^(\$(?:watch|on|watchEquality|watchChange))\((.+)\)$/))
           scopeFn = m[1]
           expr = m[2]
 
-          do (expr) =>
+          do (expr, fn) =>
+            fn = fn.bind(@)
             props = expr.split('.')
             expr = => _.reduce(props, ((obj, prop) -> obj?[prop]), @)
 
             if scopeFn == '$watchEquality'
               @scope.$watch(expr, fn, true)
+            else if scopeFn == '$watchChange'
+              @scope.$watch(expr, ((next, prev) ->
+                fn(next, prev) unless angular.equals(next, prev)
+              ), true)
             else
               @scope[scopeFn](expr, fn)

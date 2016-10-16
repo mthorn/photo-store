@@ -1,4 +1,4 @@
-@app.controller 'AdminLibrariesCtrl', class extends Controller
+@app.controller 'AdminLibrariesCtrl', class extends BaseCtrl
   @inject 'Library', '$http', '$interval'
 
   initialize: ->

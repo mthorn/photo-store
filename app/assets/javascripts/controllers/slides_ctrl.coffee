@@ -3,6 +3,7 @@
 
   LIMIT = 100
   CACHE_AHEAD = 5
+  SEARCH_PARAMS = [ 'i', 'order', 'tags', 'filters' ]
 
   initialize: ->
     super
@@ -10,10 +11,12 @@
       @scope.upload = upload
       @updateCache()
 
-  parseSearchParams: =>
-    r = angular.extend({ i: 0 }, @location.search())
-    r.i = Math.max(0, parseInt(r.i))
-    r
+    @initSearch({
+      i: 0
+      order: ''
+      tags: ''
+      filters: '[]'
+    })
 
   queryParams: ->
     angular.extend _.pick(@params, 'order', 'tags', 'filters'),
@@ -23,8 +26,8 @@
   upload: ->
     @items?[@params.i - @getOffset()]
 
-  getOffset: ->
-    Math.floor(@params.i / LIMIT) * LIMIT
+  getOffset: (i = @params.i) ->
+    Math.floor(i / LIMIT) * LIMIT
 
   updateCache: =>
     return unless @items?
@@ -38,3 +41,17 @@
 
   change: (delta) ->
     @params.i = Math.min(Math.max(@params.i + delta, 0), @items.count - 1)
+
+  '$watchChange(params)': (params, oldParams) ->
+    if params.i == oldParams.i && params.i != 0
+      @params.i = 0
+    else
+      @search(@params)
+
+  '$searchChange(i)': (search, oldSearch) ->
+    @params = _.pick(search, SEARCH_PARAMS)
+    @fetch() if @getOffset(search.i) != @getOffset(oldSearch.i)
+
+  '$searchChange(order, tags, filters)': (search) ->
+    @params = _.pick(search, SEARCH_PARAMS)
+    @fetch()

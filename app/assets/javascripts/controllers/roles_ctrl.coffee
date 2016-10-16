@@ -1,4 +1,4 @@
-@app.controller 'RolesCtrl', class RolesCtrl extends Controller
+@app.controller 'RolesCtrl', class RolesCtrl extends BaseCtrl
 
   @inject '$q', 'Role', 'library'
 

@@ -1,4 +1,4 @@
-@app.controller 'ProfileCtrl', class ProfileCtrl extends Controller
+@app.controller 'ProfileCtrl', class ProfileCtrl extends BaseCtrl
 
   @inject '$modalInstance', 'User', 'Library'
 

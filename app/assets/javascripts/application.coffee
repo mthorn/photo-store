@@ -14,6 +14,7 @@
 #= require sprintf
 #= require spark-md5
 #
-#= require controllers/controller
+#= require controllers/base_ctrl
+#= require controllers/search_base_ctrl
 #= require controllers/index_ctrl
 #= require_tree .

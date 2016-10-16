@@ -6,7 +6,7 @@
   transclude: true
   controllerAs: 'ctrl'
 
-  controller: class extends Controller
+  controller: class extends BaseCtrl
 
     FILTER_FIELDS:
       type:
@@ -52,19 +52,9 @@
     '$watchEquality(filters)': =>
       return unless @params
 
-      unless @filters
-        delete @params.filters
-        return
-
-      filters = JSON.stringify(@filters.
+      @params.filters = JSON.stringify(@filters.
         filter((filter) -> filter.op && filter.value).
         map((filter) -> _.pick(filter, 'field', 'op', 'value')))
 
-      if filters && filters != '[]'
-        @params.filters = filters
-      else
-        delete @params.filters
-
     '$watch(params.filters)': (filters) =>
-      return unless filters
       @filters = JSON.parse(filters)

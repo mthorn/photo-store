@@ -1,4 +1,4 @@
-@app.controller 'SettingsCtrl', class SettingsCtrl extends Controller
+@app.controller 'SettingsCtrl', class SettingsCtrl extends BaseCtrl
 
   @inject '$modalInstance', '$location', 'Library', 'library'
 
