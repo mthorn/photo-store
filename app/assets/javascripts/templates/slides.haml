@@ -8,10 +8,9 @@
       %i.fa.fa-stack-1x.icon-type{ 'ng-class' => '{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }' }
     %ul.uib-dropdown-menu{ 'template-url' => 'upload_dropdown.html', 'aria-labelledby' => 'upload{{upload.id}}' }
 
-  %img{ 'ng-if' => 'upload.state == "ready" && upload.type == "Photo"', 'ng-src' => '{{ upload.large_url }}', 'vertical-center' => 'upload' }
+  %img{ 'ng-if' => 'upload.state == "ready" && upload.type == "Photo"', 'ng-src' => '{{ upload.large_url }}' }
   %video{ 'ng-if' => 'upload.state == "ready" && upload.type == "Video"', 'ng-src' => '{{ upload.video_url }}',
-    'ng-poster' => '{{ upload.large_url }}', autoplay: true, controls: true, 'vertical-center' => 'upload',
-    'click-play-pause' => true }
+    'ng-poster' => '{{ upload.large_url }}', autoplay: true, controls: true, 'click-play-pause' => true }
   .processing.text-center{ 'ng-if' => 'upload.state == "process"' }
     %i.fa.fa-spinner.fa-spin
 
