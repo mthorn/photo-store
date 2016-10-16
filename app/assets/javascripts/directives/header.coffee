@@ -2,8 +2,14 @@
   templateUrl: 'header.html'
   scope: true
   controllerAs: 'ctrl'
-  controller: class extends Controller
-    @inject '$location', '$uibModal', 'User', 'Library', 'config', 'selection', 'uploader'
+  controller: class extends BaseCtrl
+    @inject '$location', '$uibModal', '$document', 'User', 'Library', 'config',
+      'selection', 'uploader'
+
+    initialize: ->
+      $html = @document.find('html')
+      $html.on 'fullscreenchange webkitfullscreenchange mozfullscreenchange', =>
+        $html.toggleClass('fullscreen', @isFullScreenActive())
 
     library: => @Library.current
     libraryId: -> @library()?.id
@@ -57,6 +63,28 @@
           @location.search _.omit(params, 'deleted')
         else
           @Library.trigger('change')
+
+    enterFullScreen: ->
+      el = @document[0].documentElement
+      for method in [ 'requestFullscreen', 'webkitRequestFullscreen', 'mozRequestFullscreen' ]
+        if el[method]?
+          el[method]()
+          break
+
+    exitFullScreen: ->
+      document = @document[0]
+      for method in [ 'exitFullscreen', 'webkitExitFullscreen', 'mozExitFullscreen' ]
+        if document[method]?
+          document[method]()
+          break
+
+    isFullScreenAvailable: ->
+      document = @document[0]
+      result = document.fullscreenEnabled ? document.webkitFullscreenEnabled ? document.mozFullscreenEnabled
+
+    isFullScreenActive: ->
+      document = @document[0]
+      (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement)?
 
   link: (scope, element, attr, ctrl) ->
     fileInput = $('<input type="file" multiple accept="image/*,video/*">')

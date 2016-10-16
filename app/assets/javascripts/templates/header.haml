@@ -112,3 +112,10 @@
           %li
             %a{ href: '/users/sign_out', target: '_self', 'data-method' => 'delete' }
               Sign out
+
+      %li{ 'ng-show' => 'ctrl.isFullScreenAvailable() && ! ctrl.isFullScreenActive()' }
+        %a{ href: '#', 'ng-click' => 'ctrl.enterFullScreen()' }
+          %i.fa.fa-expand
+      %li{ 'ng-show' => 'ctrl.isFullScreenActive()' }
+        %a{ href: '#', 'ng-click' => 'ctrl.exitFullScreen()' }
+          %i.fa.fa-compress
