@@ -1,6 +1,6 @@
 @app.controller 'ProfileCtrl', class ProfileCtrl extends BaseCtrl
 
-  @inject '$modalInstance', 'User', 'Library'
+  @inject '$uibModalInstance', 'User', 'Library'
 
   initialize: ->
     @user = @User.me
@@ -10,5 +10,5 @@
     @errors = null
     @view.$update().
       then(=> angular.copy(@view, @user)).
-      then(=> @modalInstance.close()).
+      then(=> @uibModalInstance.close()).
       catch((response) => @errors = response.data)

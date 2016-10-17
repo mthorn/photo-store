@@ -1,6 +1,6 @@
 @app.controller 'SettingsCtrl', class SettingsCtrl extends BaseCtrl
 
-  @inject '$modalInstance', '$location', 'Library', 'library'
+  @inject '$uibModalInstance', '$location', 'Library', 'library'
 
   initialize: ->
     @library.$get().then =>
@@ -10,5 +10,5 @@
     @errors = null
     @view.$update().
       then(=> angular.copy(@view, @library)).
-      then(=> @modalInstance.close()).
+      then(=> @uibModalInstance.close()).
       catch((response) => @errors = response.data)
