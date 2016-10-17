@@ -1,10 +1,14 @@
-html.fullscreen nav {
-  position: absolute;
-  opacity: 0;
-  width: 100%;
-  top: 0;
+html.fullscreen ps-header {
 
-  &:hover {
-    opacity: 1;
+  nav {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    top: 0;
+
+    &:hover {
+      opacity: 1;
+    }
   }
+
 }

@@ -21,16 +21,13 @@
       redirectTo: "/#{config.user.default_library_id}/gallery"
 
     $routeProvider.when '/:library_id/gallery',
-      templateUrl: 'gallery.html'
-      controller: 'GalleryCtrl as ctrl'
+      template: '<ps-gallery/>'
       reloadOnSearch: false
 
     $routeProvider.when '/:library_id/slides',
-      templateUrl: 'slides.html'
-      controller: 'SlidesCtrl as ctrl'
+      template: '<ps-slideshow/>'
       reloadOnSearch: false
 
     $routeProvider.when '/admin/libraries',
-      templateUrl: 'admin/libraries.html'
-      controller: 'AdminLibrariesCtrl as ctrl'
+      template: '<ps-admin-libraries/>'
 ]
