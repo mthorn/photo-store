@@ -1,6 +1,6 @@
 class UploadsController < ApplicationController
 
-  SORTABLE_FIELDS = %w( name created_at taken_at )
+  SORTABLE_FIELDS = %w( id name created_at taken_at )
   AVAILABLE_CHECK_COLUMNS = %w( name size mime md5sum )
 
   before_action :authorize_upload!, only: [ :create, :update, :destroy, :check ]

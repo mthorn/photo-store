@@ -1,4 +1,7 @@
-@app = angular.module('photo-store', [ 'templates', 'ngRoute', 'ngResource', 'ngAnimate', 'ui.bootstrap', 'ngSanitize', 'ngTouch', 'ngTagsInput' ])
+@app = angular.module('photo-store', [
+  'templates', 'ngRoute', 'ngResource', 'ngAnimate', 'ui.bootstrap',
+  'ngSanitize', 'ngTouch', 'ngTagsInput'
+])
 
 @app.constant 'config', $('script#config').data('config')
 

@@ -56,7 +56,7 @@
         if queue.length >= BATCH_SIZE || (waiting == 0 && queue.length > 0)
           batch = queue.splice(0, queue.length)
           $log.debug "Dropped #{batch.length} files"
-          $rootScope.$apply -> callback(scope, files: batch)
+          $rootScope.$applyAsync -> callback(scope, files: batch)
 
       getFilesFromEntry = (entry) ->
         waiting += 1

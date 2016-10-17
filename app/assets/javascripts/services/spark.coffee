@@ -17,12 +17,12 @@
           if i < chunks
             loadNext()
           else
-            $rootScope.$apply ->
+            $rootScope.$applyAsync ->
               file.md5sum = md5sum = spark.end()
               console.log("sum: #{md5sum}")
               resolve(md5sum)
 
-        reader.onerror = -> $rootScope.$apply -> reject()
+        reader.onerror = -> $rootScope.$applyAsync -> reject()
 
         loadNext = ->
           start = i * CHUNK_SIZE

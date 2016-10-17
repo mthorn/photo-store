@@ -16,7 +16,7 @@
       )
 
     setIds = (ids) ->
-      service.ids = _.uniq(ids.sort((a, b) -> a - b), true)
+      service.ids = _.sortedUniq(ids.sort((a, b) -> a - b), true)
 
     startId = null
 
@@ -34,18 +34,15 @@
 
         @clear() unless User.me.manual_deselect || event.ctrlKey || event.metaKey
 
-        $q.when(@ctrl?.pageIds?()).then (pageIds) =>
-          if event.shiftKey && startId? && pageIds? && (i = pageIds.indexOf(startId)) != -1
-            j = pageIds.indexOf(uploadId)
-            if i < j
-              @insert(pageIds.slice(i, j + 1))
-            else
-              @insert(pageIds.slice(j, i + 1))
-          else if (i = @indexOf(uploadId)) != -1
-            @ids.splice(i, 1)
-          else
-            @insert([ uploadId ])
-            startId = uploadId
+        if event.shiftKey && startId? && (ids = @ctrl?.idsBetween?(startId, uploadId))
+          @insert(ids)
+          startId = uploadId
+        else if (i = @indexOf(uploadId)) != -1
+          @ids.splice(i, 1)
+          startId = null
+        else
+          @insert([ uploadId ])
+          startId = uploadId
 
       isSelected: (uploadId) ->
         @enabled && @indexOf(uploadId) != -1
@@ -112,5 +109,7 @@
             library: Library.current
         ).result.then((tags) ->
           Library.current.$updateSelected(tags: tags)
+        ).then(->
+          Library.trigger('change')
         )
 ]

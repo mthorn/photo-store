@@ -12,7 +12,7 @@
         now = Date.now()
         return if now - lastProgressApply < 500
         lastProgressApply = now
-        $rootScope.$apply -> deferred.notify(loaded: event.loaded, total: event.total)
+        $rootScope.$applyAsync -> deferred.notify(loaded: event.loaded, total: event.total)
 
       $q.when($.ajax
         url: options.url

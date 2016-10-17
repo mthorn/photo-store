@@ -7,7 +7,11 @@ class @SearchBaseCtrl extends BaseCtrl
     for name, fn of @
       if angular.isFunction(fn)
         if (m = name.match(/^\$searchChange\((.+)\)$/))
-          @$searchWatchers.push([ _.words(m[1], /[\w*]+/g), (fn = fn.bind(@)) ])
+          if m[1] == '*'
+            params = _.keys(@$searchDefaults)
+          else
+            params = _.words(m[1], /[\w*]+/g)
+          @$searchWatchers.push([ params, (fn = fn.bind(@)) ])
           fn(@search(), @search())
 
   initSearch: (@$searchDefaults) ->

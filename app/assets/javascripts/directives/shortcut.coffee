@@ -1,13 +1,13 @@
 @app.directive 'shortcut', [
-  '$window',
-  ($window) ->
+  '$window', '$parse',
+  ($window,   $parse) ->
 
     shortcuts = {}
 
     $($window.document.body).on('keydown', (event) ->
       return if $(event.target).is('input, textarea')
-      if (element = shortcuts[event.which])?
-        element.click()
+      debugger
+      shortcuts[event.which]?()
     )
 
     (scope, element, attrs) ->
@@ -17,7 +17,15 @@
         else
           k.toUpperCase().charCodeAt(0)
       )
-      shortcuts[code] = element for code in codes
+
+      callback =
+        if attrs.ngClick
+          fn = $parse(attrs.ngClick)
+          -> scope.$applyAsync -> fn(scope)
+        else
+          -> element.click()
+
+      shortcuts[code] = callback for code in codes
       scope.$on '$destroy', ->
         delete shortcuts[code] for code in codes
 

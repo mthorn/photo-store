@@ -76,12 +76,11 @@
           if posts.length == 1
             fileDataPromise = $q.when()
           else
-            fileDataDeferred = $q.defer()
-            fileDataPromise = fileDataDeferred.promise
-            reader = new FileReader
-            reader.onload = -> fileDataDeferred.resolve(reader.result)
-            reader.onerror = fileDataDeferred.reject
-            reader.readAsArrayBuffer(file)
+            fileDataPromise = $q (resolve, reject) ->
+              reader = new FileReader
+              reader.onload = -> resolve(reader.result)
+              reader.onerror = reject
+              reader.readAsArrayBuffer(file)
 
           uploadNextBlock()
           uploadDeferred.promise
@@ -91,7 +90,7 @@
           @$delete() if @id # delete partially completed upload (eg. provision step succeeds but S3 rejects file)
           $q.reject(if cancel then 'cancel' else reason)
         ).
-        then((upload) -> Library.trigger('change', upload))
+        then((upload) -> Library.trigger('change'))
 
       promise.abort = ->
         cancel = true

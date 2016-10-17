@@ -7,7 +7,7 @@
       element.on 'click', (event) ->
         return if element.hasClass('btn-busy')
         element.attr('disabled', true).addClass('btn-busy')
-        scope.$apply ->
+        scope.$applyAsync ->
           result = fn(scope, $event: event)
           $q.when(result).finally ->
             element.removeAttr('disabled').removeClass('btn-busy')

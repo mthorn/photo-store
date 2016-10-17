@@ -50,10 +50,33 @@
         filters: '[]'
       })
 
-    queryParams: ->
-      angular.extend _.pick(@params, 'order', 'tags', 'filters'),
+    fetch: =>
+      return if @destroyed
+
+      if @fetching || @fetchAgain
+        return @fetchAgain = true
+
+      @timer?.cancel()
+
+      query = angular.extend _.pick(@params, 'order', 'tags', 'filters'),
         limit: LIMIT
         offset: @getOffset()
+
+      @fetching = @query(query).then((data) =>
+        @items = data.items.map((upload) => new @Upload(upload))
+        @items.count = data.count
+
+        if ! @destroyed && (@fetchAgain || _.some(@items, state: 'process'))
+          @timer?.cancel()
+          @timer = @schedule.delay(5000, @fetch)
+        null
+      ).catch(=>
+        @timer?.cancel()
+        @timer = @schedule.delay(5000, @fetch) unless @destroyed
+      ).finally(=>
+        @fetching = null
+        @fetchAgain = false
+      )
 
     upload: ->
       @items?[@params.i - @getOffset()]

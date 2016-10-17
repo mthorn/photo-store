@@ -19,7 +19,7 @@
         callback(scope, loading: true)
         unless img?
           img = $("<img src='#{attrs.whileLoading}'>").insertAfter(element)
-        element.on 'load', -> scope.$apply(remove)
+        element.on 'load', -> scope.$applyAsync(remove)
 
       scope.$on '$destroy', remove
 ]

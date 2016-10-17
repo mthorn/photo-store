@@ -1,19 +1,23 @@
 %ul.dropdown-menu
 
   %li{ role: 'menuitem' }
-    %a{ href: '#', 'ng-click' => 'ctrl.editTags(upload)' }
+    %a{ href: '#', 'ng-click' => '$ctrl.editTags(upload)' }
       Edit Tags
 
   %li{ role: 'menuitem', 'ng-show' => 'upload.deleted_at' }
-    %a{ href: '#', 'ng-click' => 'ctrl.restore(upload)' }
+    %a{ href: '#', 'ng-click' => '$ctrl.restore(upload)' }
       Restore
 
   %li{ role: 'menuitem' }
-    %a{ href: '#', 'ng-click' => 'ctrl.delete(upload)' }
+    %a{ href: '#', 'ng-click' => '$ctrl.delete(upload)' }
       Delete
 
   %li.dropdown-header Info
 
+  %li{ role: 'menuitem' }
+    %span
+      %strong ID
+      {{upload.id}}
   %li{ role: 'menuitem' }
     %span
       %strong Type

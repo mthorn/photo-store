@@ -5,35 +5,6 @@ class @IndexCtrl extends SearchBaseCtrl
   initialize: ->
     @Library.on('change', @fetch)
     @selection.ctrl = @
-    @counter = 0
-
-  fetch: =>
-    return if @destroyed
-
-    if @fetching || @fetchAgain
-      return @fetchAgain = true
-
-    @timer?.cancel()
-
-    counter = @counter += 1
-    @fetching = @query(@queryParams()).then((data) =>
-      return unless counter == @counter
-
-      @items = data.items.map((upload) => new @Upload(upload))
-      @items.count = data.count
-
-      if @fetchAgain || _.some(@items, state: 'process')
-        @timer?.cancel()
-        @timer = @schedule.delay(5000, @fetch)
-      null
-    ).catch(=>
-      @timer?.cancel()
-      @timer = @schedule.delay(5000, @fetch)
-    ).finally(=>
-      return unless counter == @counter
-      @fetching = null
-      @fetchAgain = false
-    )
 
   query: (params) =>
     @http(
@@ -57,11 +28,13 @@ class @IndexCtrl extends SearchBaseCtrl
     ).then((tags) ->
       upload.tags = tags
       upload.$update()
+    ).then(=>
+      @Library.trigger('change')
     )
 
   restore: (upload) ->
     upload.deleted_at = null
-    upload.$update().then(=> @fetch())
+    upload.$update().then(=> @Library.trigger('change'))
 
   delete: (upload) ->
     (
@@ -71,7 +44,7 @@ class @IndexCtrl extends SearchBaseCtrl
         upload.deleted_at = new Date
         upload.$update()
     ).then(=>
-      @fetch()
+      @Library.trigger('change')
     )
 
   anyFilters: ->
@@ -79,7 +52,6 @@ class @IndexCtrl extends SearchBaseCtrl
 
   '$on($destroy)': =>
     @destroyed = true
-    @counter += 1
     @timer?.cancel()
     @Library.off('change', @fetch)
     delete @selection.ctrl
