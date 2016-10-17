@@ -17,10 +17,10 @@
       <div class='processing text-center' ng-if='upload.state == "process"'>
         <i class='fa fa-spinner fa-spin'></i>
       </div>
-      <button class='btn' id='prev' ng-click='$ctrl.change(-1)' ng-hide='$ctrl.params.i <= 0'>
+      <button class='btn' id='prev' ng-click='$ctrl.change(-1)' ng-hide='$ctrl.params.i <= 0' shortcut='h,37'>
         <i class='fa fa-chevron-left'></i>
       </button>
-      <button class='btn' id='next' ng-click='$ctrl.change(1)' ng-hide='$ctrl.params.i >= $ctrl.items.count - 1'>
+      <button class='btn' id='next' ng-click='$ctrl.change(1)' ng-hide='$ctrl.params.i >= $ctrl.items.count - 1' shortcut='l,32,39'>
         <i class='fa fa-chevron-right'></i>
       </button>
     </div>
