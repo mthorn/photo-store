@@ -1,4 +1,4 @@
-class @IndexCtrl extends SearchBaseCtrl
+class @IndexCtrl extends BaseCtrl
   @inject '$http', '$routeParams', '$uibModal', 'Upload', 'Library',
     'schedule', 'placeholderImageUrl', 'selection'
 
@@ -55,6 +55,3 @@ class @IndexCtrl extends SearchBaseCtrl
     @timer?.cancel()
     @Library.off('change', @fetch)
     delete @selection.ctrl
-
-  '$watchChange(params)': ->
-    @search(@params)

@@ -1,11 +1,23 @@
 @app.factory 'selection', [
-  '$rootScope', '$location', '$http', '$route', '$q', '$uibModal', 'Library', 'User',
-  ($rootScope,   $location,   $http,   $route,   $q,   $uibModal,   Library,   User) ->
+  '$rootScope', '$location', '$http', '$route', '$q', '$uibModal', 'Library', 'User', 'SearchObserver',
+  ($rootScope,   $location,   $http,   $route,   $q,   $uibModal,   Library,   User,   SearchObserver) ->
 
-    $rootScope.$watch (-> Library.current), (lib) ->
+    service = {}
+
+    searchObserver = new SearchObserver($rootScope, select: false)
+    searchObserver.observe('select', (search) ->
+      service.enabled = search.select
+    )
+
+    $rootScope.$watch((-> service.enabled), ->
+      searchObserver.search(select: service.enabled).replace()
+    )
+
+    $rootScope.$watch((-> Library.current), (lib) ->
       setIds(lib.selection ||= [])
+    )
 
-    $rootScope.$watchCollection (-> service.ids), (ids) ->
+    $rootScope.$watchCollection((-> service.ids), (ids) ->
       return unless ids?
       lib = Library.current
       return if angular.equals(ids, lib.selection)
@@ -14,13 +26,15 @@
         url: lib.url()
         data: { selection: (lib.selection = angular.copy(ids)) }
       )
+    )
 
     setIds = (ids) ->
       service.ids = _.sortedUniq(ids.sort((a, b) -> a - b), true)
 
     startId = null
 
-    service =
+    angular.extend service,
+
       manualDeselect: (setting) ->
         if setting == 'toggle'
           User.me.$update(manual_deselect: ! User.me.manual_deselect)
@@ -89,7 +103,9 @@
             setIds(_.difference(@ids, ids))
 
       review: ->
-        $location.url "/#{Library.current.id}/gallery?selected=true"
+        $location.
+          path("/#{Library.current.id}/gallery").
+          search(angular.extend(_.omit($location.search(), 'deleted', 'tags', 'filters'), selected: 'true'))
 
       deleteSelected: ->
         Library.current.$deleteSelected().then =>

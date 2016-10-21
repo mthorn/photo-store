@@ -31,11 +31,10 @@
   """
 
   controller: class extends IndexCtrl
-    @inject 'imageCache'
+    @inject 'imageCache', 'SearchObserver'
 
     LIMIT = 100
     CACHE_AHEAD = 5
-    SEARCH_PARAMS = [ 'i', 'order', 'tags', 'filters' ]
 
     initialize: ->
       super
@@ -43,12 +42,20 @@
         @scope.upload = upload
         @updateCache()
 
-      @initSearch({
+      @searchObserver = new @SearchObserver(@scope,
         i: 0
         order: ''
         tags: ''
         filters: '[]'
-      })
+      )
+
+      @searchObserver.observe('i', (@params, prev) =>
+        @fetch() if @getOffset(@params.i) != @getOffset(prev.i)
+      )
+
+      @searchObserver.observe('order, tags, filters', (@params) =>
+        @fetch()
+      )
 
     fetch: =>
       return if @destroyed
@@ -98,15 +105,10 @@
       @params.i = Math.min(Math.max(@params.i + delta, 0), @items.count - 1)
 
     '$watchChange(params)': (params, oldParams) ->
+      # we want to reset to i = 0 when filter/order/tags are changed
       if params.i == oldParams.i && params.i != 0
+        # non-'i' param changed, set i = 0 which will fire this listener again,
+        # then we can update search
         @params.i = 0
       else
-        @search(@params)
-
-    '$searchChange(i)': (search, oldSearch) ->
-      @params = _.pick(search, SEARCH_PARAMS)
-      @fetch() if @getOffset(search.i) != @getOffset(oldSearch.i)
-
-    '$searchChange(order, tags, filters)': (search) ->
-      @params = _.pick(search, SEARCH_PARAMS)
-      @fetch()
+        @searchObserver.search(@params).replace()

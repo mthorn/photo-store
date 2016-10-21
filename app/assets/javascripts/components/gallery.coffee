@@ -51,20 +51,12 @@
     MIN_PAGES_AROUND = 2
     RENDER_PAGES_AROUND = 1
 
-    @inject '$q', '$window', '$element'
+    @inject '$q', '$window', '$element', '$location', 'SearchObserver'
 
     initialize: ->
       super
 
       @$window = $(@window)
-
-      @initSearch({
-        order: ''
-        selected: false
-        deleted: false
-        tags: ''
-        filters: '[]'
-      })
 
       @fetchStartOffset = @fetchEndOffset = @renderStartOffset = @renderEndOffset = @pageOffset = 0
       @uploads = []
@@ -72,6 +64,16 @@
 
       if (i = parseInt(@location.hash(), 10)) > 0
         @storedScrollPosition = i
+
+      @searchObserver = new @SearchObserver(@scope,
+        order: ''
+        selected: false
+        deleted: false
+        tags: ''
+        filters: '[]'
+      )
+
+      @searchObserver.observe('*', (@params) => @fetch())
 
     $onInit: ->
       @$window.on('resize', =>
@@ -140,7 +142,7 @@
       undefined
 
     queryParams: ->
-      _.pick(@search(), 'order', 'selected', 'deleted', 'tags', 'filters')
+      @searchObserver.search()
 
     fetch: (reuseExisting = false) =>
       return if @destroyed
@@ -149,7 +151,10 @@
         return @fetchAgain = true
 
       @timer?.cancel()
-      @updateRenderWindow()
+
+      if ! reuseExisting
+        @uploads.length = 0
+        delete @uploads.count
 
       [ @fetchStartOffset, @fetchEndOffset ] = @calcWindow(FETCH_PAGES_AROUND)
 
@@ -159,12 +164,12 @@
           overrideFetchStartOffset = @uploads.length if overrideFetchStartOffset == -1
         if @fetchEndOffset < @uploads.length
           overrideFetchEndOffset = _.findLastIndex(@uploads, _.isNil, @fetchEndOffset)
-      else
-        @uploads.length = 0
 
       offset = overrideFetchStartOffset ? @fetchStartOffset
       limit = (overrideFetchEndOffset ? @fetchEndOffset) - offset
       return if limit <= 0
+
+      @updateRenderWindow()
 
       @fetching = @query(
         angular.extend(@queryParams(), offset: offset, limit: limit)
@@ -221,6 +226,5 @@
         scope.$destroy()
       )
 
-    '$searchChange(*)': ->
-      @params = _.pick(@search(), 'order', 'selected', 'deleted', 'tags', 'filters')
-      @fetch()
+    '$watchChange(params)': ->
+      @searchObserver.search(@params)
