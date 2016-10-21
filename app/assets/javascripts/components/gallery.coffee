@@ -155,6 +155,8 @@
       if ! reuseExisting
         @uploads.length = 0
         delete @uploads.count
+        if ! @storedScrollPosition && (i = parseInt(@location.hash(), 10)) > 0
+          @storedScrollPosition = i
 
       [ @fetchStartOffset, @fetchEndOffset ] = @calcWindow(FETCH_PAGES_AROUND)
 
