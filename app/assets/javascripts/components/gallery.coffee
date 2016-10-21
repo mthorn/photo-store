@@ -144,11 +144,14 @@
     queryParams: ->
       @searchObserver.search()
 
+    isNotReady = (upload) ->
+      ! upload? || upload.state != 'ready'
+
     fetch: (reuseExisting = false) =>
       return if @destroyed
 
-      if @fetching || @fetchAgain
-        return @fetchAgain = true
+      if @fetching || @fetchAgain?
+        return @fetchAgain = reuseExisting
 
       @timer?.cancel()
 
@@ -162,10 +165,10 @@
 
       if reuseExisting
         if @fetchStartOffset < @uploads.length
-          overrideFetchStartOffset = _.findIndex(@uploads, _.isNil, @fetchStartOffset)
+          overrideFetchStartOffset = _.findIndex(@uploads, isNotReady, @fetchStartOffset)
           overrideFetchStartOffset = @uploads.length if overrideFetchStartOffset == -1
         if @fetchEndOffset < @uploads.length
-          overrideFetchEndOffset = _.findLastIndex(@uploads, _.isNil, @fetchEndOffset)
+          overrideFetchEndOffset = _.findLastIndex(@uploads, isNotReady, @fetchEndOffset) + 1
 
       offset = overrideFetchStartOffset ? @fetchStartOffset
       limit = (overrideFetchEndOffset ? @fetchEndOffset) - offset
@@ -182,16 +185,18 @@
         @updateRenderWindow('force')
         @tryRestoreScrollPosition()
 
-        if ! @destroyed && (@fetchAgain || _.some(data.items, state: 'process'))
+        if ! @destroyed && (@fetchAgain? || _.some(data.items, state: 'process'))
           @timer?.cancel()
-          @timer = @schedule.delay(5000, @fetch)
+          if (reuseExisting = @fetchAgain)?
+            @timer = @schedule.delay(=> @fetch(reuseExisting))
+          else
+            @timer = @schedule.delay(5000, => @fetch(true))
         null
       ).catch(=>
         @timer?.cancel()
         @timer = @schedule.delay(5000, @fetch) unless @destroyed
       ).finally(=>
-        @fetching = null
-        @fetchAgain = false
+        @fetching = @fetchAgain = null
       )
 
     margins: ->
