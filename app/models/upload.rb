@@ -80,9 +80,12 @@ class Upload < ApplicationRecord
 
   after_save :auto_tag_location, if: -> { self.location_changed? && self.library_tag_location }
   def auto_tag_location
-    return unless self.location?
-    self.location.split(/, */).each do |part|
-      self.tags.create(name: part.downcase.gsub(/ +/, '-'), kind: 'location')
+    if self.location?
+      self.location.split(/, */).each do |part|
+        self.tags.create(name: part.downcase.gsub(/ +/, '-'), kind: 'location')
+      end
+    else
+      self.tags.create(name: 'no-location', kind: 'location')
     end
   end
 
