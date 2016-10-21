@@ -48,8 +48,8 @@
 
         @clear() unless User.me.manual_deselect || event.ctrlKey || event.metaKey
 
-        if event.shiftKey && startId? && (ids = @ctrl?.idsBetween?(startId, uploadId))
-          @insert(ids)
+        if event.shiftKey && startId? && angular.isFunction(@ctrl?.idsBetween)
+          @ctrl.idsBetween(startId, uploadId).then((ids) => @insert(ids))
           startId = uploadId
         else if (i = @indexOf(uploadId)) != -1
           @ids.splice(i, 1)

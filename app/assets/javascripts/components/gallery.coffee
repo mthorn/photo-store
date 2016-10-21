@@ -202,10 +202,25 @@
     idsBetween: (a, b) ->
       i = _.findIndex(@uploads, id: a)
       j = _.findIndex(@uploads, id: b)
-      if i < j
-        _.map(@uploads.slice(i, j + 1), 'id')
-      else
-        _.map(@uploads.slice(j, i + 1), 'id')
+      if i != -1 && j != -1
+        if i < j
+          uploads = @uploads.slice(i, j + 1)
+        else
+          uploads = @uploads.slice(j, i + 1)
+
+        return @q.when(_.map(uploads, 'id')) if _.every(uploads)
+
+      @query(angular.extend(@queryParams(), only_id: true)).then((ids) =>
+        i = _.indexOf(ids, a)
+        j = _.indexOf(ids, b)
+        if i != -1 && j != -1
+          if i < j
+            ids.slice(i, j + 1)
+          else
+            ids.slice(j, i + 1)
+        else
+          []
+      )
 
     pageIds: ->
       @q.when(@uploads.slice(@calcWindow(0)...).map((item) -> item.id))
