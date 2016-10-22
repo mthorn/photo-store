@@ -49,7 +49,7 @@ class Upload < ApplicationRecord
   after_create :auto_tag_new
   def auto_tag_new
     self.library.tag_new.to_s.scan(/#{Tag::TAG_PATTERN}/).each do |tag|
-      self.tags.create(name: tag)
+      self.tag(name: tag)
     end
   end
 
@@ -68,24 +68,24 @@ class Upload < ApplicationRecord
       else
         'portrait'
       end
-    self.tags.create(name: tag, kind: 'aspect')
+    self.tag(name: tag, kind: 'aspect')
   end
 
   after_save :auto_tag_date, if: -> { self.taken_at_changed? && self.library_tag_date }
   def auto_tag_date
     return unless self.taken_at?
-    self.tags.create(name: self.taken_at.year.to_s, kind: 'date')
-    self.tags.create(name: self.taken_at.strftime('%B').downcase, kind: 'date') # month
+    self.tag(name: self.taken_at.year.to_s, kind: 'date')
+    self.tag(name: self.taken_at.strftime('%B').downcase, kind: 'date') # month
   end
 
   after_save :auto_tag_location, if: -> { self.location_changed? && self.library_tag_location }
   def auto_tag_location
     if self.location?
       self.location.split(/, */).each do |part|
-        self.tags.create(name: part.downcase.gsub(/ +/, '-'), kind: 'location')
+        self.tag(name: part.downcase.gsub(/ +/, '-'), kind: 'location')
       end
     else
-      self.tags.create(name: 'no-location', kind: 'location')
+      self.tag(name: 'no-location', kind: 'location')
     end
   end
 
@@ -150,6 +150,15 @@ class Upload < ApplicationRecord
       else
         scope
       end
+    end
+  end
+
+  def tag(attributes)
+    name = attributes[:name]
+    if existing = self.tags.find { |tag| tag.name == name }
+      existing.update(attributes)
+    else
+      self.tags.create(attributes)
     end
   end
 

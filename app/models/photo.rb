@@ -27,7 +27,7 @@ class Photo < Upload
   after_save :auto_tag_camera, if: -> { self.metadata_changed? && self.library_tag_camera }
   def auto_tag_camera
     if camera = self.metadata.try(:[], 'Model')
-      self.tags.create(name: Tag.mangle(camera), kind: 'camera')
+      self.tag(name: Tag.mangle(camera), kind: 'camera')
     end
   end
 
