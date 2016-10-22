@@ -2,71 +2,25 @@
   '$q', '$rootScope', '$http', 'formData',
   ($q,   $rootScope,   $http,   formData) ->
 
-    fileUpload = (options) ->
-      xhr = null
+    (options) ->
       deferred = $q.defer()
+      timeout = $q.defer()
 
-      lastProgressApply = 0
-      progressHandler = (event) ->
-        return unless event.lengthComputable
-        now = Date.now()
-        return if now - lastProgressApply < 500
-        lastProgressApply = now
-        $rootScope.$applyAsync -> deferred.notify(loaded: event.loaded, total: event.total)
+      options.method ?= options.type ? 'POST'
+      options.data = formData.build(options.data)
+      options.headers ?= {}
+      options.headers['Content-Type'] = undefined # browser auto-fills with correct type and boundary
+      options.withCredentials = true
+      options.uploadEventHandlers =
+        progress: (e) ->
+          deferred.notify(loaded: e.loaded, total: e.total) if e.lengthComputable
+      options.timeout = timeout.promise
 
-      $q.when($.ajax
-        url: options.url
-        type: options.type || 'POST'
-        data: options.data
-        headers: _.pick($http.defaults.headers.common, [ 'X-CSRF-Token', 'X-Call-Token' ])
-        cache: false
-        xhr: ->
-          xhr = $.ajaxSettings.xhr()
-          xhr.upload?.addEventListener('progress', progressHandler, false)
-          xhr
-        xhrFields:
-          withCredentials: true
-        contentType: false
-        processData: false
-      ).then(
-        deferred.resolve,
-        ((xhr) ->
-          # transform $.ajax error response to something more like what $http would return
-          deferred.reject
-            status: xhr.status
-            statusText: xhr.statusText
-            data: xhr.responseJSON
-        )
-      )
+      $http(options).then(
+        ((response) -> deferred.resolve(response.data)),
+        deferred.reject,
+        deferred.notify)
 
-      deferred.promise.abort = ->
-        xhr.upload?.removeEventListener('progress', progressHandler) # prevents double $apply error
-        xhr.abort()
-        null
-
+      deferred.promise.abort = timeout.resolve
       deferred.promise
-
-    fileUpload.extendResource = (resourceCls, options) ->
-      methodName = "upload#{options.field.camelize()}"
-
-      resourceCls::[methodName] = (fileOrBlob, fileName, params = {}) ->
-        fileUpload(
-          url: @url()
-          type: 'PUT'
-          data: formData().add(params).add(options.field, fileOrBlob, fileName).build()
-        ).then((data) =>
-          angular.extend @, data
-        )
-
-      resourceCls[methodName] = (fileOrBlob, fileName, params) ->
-        params = angular.copy params
-
-        fileUpload(
-          url: (new resourceCls(params)).url()
-          data: formData().add(params).add(options.field, fileOrBlob, fileName).build()
-        ).then((data) ->
-          new resourceCls data
-        )
-
-    fileUpload
 ]
