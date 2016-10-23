@@ -5,6 +5,7 @@
 @import "ng-tags-input/ng-tags-input.bootstrap";
 
 @import "buttons";
+@import "links";
 @import "popover";
 @import "tag";
 
@@ -12,7 +13,7 @@
 @import "footer";
 @import "gallery";
 @import "slideshow";
-@import "upload_lightbox";
+@import "modal";
 
 #main {
   margin-bottom: 60px;

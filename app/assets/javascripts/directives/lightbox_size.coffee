@@ -8,15 +8,15 @@
       mediaWidth = mediaHeight = mediaRatio = null
 
       update = ->
-        # 30px margin
-        windowWidth = $window.width() - 60
-        windowHeight = $window.height() - 60
-        windowRatio = windowWidth / windowHeight
+        # 10px margin
+        maxWidth = $window.width() - 20
+        maxHeight = $window.height() - 20
+        windowRatio = maxWidth / maxHeight
 
         if windowRatio <= mediaRatio
-          modal.width(windowWidth).height(windowWidth / mediaRatio)
+          modal.width(maxWidth).height(maxWidth / mediaRatio)
         else
-          modal.width(windowHeight * mediaRatio).height(windowHeight)
+          modal.width(maxHeight * mediaRatio).height(maxHeight)
 
       scope.$watch(attrs.lightboxSize, ((spec) ->
         return unless spec

@@ -28,7 +28,7 @@
       <div class='form-group' ng-repeat='filter in $ctrl.filters'>
         <label class='control-label col-sm-3'>
           {{$ctrl.FIELDS[filter.field].label}}
-          <a class='visible-xs-inline' href='#' ng-click='$ctrl.filters.splice($index, 1)'>
+          <a class='visible-xs-inline' ng-click='$ctrl.filters.splice($index, 1)'>
             <i class='fa fa-times'></i>
           </a>
         </label>
@@ -48,7 +48,7 @@
           </div>
         </div>
         <div class='col-sm-1 hidden-xs'>
-          <a href='#' ng-click='$ctrl.filters.splice($index, 1)'>
+          <a ng-click='$ctrl.filters.splice($index, 1)'>
             <i class='fa fa-times'></i>
           </a>
         </div>

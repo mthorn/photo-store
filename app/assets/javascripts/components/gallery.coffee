@@ -19,7 +19,7 @@
         <div class='gallery-gutters col-xs-6 col-sm-4 col-md-3 col-lg-2' ng-repeat='upload in $ctrl.rendered track by upload.id'>
           <div class='gallery-item' ng-class='{ selected: $ctrl.selection.isSelected(upload.id) }' ng-click='$ctrl.click($event, upload)' ng-dblclick='$ctrl.dblclick($event, upload)' ng-switch='upload.state'>
             <div class='dropdown' uib-dropdown>
-              <a class='icon-type' href='#' id='upload{{::upload.id}}' uib-dropdown-toggle>
+              <a class='icon-type' id='upload{{::upload.id}}' uib-dropdown-toggle>
                 <i class='fa' ng-class='::{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }'></i>
               </a>
               <ul aria-labelledby='upload{{::upload.id}}' class='dropdown-menu' template-url='upload_dropdown.html' uib-dropdown-menu></ul>
@@ -244,6 +244,7 @@
       @uibModal.open(
         templateUrl: 'upload_lightbox.html'
         scope: angular.extend(scope = @scope.$new(), upload: upload)
+        windowClass: 'reduce-margins'
       ).result.finally(->
         scope.$destroy()
       )

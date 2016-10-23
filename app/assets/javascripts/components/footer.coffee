@@ -2,7 +2,7 @@
 
   template: """
     <div class='text-right text-warning' ng-show='$ctrl.up.errors.length'>
-      <a href='#' ng-click='$ctrl.up.viewErrors()'>
+      <a ng-click='$ctrl.up.viewErrors()'>
         {{$ctrl.up.errors.length}} files failed to upload.
       </a>
       <button class='btn btn-default' ng-click='$ctrl.up.retryAll()'>Retry</button>

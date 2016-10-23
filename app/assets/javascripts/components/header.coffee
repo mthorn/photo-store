@@ -23,7 +23,7 @@
               <a ng-href='/{{$ctrl.libraryId()}}/slides'>Slideshow</a>
             </li>
             <li ng-show='$ctrl.library()["can_upload?"]'>
-              <a href='#' ng-click='$ctrl.upload()'>Upload</a>
+              <a ng-click='$ctrl.upload()'>Upload</a>
             </li>
             <li ng-class='{ active: $ctrl.pathStartsWith("/admin/") }' ng-show='$ctrl.User.me.admin'>
               <a href='/admin/libraries'>Admin</a>
@@ -38,55 +38,55 @@
               </a>
               <ul class='dropdown-menu'>
                 <li>
-                  <a href='#' ng-click='$ctrl.selection.enabled = ! $ctrl.selection.enabled'>
+                  <a ng-click='$ctrl.selection.enabled = ! $ctrl.selection.enabled'>
                     {{$ctrl.selection.enabled && 'Disable' || 'Enable'}}
                   </a>
                 </li>
                 <li>
-                  <a href='#' ng-click='$ctrl.selection.manualDeselect("toggle")'>
+                  <a ng-click='$ctrl.selection.manualDeselect("toggle")'>
                     <i class='fa' ng-class='{ "fa-check": $ctrl.selection.manualDeselect() }'></i>
                     Click to de-select
                   </a>
                 </li>
                 <li class='divider' role='separator'></li>
                 <li>
-                  <a href='#' ng-click='$ctrl.selection.clear()' shortcut='c'>
+                  <a ng-click='$ctrl.selection.clear()' shortcut='c'>
                     Clear
                   </a>
                 </li>
                 <li ng-show='$ctrl.selection.isPageAvailable()'>
-                  <a href='#' ng-click='$ctrl.selection.togglePage(true)' shortcut='p'>
+                  <a ng-click='$ctrl.selection.togglePage(true)' shortcut='p'>
                     Select all on page
                   </a>
                 </li>
                 <li ng-show='$ctrl.selection.isAllPagesAvailable()'>
-                  <a href='#' ng-click='$ctrl.selection.toggleAllPages(true)' shortcut='a'>
+                  <a ng-click='$ctrl.selection.toggleAllPages(true)' shortcut='a'>
                     Select all on all pages
                   </a>
                 </li>
                 <li ng-show='$ctrl.selection.isPageAvailable() && $ctrl.selection.manualDeselect()'>
-                  <a href='#' ng-click='$ctrl.selection.togglePage(false)'>
+                  <a ng-click='$ctrl.selection.togglePage(false)'>
                     De-select all on page
                   </a>
                 </li>
                 <li ng-show='$ctrl.selection.isAllPagesAvailable() && $ctrl.selection.manualDeselect()'>
-                  <a href='#' ng-click='$ctrl.selection.toggleAllPages(false)'>
+                  <a ng-click='$ctrl.selection.toggleAllPages(false)'>
                     De-select all on all pages
                   </a>
                 </li>
                 <li class='divider' role='separator'></li>
                 <li ng-class='{ disabled: $ctrl.selection.isEmpty() }'>
-                  <a href='#' ng-click='$ctrl.selection.editTags()' shortcut='t'>
+                  <a ng-click='$ctrl.selection.editTags()' shortcut='t'>
                     Add/Remove Tags
                   </a>
                 </li>
                 <li ng-class='{ disabled: $ctrl.selection.isEmpty() }'>
-                  <a href='#' ng-click='$ctrl.selection.review()'>
+                  <a ng-click='$ctrl.selection.review()'>
                     Review
                   </a>
                 </li>
                 <li ng-class='{ disabled: $ctrl.selection.isEmpty() }'>
-                  <a href='#' ng-click='$ctrl.selection.deleteSelected()' shortcut='d'>
+                  <a ng-click='$ctrl.selection.deleteSelected()' shortcut='d'>
                     Delete
                   </a>
                 </li>
@@ -99,17 +99,17 @@
               </a>
               <ul class='dropdown-menu'>
                 <li ng-class='{ disabled: ! $ctrl.library() }'>
-                  <a href='#' ng-click='$ctrl.settings()' shortcut='s'>
+                  <a ng-click='$ctrl.settings()' shortcut='s'>
                     Settings
                   </a>
                 </li>
                 <li ng-show='$ctrl.library()["owner?"]'>
-                  <a href='#' ng-click='$ctrl.roles()' shortcut='r'>
+                  <a ng-click='$ctrl.roles()' shortcut='r'>
                     Roles
                   </a>
                 </li>
                 <li ng-show='$ctrl.library()["owner?"]'>
-                  <a href='#' ng-click='$ctrl.members()' shortcut='m'>
+                  <a ng-click='$ctrl.members()' shortcut='m'>
                     Members
                   </a>
                 </li>
@@ -123,12 +123,12 @@
                   </a>
                 </li>
                 <li>
-                  <a href='#' ng-click='$ctrl.removeDeleted()'>
+                  <a ng-click='$ctrl.removeDeleted()'>
                     Remove
                   </a>
                 </li>
                 <li ng-if-end>
-                  <a href='#' ng-click='$ctrl.restoreDeleted()'>
+                  <a ng-click='$ctrl.restoreDeleted()'>
                     Restore
                   </a>
                 </li>
@@ -147,12 +147,12 @@
               </a>
               <ul class='dropdown-menu'>
                 <li>
-                  <a href='#' ng-click='$ctrl.profile()'>
+                  <a ng-click='$ctrl.profile()'>
                     Profile
                   </a>
                 </li>
                 <li>
-                  <a href='#' ng-click='$ctrl.password()'>
+                  <a ng-click='$ctrl.password()'>
                     Change Password
                   </a>
                 </li>
@@ -164,12 +164,12 @@
               </ul>
             </li>
             <li ng-show='$ctrl.isFullScreenAvailable() && ! $ctrl.isFullScreenActive()'>
-              <a href='#' ng-click='$ctrl.enterFullScreen()'>
+              <a ng-click='$ctrl.enterFullScreen()'>
                 <i class='fa fa-expand'></i>
               </a>
             </li>
             <li ng-show='$ctrl.isFullScreenActive()'>
-              <a href='#' ng-click='$ctrl.exitFullScreen()'>
+              <a ng-click='$ctrl.exitFullScreen()'>
                 <i class='fa fa-compress'></i>
               </a>
             </li>
