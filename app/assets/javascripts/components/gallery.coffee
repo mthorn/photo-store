@@ -24,10 +24,11 @@
               </a>
               <ul aria-labelledby='upload{{::upload.id}}' class='dropdown-menu' template-url='upload_dropdown.html' uib-dropdown-menu></ul>
             </div>
+
             <div class='processing text-center' ng-if='upload.isLoading'>
               <i class='fa fa-4x fa-spinner fa-spin'></i>
             </div>
-            <img ng-src='{{::upload.gallery_url}}' ng-switch-when='ready' set-loading='upload.isLoading = loading' while-loading='{{::$ctrl.placeholderImageUrl}}'>
+            <img ng-src='{{::upload.gallery_url}}' ng-style='upload.style()' ng-switch-when='ready' set-loading='upload.isLoading = loading' while-loading='{{::$ctrl.placeholderImageUrl}}'>
             <div class='processing text-center' ng-switch-when='process'>
               <i class='fa fa-4x fa-spinner fa-spin'></i>
             </div>
@@ -242,12 +243,16 @@
 
     dblclick: (event, upload) ->
       @uibModal.open(
-        templateUrl: 'upload_lightbox.html'
-        scope: angular.extend(scope = @scope.$new(), upload: upload)
-        windowClass: 'reduce-margins'
-      ).result.finally(->
-        scope.$destroy()
+        component: 'psUploadLightbox'
+        resolve:
+          upload: -> upload
       )
+
+    rotate: (upload, angle) ->
+      angle += upload.rotate
+      angle += 360 if angle < 0
+      upload.rotate = angle % 360
+      upload.$update()
 
     '$watchChange(params)': ->
       @searchObserver.search(@params)

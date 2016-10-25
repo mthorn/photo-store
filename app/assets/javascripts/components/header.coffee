@@ -99,17 +99,17 @@
               </a>
               <ul class='dropdown-menu'>
                 <li ng-class='{ disabled: ! $ctrl.library() }'>
-                  <a ng-click='$ctrl.settings()' shortcut='s'>
+                  <a ng-click='$ctrl.settings()'>
                     Settings
                   </a>
                 </li>
                 <li ng-show='$ctrl.library()["owner?"]'>
-                  <a ng-click='$ctrl.roles()' shortcut='r'>
+                  <a ng-click='$ctrl.roles()'>
                     Roles
                   </a>
                 </li>
                 <li ng-show='$ctrl.library()["owner?"]'>
-                  <a ng-click='$ctrl.members()' shortcut='m'>
+                  <a ng-click='$ctrl.members()'>
                     Members
                   </a>
                 </li>

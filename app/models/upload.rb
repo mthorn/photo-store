@@ -35,6 +35,7 @@ class Upload < ApplicationRecord
   validates :imported_at, presence: true
   validates :latitude, allow_nil: true, numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }
   validates :longitude, allow_nil: true, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
+  validates :rotate, inclusion: [ 0, 90, 180, 270 ]
 
   scope :deleted, -> { where.not(deleted_at: nil) }
 

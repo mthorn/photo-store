@@ -15,6 +15,16 @@
       %i.fa.fa-trash
       Delete
 
+  %li{ role: 'menuitem' }
+    %a{ 'ng-click' => '$ctrl.rotate(upload, -90)' }
+      %i.fa.fa-rotate-left
+      Rotate Left
+
+  %li{ role: 'menuitem' }
+    %a{ 'ng-click' => '$ctrl.rotate(upload, 90)' }
+      %i.fa.fa-rotate-right
+      Rotate Right
+
   %li.dropdown-header Info
 
   %li{ role: 'menuitem' }

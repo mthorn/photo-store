@@ -12,11 +12,9 @@
         </span>
         <ul aria-labelledby='upload{{upload.id}}' class='dropdown-menu' template-url='upload_dropdown.html' uib-dropdown-menu></ul>
       </div>
-      <img ng-if='upload.state == "ready" && upload.type == "Photo"' ng-src='{{ upload.large_url }}'>
-      <video autoplay click-play-pause controls ng-if='upload.state == "ready" && upload.type == "Video"' ng-poster='{{ upload.large_url }}' ng-src='{{ upload.video_url }}'></video>
-      <div class='processing text-center' ng-if='upload.state == "process"'>
-        <i class='fa fa-spinner fa-spin'></i>
-      </div>
+
+      <ps-view-upload upload='upload'></ps-view-upload>
+
       <button class='btn' id='prev' ng-click='$ctrl.change(-1)' ng-hide='$ctrl.params.i <= 0' shortcut='h,37'>
         <i class='fa fa-chevron-left'></i>
       </button>
@@ -31,16 +29,17 @@
   """
 
   controller: class extends IndexCtrl
-    @inject 'imageCache', 'SearchObserver'
+    @inject '$element', 'imageCache', 'SearchObserver'
 
     LIMIT = 100
     CACHE_AHEAD = 5
 
     initialize: ->
       super
-      @scope.$watch (=> @upload()), (upload) =>
+      @scope.$watch((=> @upload()), (upload) =>
         @scope.upload = upload
         @updateCache()
+      )
 
       @searchObserver = new @SearchObserver(@scope,
         i: 0
@@ -103,6 +102,16 @@
 
     change: (delta) ->
       @params.i = Math.min(Math.max(@params.i + delta, 0), @items.count - 1)
+
+    transformStyles: ->
+      if (upload = @upload()) && upload.rotate in [ 90, 270 ]
+        el = @element.find('.slides')
+        width = el.width()
+        height = el.height()
+        angular.extend upload.style(),
+          width: "#{width}px";
+          height: "#{height}px";
+          'transform-origin': "#{height / 2}px #{height / 2}px"
 
     '$watchChange(params)': (params, oldParams) ->
       # we want to reset to i = 0 when filter/order/tags are changed
