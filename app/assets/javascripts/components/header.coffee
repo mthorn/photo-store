@@ -196,36 +196,31 @@
 
     settings: ->
       @uibModal.open
-        templateUrl: 'settings.html'
-        controller: 'SettingsCtrl as ctrl'
+        component: 'modalSettings'
         resolve:
           library: @library
 
     roles: ->
       @uibModal.open
-        templateUrl: 'roles.html'
-        controller: 'RolesCtrl as ctrl'
+        component: 'modalRoles'
         resolve:
           library: @library
         size: 'lg'
 
     members: ->
       @uibModal.open
-        templateUrl: 'members.html'
-        controller: 'MembersCtrl as ctrl'
+        component: 'modalMembers'
         resolve:
           library: @library
         size: 'lg'
 
     profile: ->
       @uibModal.open
-        templateUrl: 'profile.html'
-        controller: 'ProfileCtrl as ctrl'
+        component: 'modalProfile'
 
     password: ->
       @uibModal.open
-        templateUrl: 'password.html'
-        controller: 'PasswordCtrl as ctrl'
+        component: 'modalPassword'
 
     removeDeleted: ->
       @library().$removeDeleted().then =>

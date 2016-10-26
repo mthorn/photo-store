@@ -175,14 +175,12 @@
 
       viewErrors: ->
         $uibModal.open(
-          templateUrl: 'errors.html'
-          scope: scope = angular.extend($rootScope.$new(),
-            errors: svc.errors
-            retryAt: (i) ->
-              if (failure = svc.errors?.splice(i, 1)[0])?
-                enqueue([ failure.file ], 'start', failure.importDate)
-          )
-        ).result.finally(->
-          scope.$destroy()
+          component: 'modalErrors'
+          resolve:
+            errors: -> svc.errors
+            retryAt: ->
+              (i) ->
+                if (failure = svc.errors?.splice(i, 1)[0])?
+                  enqueue([ failure.file ], 'start', failure.importDate)
         )
 ]

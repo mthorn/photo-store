@@ -17,15 +17,13 @@ class @IndexCtrl extends BaseCtrl
 
   editTags: (upload) ->
     @uibModal.open(
-      templateUrl: 'tags_edit.html'
-      scope: angular.extend (scope = @scope.$new()),
-        heading: "Tags"
-        tags: upload.tags
-        negatives: false
-        library: @Library.current
-    ).result.finally(->
-      scope.$destroy()
-    ).then((tags) ->
+      component: 'modalTagsEdit'
+      resolve:
+        heading: -> "Tags"
+        tags: -> upload.tags
+        negatives: -> false
+        library: => @Library.current
+    ).result.then((tags) ->
       upload.tags = tags
       upload.$update()
     ).then(=>
@@ -49,6 +47,12 @@ class @IndexCtrl extends BaseCtrl
 
   anyFilters: ->
     @params.tags || @params.filters
+
+  rotate: (upload, angle) ->
+    angle += upload.rotate
+    angle += 360 if angle < 0
+    upload.rotate = angle % 360
+    upload.$update()
 
   '$on($destroy)': =>
     @destroyed = true

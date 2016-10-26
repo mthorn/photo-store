@@ -248,11 +248,5 @@
           upload: -> upload
       )
 
-    rotate: (upload, angle) ->
-      angle += upload.rotate
-      angle += 360 if angle < 0
-      upload.rotate = angle % 360
-      upload.$update()
-
     '$watchChange(params)': ->
       @searchObserver.search(@params)

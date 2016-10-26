@@ -118,11 +118,11 @@
       editTags: ->
         return if @count() == 0
         $uibModal.open(
-          templateUrl: 'tags_edit.html'
-          scope: angular.extend $rootScope.$new(),
-            heading: "Add/Remove Tags (#{@count()} items selected)"
-            negatives: true
-            library: Library.current
+          component: 'modalTagsEdit'
+          resolve:
+            heading: => "Add/Remove Tags (#{@count()} items selected)"
+            negatives: -> true
+            library: -> Library.current
         ).result.then((tags) ->
           Library.current.$updateSelected(tags: tags)
         ).then(->
