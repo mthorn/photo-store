@@ -27,39 +27,39 @@
 
   %li.dropdown-header Info
 
-  %li{ role: 'menuitem' }
-    %span
+  %li.disabled{ role: 'menuitem' }
+    %a
       %strong ID
       {{upload.id}}
-  %li{ role: 'menuitem' }
-    %span
+  %li.disabled{ role: 'menuitem' }
+    %a
       %strong Type
       {{upload.type}} ({{upload.mime}})
-  %li{ role: 'menuitem' }
-    %span
+  %li.disabled{ role: 'menuitem' }
+    %a
       %strong Name
       {{upload.name}}
-  %li{ role: 'menuitem' }
-    %span
+  %li.disabled{ role: 'menuitem' }
+    %a
       %strong Size
       {{upload.size | bytes}}
-  %li{ role: 'menuitem', 'ng-show' => 'upload.width' }
-    %span
+  %li.disabled{ role: 'menuitem', 'ng-show' => 'upload.width' }
+    %a
       %strong Dimensions
       {{upload.width}} x {{upload.height}}
-  %li{ role: 'menuitem', 'ng-show' => 'upload.taken_at' }
-    %span
+  %li.disabled{ role: 'menuitem', 'ng-show' => 'upload.taken_at' }
+    %a
       %strong Taken
       {{upload.taken_at | date:"yyyy-MM-dd"}}
-  %li{ role: 'menuitem', 'ng-show' => 'upload.imported_at' }
-    %span
+  %li.disabled{ role: 'menuitem', 'ng-show' => 'upload.imported_at' }
+    %a
       %strong Imported
       {{upload.imported_at | date:"yyyy-MM-dd"}}
-  %li{ role: 'menuitem', 'ng-show' => 'upload.location' }
-    %span
+  %li.disabled{ role: 'menuitem', 'ng-show' => 'upload.location' }
+    %a
       %strong Location
       {{upload.location}}
-  %li{ role: 'menuitem', 'ng-show' => 'upload.tags.length' }
-    %span
+  %li.disabled{ role: 'menuitem', 'ng-show' => 'upload.tags.length' }
+    %a
       %strong Tags
       {{upload.tags.join(', ')}}

@@ -5,6 +5,7 @@ html.fullscreen ps-gallery {
 }
 
 ps-gallery {
+  display: block;
 
   .gallery {
     @extend .clearfix;

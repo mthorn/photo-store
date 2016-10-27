@@ -14,11 +14,8 @@
 @import "gallery";
 @import "slideshow";
 @import "view_upload";
+@import "admin_libraries";
 
-#main {
+ng-view {
   margin-bottom: 60px;
-}
-
-.container {
-  margin: 0 2%;
 }

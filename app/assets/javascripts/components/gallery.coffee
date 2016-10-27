@@ -1,7 +1,7 @@
 @app.component 'psGallery',
 
   template: """
-    <div class='gallery-filters row'>
+    <div class='gallery-filters row-fluid'>
       <div class='col-xs-10 col-xs-offset-1'>
         <uib-accordion>
           <div is-open='$ctrl.filtersOpen' uib-accordion-group>
@@ -15,7 +15,7 @@
       </div>
     </div>
     <div ng-if='$ctrl.uploads.count != 0'>
-      <div id='gallery_container' class='gallery row' ng-style='$ctrl.margins()'>
+      <div id='gallery_container' class='gallery row-fluid' ng-style='$ctrl.margins()'>
         <div class='gallery-gutters col-xs-6 col-sm-4 col-md-3 col-lg-2' ng-repeat='upload in $ctrl.rendered track by upload.id'>
           <div class='gallery-item' ng-class='{ selected: $ctrl.selection.isSelected(upload.id) }' ng-click='$ctrl.click($event, upload)' ng-dblclick='$ctrl.dblclick($event, upload)' ng-switch='upload.state'>
             <div class='dropdown' uib-dropdown>

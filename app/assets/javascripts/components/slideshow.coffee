@@ -5,14 +5,14 @@
       <ps-filters ng-show='filtersOpen' params='$ctrl.params'></ps-filters>
       <i class='fa fa-search' ng-hide='filtersOpen'></i>
     </div>
-    <div class='slides' ng-if='$ctrl.items.count != 0' ng-swipe-left='$ctrl.change(1)' ng-swipe-right='$ctrl.change(-1)'>
-      <div class='dropdown' is-open='dropdown' ng-mouseleave='dropdown = false' uib-dropdown>
-        <span class='icon-type' ng-mouseenter='dropdown = true'>
-          <i class='fa fa-stack-1x icon-type' ng-class='{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }'></i>
-        </span>
-        <ul aria-labelledby='upload{{upload.id}}' class='dropdown-menu' template-url='upload_dropdown.html' uib-dropdown-menu></ul>
-      </div>
+    <div class='dropdown' is-open='dropdown' ng-mouseleave='dropdown = false' uib-dropdown>
+      <span class='icon-type' ng-mouseenter='dropdown = true'>
+        <i class='fa fa-stack-1x icon-type' ng-class='{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }'></i>
+      </span>
+      <ul aria-labelledby='upload{{upload.id}}' class='dropdown-menu' template-url='upload_dropdown.html' uib-dropdown-menu></ul>
+    </div>
 
+    <div class='slides' ng-if='$ctrl.items.count != 0' ng-swipe-left='$ctrl.change(1)' ng-swipe-right='$ctrl.change(-1)'>
       <ps-view-upload upload='upload'></ps-view-upload>
 
       <button class='btn' id='prev' ng-click='$ctrl.change(-1)' ng-hide='$ctrl.params.i <= 0' shortcut='h,37'>
