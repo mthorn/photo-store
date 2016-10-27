@@ -180,13 +180,20 @@
   """
 
   controller: class extends BaseCtrl
-    @inject '$location', '$uibModal', '$document', 'User', 'Library',
-      'selection', 'uploader'
+    @inject '$location', '$uibModal', '$document', '$window', '$element',
+      'User', 'Library', 'selection', 'uploader'
+
+    initialize: ->
+      @$window = $(@window)
 
     $onInit: ->
       $html = @document.find('html')
       $html.on 'fullscreenchange webkitfullscreenchange mozfullscreenchange', =>
         $html.toggleClass('fullscreen', @isFullScreenActive())
+
+      @$window.on('scroll', =>
+        $html.toggleClass('scrolled', @window.scrollY > 50)
+      )
 
     library: => @Library.current
     libraryId: -> @library()?.id

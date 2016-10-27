@@ -1,14 +1,30 @@
 html.fullscreen ps-header {
-
   nav {
     position: absolute;
     opacity: 0;
-    width: 100%;
-    top: 0;
+  }
+}
 
-    &:hover {
-      opacity: 1;
+html.scrolled {
+  body {
+    padding-top: 50px;
+  }
+  ps-header {
+    nav {
+      position: fixed;
+      opacity: 0;
     }
   }
+}
 
+ps-header {
+  nav {
+    width: 100%;
+    top: 0;
+    z-index: 10;
+  }
+
+  nav:hover  {
+    opacity: 1 !important;
+  }
 }
