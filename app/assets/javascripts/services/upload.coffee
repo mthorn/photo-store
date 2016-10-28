@@ -1,6 +1,6 @@
 @app.factory 'Upload', [
-  '$resource', '$q', 'fileUpload', 'formData', 'schedule', 'Library',
-  ($resource,   $q,   fileUpload,   formData,   schedule,   Library) ->
+  '$resource', '$q', '$uibModal', 'fileUpload', 'formData', 'schedule', 'Library',
+  ($resource,   $q,   $uibModal,   fileUpload,   formData,   schedule,   Library) ->
 
     class Upload extends $resource '/api/libraries/:library_id/uploads/:id.json'
 
@@ -114,5 +114,39 @@
           transform: "rotate(#{@rotate}deg)"
         else if @rotate?
           {}
-]
 
+      editTags: ->
+        $uibModal.open(
+          component: 'modalTagsEdit'
+          resolve:
+            heading: -> "Tags"
+            tags: => @tags
+            negatives: -> false
+            library: => Library.current
+        ).result.then((@tags) =>
+          @$update()
+        ).then(=>
+          Library.trigger('change')
+        )
+
+      restore: ->
+        @deleted_at = null
+        @$update().then(=> Library.trigger('change'))
+
+      delete: ->
+        (
+          if @deleted_at?
+            @$delete()
+          else
+            @deleted_at = new Date
+            @$update()
+        ).then(=>
+          Library.trigger('change')
+        )
+
+      applyRotate: (angle) ->
+        angle += @rotate
+        angle += 360 if angle < 0
+        @rotate = angle % 360
+        @$update()
+]

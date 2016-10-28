@@ -1,19 +1,6 @@
 @app.component 'psGallery',
 
   template: """
-    <div class='gallery-filters row-fluid'>
-      <div class='col-xs-10 col-xs-offset-1'>
-        <uib-accordion>
-          <div is-open='$ctrl.filtersOpen' uib-accordion-group>
-            <uib-accordion-heading>
-              Options
-              <i class='pull-right fa' ng-class='{ "fa-chevron-down": $ctrl.filtersOpen, "fa-chevron-right": ! $ctrl.filtersOpen }'></i>
-            </uib-accordion-heading>
-            <ps-filters params='$ctrl.params'></ps-filters>
-          </div>
-        </uib-accordion>
-      </div>
-    </div>
     <div ng-if='$ctrl.uploads.count != 0'>
       <div id='gallery_container' class='gallery row-fluid' ng-style='$ctrl.margins()'>
         <div class='gallery-gutters col-xs-6 col-sm-4 col-md-3 col-lg-2' ng-repeat='upload in $ctrl.rendered track by upload.id'>
@@ -46,16 +33,19 @@
     </p>
   """
 
-  controller: class extends IndexCtrl
+  controller: class extends BaseCtrl
 
     FETCH_PAGES_AROUND = 10
     MIN_PAGES_AROUND = 2
     RENDER_PAGES_AROUND = 1
 
-    @inject '$q', '$window', '$element', '$location', 'SearchObserver'
+    @inject '$q', '$window', '$element', '$location', '$http', '$routeParams',
+      '$uibModal', 'Library', 'SearchObserver', 'Upload', 'header', 'schedule',
+      'placeholderImageUrl', 'selection'
 
     initialize: ->
-      super
+      @Library.on('change', @fetch)
+      @selection.ctrl = @
 
       @$window = $(@window)
 
@@ -66,17 +56,24 @@
       if (i = parseInt(@location.hash(), 10)) > 0
         @storedScrollPosition = i
 
-      @searchObserver = new @SearchObserver(@scope,
-        order: ''
+      @filtersObserver = @header.newFiltersObserver(@scope).
+        observe('*', initial: false, => @fetch())
+      @paramsObserver = @SearchObserver(@scope,
         selected: false
         deleted: false
-        tags: ''
-        filters: '[]'
       )
+      @paramsObserver.observe('*', => @fetch())
 
-      @searchObserver.observe('*', (@params) => @fetch())
+    $onDestroy: ->
+      @header.showFilters = false
+      @destroyed = true
+      @timer?.cancel()
+      @Library.off('change', @fetch)
+      delete @selection.ctrl
 
     $onInit: ->
+      @header.showFilters = true
+
       @$window.on('resize', =>
         @updateItemHeight()
         @scrollTo(@pageOffset)
@@ -103,6 +100,18 @@
         @updateRenderWindow()
         @location.hash("#{@pageOffset}").replace()
       )
+
+    query: (params) =>
+      @http(
+        method: 'GET'
+        url: "/api/libraries/#{@routeParams.library_id}/uploads.json"
+        params: params
+      ).then((response) ->
+        response.data
+      )
+
+    anyFilters: ->
+      @params.tags || @params.filters
 
     tryRestoreScrollPosition: ->
       if i = @storedScrollPosition
@@ -143,7 +152,7 @@
       undefined
 
     queryParams: ->
-      @searchObserver.search()
+      angular.extend @paramsObserver.params(), @filtersObserver.params()
 
     isNotReady = (upload) ->
       ! upload? || upload.state != 'ready'
@@ -247,6 +256,3 @@
         resolve:
           upload: -> upload
       )
-
-    '$watchChange(params)': ->
-      @searchObserver.search(@params)

@@ -4,7 +4,12 @@
 
     class SearchObserver
 
-      constructor: (scope, @defaults) ->
+      constructor: (scope, defaults) ->
+        if ! (@ instanceof SearchObserver)
+          return new SearchObserver(scope, defaults)
+
+        @scope = scope
+        @defaults = defaults
         @watches = []
         @keys = _.keys @defaults
 
@@ -22,17 +27,9 @@
         scope.$on '$routeUpdate', @updateAndNotify
         scope.$on '$routeChangeSuccess', @updateAndNotify
 
-      observe: (params, listener) ->
-        if params == '*'
-          @watches.push([ @keys, listener ])
-        else if angular.isString(params)
-          @watches.push([ _.words(params, /[\w*]+/g), listener ])
-        else
-          @watches.push([ params, listener ])
+        @params()
 
-        listener(@search(), @search())
-
-      search: (params) ->
+      params: (params) ->
         if arguments.length == 1
           params = angular.copy params
 
@@ -60,27 +57,65 @@
           else
             $location.search(params)
         else
-          if ! @$search?
-            @$search = angular.extend({}, @defaults, _.pick($location.search(), @keys))
+          if ! @$params?
+            @$params = angular.extend({}, @defaults, _.pick($location.search(), @keys))
 
             # convert strings values to required types
             for key, type of @types
-              if angular.isString(val = @$search[key]) && type != 'string'
-                @$search[key] =
+              if angular.isString(val = @$params[key]) && type != 'string'
+                @$params[key] =
                   switch type
                     when 'number' then parseInt(val)
                     when 'boolean' then val == 'true'
                     else val
 
-          angular.copy @$search
+          angular.copy @$params
 
       updateAndNotify: =>
-        last = @$search
-        @$search = null
+        last = @$params
+        @$params = null
 
-        current = @search()
+        current = @params()
         for [ params, listener ] in @watches
           if _.some(params, (param) -> current[param] != last[param])
             listener(current, last)
         undefined
+
+      observe: (params, options, listener) ->
+        if arguments.length == 2
+          listener = options
+          options = {}
+
+        if params == '*'
+          @watches.push([ @keys, listener ])
+        else if angular.isString(params)
+          @watches.push([ _.words(params, /[\w*]+/g), listener ])
+        else
+          @watches.push([ params, listener ])
+
+        listener(@params(), @params()) unless options.initial == false
+        @
+
+      bindTo: (@$bindObject) ->
+        @
+
+      bindParam: (name, options = {}) ->
+        bindProperty = options.to ? name
+        @observe(name, (params) => @$bindObject[bindProperty] = params[name])
+        @scope.$watch((=> @$bindObject[bindProperty]), ((next, prev) =>
+          sameAsLast = angular.equals(next, prev)
+          sameAsSearch = angular.equals(next, @params()[name])
+          return if sameAsLast && sameAsSearch
+          @param(name, next)
+          $location.replace() if options.onUpdate == 'replace'
+        ), true)
+        @
+
+      bindAll: (name) ->
+        @observe('*', (params) => @$bindObject[name] = params)
+        @scope.$watch((=> @$bindObject[name]), ((next, prev) =>
+          return if angular.equals(next, prev)
+          @params(next || {})
+        ), true)
+        @
 ]

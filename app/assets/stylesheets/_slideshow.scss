@@ -1,12 +1,4 @@
 html.fullscreen ps-slideshow {
-  .slides-filters.open {
-    top: 0;
-  }
-
-  .icon-type {
-    top: 36px;
-  }
-
   .slides {
     padding: 0;
   }
@@ -15,42 +7,7 @@ html.fullscreen ps-slideshow {
 ps-slideshow {
   display: block;
 
-  .slides-filters {
-    margin: 10px;
-    padding: 10px;
-    border-radius: 10px;
-
-    &.closed {
-      position: absolute;
-      top: 50px;
-      width: 60px;
-      font-size: 20px;
-    }
-
-    &.open {
-      position: relative;
-      top: -10px;
-      background: white;
-    }
-  }
-
-  .icon-type {
-    position: absolute;
-    top: 0px;
-    right: 22px;
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  }
-
-  .dropdown-menu {
-    right: 0;
-    left: initial;
-  }
-
-
   .slides {
-
     position: absolute;
     top: 0;
     width: 100%;

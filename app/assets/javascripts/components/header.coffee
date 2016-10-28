@@ -28,6 +28,22 @@
             <li ng-class='{ active: $ctrl.pathStartsWith("/admin/") }' ng-show='$ctrl.User.me.admin'>
               <a href='/admin/libraries'>Admin</a>
             </li>
+            <li class='separator'></li>
+            <li ng-show='$ctrl.header.showFilters' ng-class='{ active: $ctrl.filtersOpen }'>
+              <a ng-click='$ctrl.filtersOpen = ! $ctrl.filtersOpen'>
+                <i class='fa fa-search'></i>
+                Search
+                <span class='caret'></span>
+              </a>
+            </li>
+            <li ng-show='upload' class='dropdown' uib-dropdown auto-close='outsideClick'>
+              <a aria-expanded='false' aria-haspopup='true' uib-dropdown-toggle>
+                <i class='fa' ng-class='{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }'></i>
+                {{upload.type}}
+                <span class='caret'></span>
+              </a>
+              <ul class='dropdown-menu' template-url='upload_dropdown.html' uib-dropdown-menu></ul>
+            </li>
           </ul>
           <ul class='nav navbar-nav navbar-right'>
             <li class='dropdown'>
@@ -177,14 +193,20 @@
         </div>
       </div>
     </nav>
+
+    <div class='filters' ng-show='$ctrl.filtersOpen && $ctrl.header.showFilters'>
+      <ps-filters></ps-filters>
+    </div>
   """
 
   controller: class extends BaseCtrl
     @inject '$location', '$uibModal', '$document', '$window', '$element',
-      'User', 'Library', 'selection', 'uploader'
+      'User', 'Library', 'selection', 'uploader', 'header'
 
     initialize: ->
       @$window = $(@window)
+
+      @scope.$watch((=> @header.currentUpload), (upload) => @scope.upload = upload)
 
     $onInit: ->
       $html = @document.find('html')

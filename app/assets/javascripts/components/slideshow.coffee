@@ -1,17 +1,6 @@
 @app.component 'psSlideshow',
 
   template: """
-    <div class='slides-filters' ng-class='{ open: filtersOpen, closed: ! filtersOpen }' ng-mouseenter='filtersOpen = true' ng-mouseleave='filtersOpen = false'>
-      <ps-filters ng-show='filtersOpen' params='$ctrl.params'></ps-filters>
-      <i class='fa fa-search' ng-hide='filtersOpen'></i>
-    </div>
-    <div class='dropdown' is-open='dropdown' ng-mouseleave='dropdown = false' uib-dropdown>
-      <span class='icon-type' ng-mouseenter='dropdown = true'>
-        <i class='fa fa-stack-1x icon-type' ng-class='{ "fa-camera": upload.type == "Photo", "fa-video-camera": upload.type == "Video" }'></i>
-      </span>
-      <ul aria-labelledby='upload{{upload.id}}' class='dropdown-menu' template-url='upload_dropdown.html' uib-dropdown-menu></ul>
-    </div>
-
     <div class='slides' ng-if='$ctrl.items.count != 0' ng-swipe-left='$ctrl.change(1)' ng-swipe-right='$ctrl.change(-1)'>
       <ps-view-upload upload='upload'></ps-view-upload>
 
@@ -28,32 +17,56 @@
     </p>
   """
 
-  controller: class extends IndexCtrl
-    @inject '$element', 'imageCache', 'SearchObserver'
+  controller: class extends BaseCtrl
+    @inject '$http', '$element', '$routeParams', 'Library', 'SearchObserver',
+      'Upload', 'imageCache', 'header', 'schedule', 'selection'
 
     LIMIT = 100
     CACHE_AHEAD = 5
 
     initialize: ->
-      super
+      @Library.on('change', @fetch)
+      @selection.ctrl = @
+
       @scope.$watch((=> @upload()), (upload) =>
-        @scope.upload = upload
+        @header.currentUpload = @scope.upload = upload
         @updateCache()
       )
 
-      @searchObserver = new @SearchObserver(@scope,
-        i: 0
-        order: ''
-        tags: ''
-        filters: '[]'
-      )
+      @filtersObserver = @header.newFiltersObserver(@scope).
+        observe('*', initial: false, =>
+          # we want to reset to i = 0 when filter/order/tags are changed
+          if @params.i != 0
+            # non-'i' param changed, set i = 0 which will fire this listener again,
+            # then we can update search
+            @params.i = 0
+          else
+            @fetch()
+        )
 
-      @searchObserver.observe('i', (@params, prev) =>
-        @fetch() if @getOffset(@params.i) != @getOffset(prev.i)
-      )
+      @SearchObserver(@scope, i: 0).
+        bindTo(@).
+        bindAll('params').
+        observe('i', (next, prev) => @fetch() if next.i == prev.i || @getOffset(@params.i) != @getOffset(prev.i))
 
-      @searchObserver.observe('order, tags, filters', (@params) =>
-        @fetch()
+    $onDestroy: ->
+      @header.showFilters = false
+      @header.currentUpload = null
+      @destroyed = true
+      @timer?.cancel()
+      @Library.off('change', @fetch)
+      delete @selection.ctrl
+
+    $onInit: ->
+      @header.showFilters = true
+
+    query: (params) =>
+      @http(
+        method: 'GET'
+        url: "/api/libraries/#{@routeParams.library_id}/uploads.json"
+        params: params
+      ).then((response) ->
+        response.data
       )
 
     fetch: =>
@@ -64,7 +77,7 @@
 
       @timer?.cancel()
 
-      query = angular.extend _.pick(@params, 'order', 'tags', 'filters'),
+      query = angular.extend @filtersObserver.params(),
         limit: LIMIT
         offset: @getOffset()
 
@@ -112,12 +125,3 @@
           width: "#{width}px";
           height: "#{height}px";
           'transform-origin': "#{height / 2}px #{height / 2}px"
-
-    '$watchChange(params)': (params, oldParams) ->
-      # we want to reset to i = 0 when filter/order/tags are changed
-      if params.i == oldParams.i && params.i != 0
-        # non-'i' param changed, set i = 0 which will fire this listener again,
-        # then we can update search
-        @params.i = 0
-      else
-        @searchObserver.search(@params).replace()

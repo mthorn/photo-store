@@ -4,14 +4,9 @@
 
     service = {}
 
-    searchObserver = new SearchObserver($rootScope, select: false)
-    searchObserver.observe('select', (search) ->
-      service.enabled = search.select
-    )
-
-    $rootScope.$watch((-> service.enabled), ->
-      searchObserver.search(select: service.enabled).replace()
-    )
+    SearchObserver($rootScope, select: false).
+      bindTo(service).
+      bindParam('select', to: 'enabled', onUpdate: 'replace')
 
     $rootScope.$watch((-> Library.current), (lib) ->
       setIds(lib.selection ||= [])

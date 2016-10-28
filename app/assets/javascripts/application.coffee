@@ -16,5 +16,4 @@
 #
 #= require app
 #= require base_ctrl
-#= require index_ctrl
 #= require_tree .

@@ -63,8 +63,6 @@
     </div>
   """
 
-  bindings:
-    params: '='
   transclude: true
 
   controller: class extends BaseCtrl
@@ -102,7 +100,13 @@
         Photo: 'Photo'
         Video: 'Video'
 
-    @inject 'Library'
+    @inject 'Library', 'SearchObserver', 'header'
+
+    initialize: ->
+      @header.newFiltersObserver(@scope).
+        bindTo(@).
+        bindAll('params').
+        observe('filters', => @filters = JSON.parse(@params.filters))
 
     '$watch(newFilter)': =>
       return unless @newFilter
@@ -111,11 +115,6 @@
       @newFilter = null
 
     '$watchEquality(filters)': =>
-      return unless @params
-
       @params.filters = JSON.stringify(@filters.
         filter((filter) -> filter.op && filter.value).
         map((filter) -> _.pick(filter, 'field', 'op', 'value')))
-
-    '$watch(params.filters)': (filters) =>
-      @filters = JSON.parse(filters)
