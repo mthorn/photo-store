@@ -14,6 +14,7 @@
             <option value='created_at-desc'>upload time &#8593;</option>
             <option value='taken_at-asc'>time taken &#8595;</option>
             <option value='taken_at-desc'>time taken &#8593;</option>
+            <option value='random'>random</option>
           </select>
         </div>
       </div>

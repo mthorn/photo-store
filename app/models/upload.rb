@@ -154,6 +154,20 @@ class Upload < ApplicationRecord
     end
   end
 
+  def self.random_order(seed)
+    prng = Random.new(seed)
+    cols = []
+    while cols.size < 5
+      col = prng.rand(32) + 1
+      cols.push(col) unless cols.index(col)
+    end
+
+    self.order(
+      *(cols.map { |col| "SUBSTR(uploads.md5sum, #{col}, 1)" }),
+      :id
+    )
+  end
+
   def tag(attributes)
     name = attributes[:name]
     if existing = self.tags.find { |tag| tag.name == name }

@@ -44,6 +44,8 @@
       'placeholderImageUrl', 'selection'
 
     initialize: ->
+      @seed = Math.round(Math.random() * 1000000)
+
       @Library.on('change', @fetch)
       @selection.ctrl = @
 
@@ -152,7 +154,8 @@
       undefined
 
     queryParams: ->
-      angular.extend @paramsObserver.params(), @filtersObserver.params()
+      angular.extend @paramsObserver.params(), @filtersObserver.params(),
+        seed: @seed
 
     isNotReady = (upload) ->
       ! upload? || upload.state != 'ready'

@@ -39,7 +39,9 @@ class UploadsController < ApplicationController
     end
 
     # ordering
-    if (order = params[:order]).present? # format: "field1-asc,field2-desc,..."
+    if (order = params[:order]) == 'random'
+      @uploads = @uploads.random_order(params[:seed].try(:to_i) || Random.new_seed)
+    elsif order.present? # format: "field1-asc,field2-desc,..."
       @uploads = @uploads.order(
         order.
           split(',').
