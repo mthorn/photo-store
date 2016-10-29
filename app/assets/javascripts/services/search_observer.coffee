@@ -29,47 +29,76 @@
 
         @params()
 
+      # Get/set all params
       params: (params) ->
         if arguments.length == 1
-          params = angular.copy params
+          @$lastAppliedParams = params
+          search = @paramsToSearch(params)
 
-          # delete default values from params
-          for key, def of @defaults
-            delete params[key] if params[key] == def
-
-          # normalize non-string values
-          for key, val of params
-            if angular.isUndefined(val)
-              delete params[key]
-            else if ! val?
-              params[key] = ''
-            else if @types[key] == 'boolean'
-              params[key] = (if val then 'true' else 'false')
-            else if ! angular.isString(val)
-              params[key] = "#{val}"
-
-          # add other values that are already in search that this instance is not observing
-          current = $location.search()
-          angular.extend(params, _.omit(current, @keys))
-
-          if angular.equals(params, current)
+          currentAll = $location.search()
+          currentOwn = @$lastAppliedSearch ? _.pick(currentAll, @keys)
+          if angular.equals(search, currentOwn)
             $location
           else
-            $location.search(params)
+            @$lastAppliedSearch = search
+            # add other values that are already in search that this instance is not observing
+            $location.search(angular.extend({}, search, _.omit(currentAll, @keys)))
         else
-          if ! @$params?
-            @$params = angular.extend({}, @defaults, _.pick($location.search(), @keys))
+          # shallow copy
+          angular.extend({}, @$params ?= @searchToParams($location.search()))
 
-            # convert strings values to required types
-            for key, type of @types
-              if angular.isString(val = @$params[key]) && type != 'string'
-                @$params[key] =
-                  switch type
-                    when 'number' then parseInt(val)
-                    when 'boolean' then val == 'true'
-                    else val
+      # Get/set single param. Leaves other param values as is.
+      param: (name, value) ->
+        if arguments.length == 2
+          params = @$lastAppliedParams ? @params()
+          if angular.isDefined value
+            params[name] = value
+          else
+            delete params[name]
+          @params(params)
+        else
+          @$params ?= @searchToParams($location.search())
+          @$params[name]
 
-          angular.copy @$params
+      paramsToSearch: (params, options = {}) ->
+        search = angular.copy params
+
+        # delete default values from search, unless option to keep them is set
+        if options.defaults != true
+          for key, def of @defaults
+            delete search[key] if angular.equals(search[key], def)
+
+        # normalize non-string values
+        omit = options.omit ? []
+        for key, val of search
+          if angular.isUndefined(val) || key in omit
+            delete search[key]
+          else if ! val?
+            search[key] = ''
+          else if ! angular.isString(val)
+            switch @types[key]
+              when 'boolean'
+                search[key] = (if val then 't' else 'f')
+              else
+                search[key] = "#{val}"
+
+        search
+
+      searchToParams: (search, options = {}) ->
+        params = {}
+        angular.extend(params, @defaults) unless options.defaults == false
+        angular.extend(params, _.pick(search, @keys))
+
+        # convert strings values to required types
+        for key, type of @types
+          if angular.isString(val = params[key]) && type != 'string'
+            params[key] =
+              switch type
+                when 'number' then parseInt(val)
+                when 'boolean' then val == 't'
+                else val
+
+        params
 
       updateAndNotify: =>
         last = @$params

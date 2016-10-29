@@ -17,10 +17,10 @@
         <div class='collapse navbar-collapse' id='nav_content'>
           <ul class='nav navbar-nav'>
             <li ng-class='{ active: $ctrl.pathEndsWith("/gallery") }'>
-              <a ng-href='/{{$ctrl.libraryId()}}/gallery'>Gallery</a>
+              <a ng-href='/{{$ctrl.libraryId()}}/gallery{{$ctrl.filterQuery}}'>Gallery</a>
             </li>
             <li ng-class='{ active: $ctrl.pathEndsWith("/slides") }'>
-              <a ng-href='/{{$ctrl.libraryId()}}/slides'>Slideshow</a>
+              <a ng-href='/{{$ctrl.libraryId()}}/slides{{$ctrl.filterQuery}}'>Slideshow</a>
             </li>
             <li ng-show='$ctrl.library()["can_upload?"]'>
               <a ng-click='$ctrl.upload()'>Upload</a>
@@ -134,7 +134,7 @@
                   {{$ctrl.library().deleted_count}} deleted items
                 </li>
                 <li>
-                  <a ng-href='/{{$ctrl.libraryId()}}/gallery?deleted=true'>
+                  <a ng-href='/{{$ctrl.libraryId()}}/gallery?deleted=t'>
                     Review
                   </a>
                 </li>
@@ -201,12 +201,20 @@
 
   controller: class extends BaseCtrl
     @inject '$location', '$uibModal', '$document', '$window', '$element',
-      'User', 'Library', 'selection', 'uploader', 'header'
+      '$httpParamSerializer', 'User', 'Library', 'selection', 'uploader',
+      'header'
 
     initialize: ->
       @$window = $(@window)
 
       @scope.$watch((=> @header.currentUpload), (upload) => @scope.upload = upload)
+
+      (filtersObserver = @header.newFiltersObserver(@scope)).observe('*', (filterParams) =>
+        if query = @httpParamSerializer(filtersObserver.paramsToSearch(filterParams))
+          @filterQuery = '?' + query
+        else
+          @filterQuery = ''
+      )
 
     $onInit: ->
       $html = @document.find('html')
@@ -253,14 +261,14 @@
 
     removeDeleted: ->
       @library().$removeDeleted().then =>
-        if (params = @location.search()).deleted == 'true'
+        if (params = @location.search()).deleted == 't'
           @location.search _.omit(params, 'deleted')
         else
           @Library.trigger('change')
 
     restoreDeleted: ->
       @library().$restoreDeleted().then =>
-        if (params = @location.search()).deleted == 'true'
+        if (params = @location.search()).deleted == 't'
           @location.search _.omit(params, 'deleted')
         else
           @Library.trigger('change')

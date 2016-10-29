@@ -100,12 +100,12 @@
       review: ->
         $location.
           path("/#{Library.current.id}/gallery").
-          search(angular.extend(_.omit($location.search(), 'deleted', 'tags', 'filters'), selected: 'true'))
+          search(angular.extend(_.omit($location.search(), 'deleted', 'tags', 'filters'), selected: 't'))
 
       deleteSelected: ->
         Library.current.$deleteSelected().then =>
           @ids = []
-          if (params = $location.search()).selected == 'true'
+          if (params = $location.search()).selected == 't'
             $location.search _.omit(params, 'selected')
           else
             Library.trigger('change')
