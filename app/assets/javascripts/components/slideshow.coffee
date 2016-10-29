@@ -18,15 +18,15 @@
   """
 
   controller: class extends BaseCtrl
-    @inject '$http', '$element', '$routeParams', 'Library', 'SearchObserver',
-      'Upload', 'imageCache', 'header', 'schedule', 'selection'
+    @inject '$http', '$window', '$element', '$routeParams', 'Library',
+      'SearchObserver', 'Upload', 'imageCache', 'header', 'schedule',
+      'selection'
 
     LIMIT = 100
     CACHE_AHEAD = 5
 
     initialize: ->
-      @Library.on('change', @fetch)
-      @selection.ctrl = @
+      @$window = $(@window)
 
       @scope.$watch((=> @upload()), (upload) =>
         @header.currentUpload = @scope.upload = upload
@@ -56,9 +56,16 @@
       @timer?.cancel()
       @Library.off('change', @fetch)
       delete @selection.ctrl
+      @$window.off('resize', @windowResized)
 
     $onInit: ->
+      @Library.on('change', @fetch)
+      @selection.ctrl = @
       @header.showFilters = true
+      @$window.on('resize', @windowResized)
+
+    windowResized: =>
+      @scope.$applyAsync()
 
     query: (params) =>
       @http(

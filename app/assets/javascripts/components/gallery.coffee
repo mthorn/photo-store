@@ -67,6 +67,7 @@
       @paramsObserver.observe('*', => @fetch())
 
     $onDestroy: ->
+      @$window.off('resize', @windowResized)
       @header.showFilters = false
       @destroyed = true
       @timer?.cancel()
@@ -76,10 +77,7 @@
     $onInit: ->
       @header.showFilters = true
 
-      @$window.on('resize', =>
-        @updateItemHeight()
-        @scrollTo(@pageOffset)
-      )
+      @$window.on('resize', @windowResized)
 
       calcPageOffset = =>
         Math.max(0, Math.floor((@window.scrollY - @initialMargin) / @itemHeight) * @columns) if @itemHeight?
@@ -102,6 +100,10 @@
         @updateRenderWindow()
         @location.hash("#{@pageOffset}").replace()
       )
+
+    windowResized: =>
+      @updateItemHeight()
+      @scrollTo(@pageOffset)
 
     query: (params) =>
       @http(
