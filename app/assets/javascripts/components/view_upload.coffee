@@ -2,11 +2,15 @@
 
   bindings:
     upload: '<'
+    finished: '&'
 
   template: """
     <div ng-mouseleave='$ctrl.showControls(false)'>
       <div class='transform-origin' ng-style='$ctrl.transformStyles()' ng-show='$ctrl.upload.state == "ready"'>
-        <img ng-if='$ctrl.upload.type == "Photo"' ng-src='{{ $ctrl.upload.large_url }}'>
+        <img
+            ng-if='$ctrl.upload.type == "Photo"'
+            ng-src='{{$ctrl.upload.large_url}}'
+            ng-init='$ctrl.imageInit()'></img>
         <video autoplay
             ng-if='$ctrl.upload.type == "Video"'
             ng-init='$ctrl.videoInit()'
@@ -43,6 +47,8 @@
     @inject '$element', '$filter', 'schedule'
 
     $onInit: ->
+      @scope.$watch((=> @upload), (=> @hasFinished = false))
+
       @element.on('click', 'video', (e) ->
         video = e.target
         if video.paused
@@ -81,6 +87,15 @@
 
       css
 
+    triggerFinished: =>
+      return if @hasFinished
+      @hasFinished = true
+      @scope.$apply => @finished()
+
+    imageInit: ->
+      @element.find('img').on('load', @triggerFinished)
+      undefined
+
     videoInit: ->
       @$video = @element.find('video')
       @video = @$video[0]
@@ -91,6 +106,7 @@
       @$video.
         on('play playing', (e) => @scope.$apply => @playing = true).
         on('pause', (e) => @scope.$apply => @playing = false).
+        on('pause ended', @triggerFinished).
         on('timeupdate', (e) =>
           current = @video.currentTime * 1000
           duration = @video.duration * 1000

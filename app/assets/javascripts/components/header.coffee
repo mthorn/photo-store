@@ -44,6 +44,12 @@
               </a>
               <ul class='dropdown-menu' template-url='upload_dropdown.html' uib-dropdown-menu></ul>
             </li>
+            <li ng-repeat='control in $ctrl.header.extraControls' ng-class='{ active: control.active }'>
+              <a ng-click='control.callback()'>
+                <i class='fa' ng-class='control.icon'></i>
+                {{control.text || ''}}
+              </a>
+            </li>
           </ul>
           <ul class='nav navbar-nav navbar-right'>
             <li class='dropdown'>

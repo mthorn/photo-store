@@ -2,7 +2,7 @@
 
   template: """
     <div class='slides' ng-if='$ctrl.items.count != 0' ng-swipe-left='$ctrl.change(1)' ng-swipe-right='$ctrl.change(-1)'>
-      <ps-view-upload upload='upload'></ps-view-upload>
+      <ps-view-upload upload='upload' finished='$ctrl.slideDefer.resolve()'></ps-view-upload>
 
       <button class='btn' id='prev' ng-click='$ctrl.change(-1)' ng-hide='$ctrl.params.i <= 0' shortcut='h,37'>
         <i class='fa fa-chevron-left'></i>
@@ -18,7 +18,7 @@
   """
 
   controller: class extends BaseCtrl
-    @inject '$http', '$window', '$element', '$routeParams', 'Library',
+    @inject '$http', '$window', '$element', '$routeParams', '$q', 'Library',
       'SearchObserver', 'Upload', 'imageCache', 'header', 'schedule',
       'selection'
 
@@ -32,6 +32,8 @@
         @header.currentUpload = @scope.upload = upload
         @updateCache()
       )
+
+      @slideDefer = @q.defer()
 
       @filtersObserver = @header.newFiltersObserver(@scope).
         observe('*', initial: false, =>
@@ -49,14 +51,21 @@
         bindAll('params').
         observe('i', (next, prev) => @fetch() if next.i == prev.i || @getOffset(@params.i) != @getOffset(prev.i))
 
+      @header.extraControls = [
+        { icon: 'fa-play', text: 'Auto', callback: @toggleAutoplay }
+      ]
+
     $onDestroy: ->
       @header.showFilters = false
       @header.currentUpload = null
+      @header.extraControls = null
       @destroyed = true
       @timer?.cancel()
       @Library.off('change', @fetch)
       delete @selection.ctrl
       @$window.off('resize', @windowResized)
+      @autoplay?.cancel()
+      @slideDefer?.reject()
 
     $onInit: ->
       @Library.on('change', @fetch)
@@ -121,7 +130,13 @@
           @imageCache.store(upload.large_url) if upload.type == 'Photo'
 
     change: (delta) ->
-      @params.i = Math.min(Math.max(@params.i + delta, 0), @items.count - 1)
+      i = (@params.i + delta) % @items.count
+      i += @items.count if i < 0
+      @params.i = i
+      prev = @slideDefer
+      @slideDefer = @q.defer()
+      prev.resolve(@slideDefer.promise)
+      @slideDefer.promise
 
     transformStyles: ->
       if (upload = @upload()) && upload.rotate in [ 90, 270 ]
@@ -132,3 +147,19 @@
           width: "#{width}px";
           height: "#{height}px";
           'transform-origin': "#{height / 2}px #{height / 2}px"
+
+    toggleAutoplay: =>
+      control = @header.extraControls[0]
+      active = control.active = ! control.active
+      control.icon = if active then 'fa-stop' else 'fa-play'
+
+      if active
+        @autoplay ? @slideDefer.promise.then(=>
+          @autoplay ?= @schedule.repeatWithDelay(1000, =>
+            @schedule.delay(if @upload.type == 'Photo' then 2000 else 0).
+              then(=> @change(1))
+          )
+        )
+      else
+        @autoplay?.cancel()
+        @autoplay = null
