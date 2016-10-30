@@ -33,19 +33,22 @@
             <i class='fa fa-times'></i>
           </a>
         </label>
-        <div class='col-sm-3'>
-          <select class='form-control' ng-model='filter.op' ng-options='key as value for (key, value) in $ctrl.OPERATORS[$ctrl.FIELDS[filter.field].type]'></select>
+        <div class='col-sm-8 form-inline' ng-if='$ctrl.FIELDS[filter.field].type == "radio"'>
+          <div class='radio' ng-repeat='(value, label) in $ctrl.ENUM_OPTIONS[filter.field]'>
+            <label>
+              <input type="radio" value='{{value}}' ng-model='filter.value'></input>
+              {{label}}
+            </label>
+          </div>
         </div>
-        <div class='col-sm-5' ng-switch='$ctrl.FIELDS[filter.field].type'>
-          <select class='form-control' ng-model='filter.value' ng-options='key as value for (key, value) in $ctrl.ENUM_OPTIONS[filter.field]' ng-switch-when='enum'></select>
-          <input class='form-control' ng-model-options='{ updateOn: "blur change" }' ng-model='filter.value' ng-switch-when='string'>
-          <div class='input-group' ng-switch-when='date'>
-            <input class='form-control' datepicker-popup='yyyy-MM-dd' is-open='isOpen' ng-model='filter.value' type='text'>
-            <span class='input-group-btn'>
-              <button class='btn btn-default' ng-click='isOpen = ! isOpen' type='button'>
-                <i class='fa fa-calendar'></i>
-              </button>
-            </span>
+        <div ng-if='$ctrl.FIELDS[filter.field].type != "radio"'>
+          <div class='col-sm-3'>
+            <select class='form-control' ng-model='filter.op' ng-options='key as value for (key, value) in $ctrl.OPERATORS[$ctrl.FIELDS[filter.field].type]'></select>
+          </div>
+          <div class='col-sm-5' ng-switch='$ctrl.FIELDS[filter.field].type'>
+            <select class='form-control' ng-model='filter.value' ng-options='key as value for (key, value) in $ctrl.ENUM_OPTIONS[filter.field]' ng-switch-when='radio'></select>
+            <input type='text' class='form-control' ng-model-options='{ updateOn: "blur change" }' ng-model='filter.value' ng-switch-when='string'>
+            <input type='date' class='form-control' ng-model-options='{ updateOn: "blur change" }' ng-model='filter.value' ng-switch-when='date'>
           </div>
         </div>
         <div class='col-sm-1 hidden-xs'>
@@ -71,7 +74,7 @@
     FIELDS:
       type:
         label: 'Type'
-        type: 'enum'
+        type: 'radio'
       name:
         label: 'Name'
         type: 'string'
@@ -101,21 +104,34 @@
         Photo: 'Photo'
         Video: 'Video'
 
-    @inject 'Library', 'SearchObserver', 'header'
+    @inject '$filter', 'Library', 'SearchObserver', 'header'
 
     initialize: ->
+      @dateFilter = @filter('date')
+
       @header.newFiltersObserver(@scope).
         bindTo(@).
         bindAll('params').
-        observe('filters', => @filters = JSON.parse(@params.filters))
+        observe('filters', =>
+          @filters = _.each(JSON.parse(@params.filters), (filter) =>
+            if @FIELDS[filter.field].type == 'date'
+              filter.value = new Date("#{filter.value} 00:00:00")
+          )
+        )
 
     '$watch(newFilter)': =>
       return unless @newFilter
       @filters ?= []
-      @filters.push(field: @newFilter)
+      @filters.push(field: @newFilter, op: 'eq')
       @newFilter = null
 
     '$watchEquality(filters)': =>
       @params.filters = JSON.stringify(@filters.
         filter((filter) -> filter.op && filter.value).
-        map((filter) -> _.pick(filter, 'field', 'op', 'value')))
+        map((filter) =>
+          result = _.pick(filter, 'field', 'op', 'value')
+          if result.value instanceof Date
+            result.value = @dateFilter(result.value, 'yyyy-MM-dd')
+          result
+        )
+      )
