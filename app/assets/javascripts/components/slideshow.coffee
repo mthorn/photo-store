@@ -52,7 +52,8 @@
         observe('i', (next, prev) => @fetch() if next.i == prev.i || @getOffset(@params.i) != @getOffset(prev.i))
 
       @header.extraControls = [
-        { icon: 'fa-play', text: 'Auto', callback: @toggleAutoplay }
+        { icon: 'fa-play', text: 'Auto', callback: @toggleAutoplay },
+        { icon: 'fa-step-backward', text: 'Start', callback: (=> @params.i = 0) }
       ]
 
     $onDestroy: ->
