@@ -4,6 +4,12 @@ html.fullscreen ps-slideshow {
   }
 }
 
+html.key-mode ps-slideshow {
+  .slides button {
+    opacity: 0;
+  }
+}
+
 ps-slideshow {
   display: block;
 

@@ -156,7 +156,7 @@
       if active
         @autoplay ? @slideDefer.promise.then(=>
           @autoplay ?= @schedule.repeatWithDelay(1000, =>
-            @schedule.delay(if @upload.type == 'Photo' then 2000 else 0).
+            @schedule.delay(if @upload().type == 'Photo' then 2000 else 0).
               then(=> @change(1))
           )
         )

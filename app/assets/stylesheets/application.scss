@@ -17,6 +17,10 @@
 @import "admin_libraries";
 @import "filters";
 
+body {
+  user-select: none;
+}
+
 ng-view {
   margin-bottom: 60px;
 }
