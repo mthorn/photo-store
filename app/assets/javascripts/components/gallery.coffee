@@ -80,7 +80,7 @@
       @$window.on('resize', @windowResized)
 
       calcPageOffset = =>
-        Math.max(0, Math.floor((@window.scrollY - @initialMargin) / @itemHeight) * @columns) if @itemHeight?
+        Math.max(0, Math.round((@window.scrollY - @initialMargin) / @itemHeight) * @columns) if @itemHeight?
       @$window.on('scroll', =>
         if @pageOffset != calcPageOffset()
           @scope.$applyAsync => @pageOffset = calcPageOffset()
@@ -136,7 +136,7 @@
         firstChild = container.firstElementChild
         @itemHeight = $(firstChild).outerHeight(true)
         @columns = _.findIndex(container.children, (e) -> e.offsetTop != firstChild.offsetTop)
-        @perPage = Math.ceil(@$window.height() / @itemHeight) * @columns
+        @perPage = Math.floor(@$window.height() / @itemHeight) * @columns
         @itemHeight
 
     calcWindow: (buffer) ->
