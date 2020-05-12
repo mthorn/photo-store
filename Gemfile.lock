@@ -265,7 +265,7 @@ GEM
       mini_portile2 (~> 2.1.0)
     orm_adapter (0.5.0)
     pg (0.19.0)
-    puma (3.6.0)
+    puma (3.12.4)
     rack (2.0.1)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -400,7 +400,7 @@ DEPENDENCIES
   uglifier
 
 RUBY VERSION
-   ruby 2.3.1p112
+   ruby 2.6.6p146
 
 BUNDLED WITH
-   1.13.5
+   1.17.3
