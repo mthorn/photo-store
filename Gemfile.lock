@@ -48,7 +48,8 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.4.0)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     arel (7.1.4)
     autoprefixer-rails (6.5.1)
       execjs
@@ -255,7 +256,9 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    mimemagic (0.3.2)
+    mimemagic (0.4.3)
+      nokogiri (~> 1)
+      rake
     mini_magick (4.5.1)
     mini_portile2 (2.1.0)
     minitest (5.9.1)
@@ -265,6 +268,7 @@ GEM
       mini_portile2 (~> 2.1.0)
     orm_adapter (0.5.0)
     pg (0.19.0)
+    public_suffix (4.0.6)
     puma (3.12.4)
     rack (2.0.1)
     rack-test (0.6.3)
